@@ -39,7 +39,6 @@ SCRIPTS = ROOT / "scripts"
 BASE_PY = r"E:\ai\AirLLM\py3.11.9\python.exe"
 VENV_PY = ROOT / "venv-tts" / "Scripts" / "python.exe"
 CONFIG_PATH = ROOT / "config.json"
-OUTPUT_DIR = ROOT / "output"
 
 _console_queue = queue.Queue()
 _console_history = []
@@ -335,8 +334,9 @@ def _run_worker(job_id, req):
         # Build command - pass media files directly, no inbox copy
         cmd = [BASE_PY, str(SCRIPTS / "run_video.py"), "--name", slug,
                "--media"] + [str(m) for m in (req.media or [])]
-        # Write scenes to a temp JSON file for the pipeline
-        scenes_path = OUTPUT_DIR / f"{slug}_scenes.json"
+        # Write scenes to a temp JSON file for the pipeline (kept out of output/)
+        scenes_path = Path(os.environ.get("TEMP", ".")) / "ReelForge" / f"{slug}_scenes.json"
+        scenes_path.parent.mkdir(parents=True, exist_ok=True)
         scenes_path.write_text(
             json.dumps(req.scenes or [], indent=2, ensure_ascii=False),
             encoding="utf-8",
