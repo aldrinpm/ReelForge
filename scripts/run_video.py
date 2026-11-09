@@ -702,7 +702,7 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
     return kit_path
 
 
-def pipeline(run_name, media_files, prompt, no_open, voice=None, speed=1.0,
+def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
              overlay=True, overlay_duration=3.0, overlay_position="top",
              music=None, scenes=None):
     slug = slugify(run_name)
@@ -718,8 +718,6 @@ def pipeline(run_name, media_files, prompt, no_open, voice=None, speed=1.0,
 
     # 0. Preflight
     log("[1/6] Preflight")
-    if not prompt:
-        raise PipelineError("Prompt is required.")
     if not media_files:
         raise PipelineError("At least one media file is required.")
 
@@ -840,10 +838,6 @@ def main():
         "--scenes", default=None,
         help="Path to scenes JSON file",
     )
-    parser.add_argument(
-        "--prompt", default=None,
-        help="Video topic / prompt",
-    )
     parser.add_argument("--no-open", action="store_true",
                         help="Do not open the output folder at the end")
     parser.add_argument("--voice", default=None, help="TTS voice (e.g. af_heart)")
@@ -865,10 +859,6 @@ def main():
     )
     args = parser.parse_args()
 
-    prompt = args.prompt
-    if not prompt:
-        parser.error("A prompt/topic is required.")
-
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_name = f"run_{ts}"
 
@@ -883,7 +873,7 @@ def main():
             import json as _json
             with open(args.scenes, 'r', encoding='utf-8') as _f:
                 scenes = _json.load(_f)
-        return pipeline(run_name, args.media, prompt, args.no_open,
+        return pipeline(run_name, args.media, args.no_open,
                         args.voice, args.tts_speed or 1.0,
                         args.overlay, args.overlay_duration,
                         args.overlay_position, args.music, scenes)

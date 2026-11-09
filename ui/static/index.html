@@ -150,17 +150,6 @@
       <h2 class="text-2xl font-semibold mb-4">New Run</h2>
       <div class="card space-y-4">
         <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="block text-sm text-gray-400">Topic / prompt</label>
-            <div class="flex gap-2">
-              <button class="btn-secondary btn-sm" onclick="browsePromptFile()">Browse .txt</button>
-              <button class="btn-secondary btn-sm" onclick="clearPrompt()">Clear</button>
-            </div>
-          </div>
-          <textarea id="run-prompt" class="h-24" placeholder="Type/paste your video topic or full creative brief..."></textarea>
-          <input type="file" id="run-prompt-file" accept=".txt,text/plain" class="hidden" onchange="onPromptFilePicked()">
-        </div>
-        <div>
           <label class="block text-sm text-gray-400 mb-1">Media files</label>
           <div class="flex gap-2 mb-2">
             <button class="btn-secondary btn-sm" onclick="pickFiles()">Select Files</button>
@@ -410,54 +399,6 @@
       return scenes;
     }
 
-
-    // Load the topic/prompt from a .txt file instead of typing/pasting.
-    function browsePromptFile() {
-      document.getElementById('run-prompt-file').click();
-    }
-    function clearPrompt() {
-      const box = document.getElementById('run-prompt');
-      box.value = '';
-      box.focus();
-      document.getElementById('run-status').textContent = 'Prompt cleared.';
-    }
-    function decodePromptText(buffer) {
-      // UTF-8 BOM is stripped automatically; detect UTF-16 BOMs, then try
-      // strict UTF-8 and fall back to Windows ANSI (cp1252) for legacy
-      // .txt files saved without an encoding declaration.
-      const head = new Uint8Array(buffer.slice(0, 2));
-      if (head[0] === 0xFF && head[1] === 0xFE) return new TextDecoder('utf-16le').decode(buffer);
-      if (head[0] === 0xFE && head[1] === 0xFF) return new TextDecoder('utf-16be').decode(buffer);
-      try { return new TextDecoder('utf-8', { fatal: true }).decode(buffer); }
-      catch (e) { return new TextDecoder('windows-1252').decode(buffer); }
-    }
-    function onPromptFilePicked() {
-      const input = document.getElementById('run-prompt-file');
-      const file = input.files && input.files[0];
-      if (!file) return;
-      const isTxt = /\.txt$/i.test(file.name) || file.type === 'text/plain';
-      if (!isTxt) {
-        alert('Please choose a .txt file (got: ' + file.name + ')');
-        input.value = '';
-        return;
-      }
-      const box = document.getElementById('run-prompt');
-      const replaced = box.value.trim() !== '';
-      const status = document.getElementById('run-status');
-      const reader = new FileReader();
-      reader.onload = () => {
-        const text = decodePromptText(reader.result).trim();
-        box.value = text;
-        box.focus();
-        status.textContent = 'Loaded prompt from "' + file.name + '" (' +
-          text.length + ' chars)' + (replaced ? ' — replaced existing text' : '');
-      };
-      reader.onerror = () =>
-        alert('Could not read file: ' + (reader.error && reader.error.message || 'unknown error'));
-      reader.readAsArrayBuffer(file);
-      input.value = ''; // allow re-selecting the same file later
-    }
-
     // Voices
     async function loadVoices() {
       try { const r = await fetch('/voices'); const d = await r.json();
@@ -529,11 +470,9 @@
 
     // Run
     async function startRun() {
-      const prompt = document.getElementById('run-prompt').value.trim();
       const ts = new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, '');
       const name = 'run_' + ts;
       document.getElementById('run-status').textContent = 'startRun called: name=' + name + ', files=' + selectedFiles.length;
-      if (!prompt) { alert('Enter a topic or prompt'); return; }
       if (selectedFiles.length === 0) { alert('Select at least one media file'); return; }
       const scenes = getScenes();
       if (scenes.length !== selectedFiles.length) {
@@ -549,7 +488,7 @@
         const res = await fetch('/run', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name, prompt, media: selectedFiles,
+            name, media: selectedFiles,
             scenes: scenes,
             voice: document.getElementById('run-voice').value || null,
             speed: parseFloat(document.getElementById('run-tts-speed').value),
