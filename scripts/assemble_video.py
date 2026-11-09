@@ -259,13 +259,18 @@ def overlay_drawtext(scene, duration, settings):
         _font_path = "C:/Windows/Fonts/arial.ttf"
     fontfile = _font_path.replace(":", "\\:")
 
+    # Constrain text box width so long text wraps instead of running off
+    # either edge of the 1080p frame. 90% of frame width keeps a safe margin.
+    boxw = int(1080 * 0.90)
+    boxh = int(1920 * 0.40)
+
     return (
         f",drawtext=fontfile='{fontfile}':textfile='{txt_ff}'"
-        f":expansion=none:"  # text is literal: % \ {} must never be treated
-                             # as drawtext expansion (e.g. "FALLS 5.5%")
+        f":expansion=none:"
         f"fontsize={fontsize}:fontcolor=white:borderw=3:bordercolor=black:"
         f"box=1:boxcolor=black@0.35:boxborderw=12:"
         f"x=(w-text_w)/2:y={y_expr}:"
+        f"boxw={boxw}:boxh={boxh}:line_spacing=10:"
         f"enable='between(t,{start:.2f},{end:.2f})'"
     )
 def normalize_image(scene, src, out, target_len, overlay_settings=None):
