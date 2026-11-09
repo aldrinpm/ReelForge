@@ -39,6 +39,7 @@ SCRIPTS = ROOT / "scripts"
 BASE_PY = r"E:\ai\AirLLM\py3.11.9\python.exe"
 VENV_PY = ROOT / "venv-tts" / "Scripts" / "python.exe"
 CONFIG_PATH = ROOT / "config.json"
+OUTPUT_DIR = ROOT / "output"
 
 _console_queue = queue.Queue()
 _console_history = []
