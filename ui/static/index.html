@@ -110,6 +110,11 @@
     .block { display: block; }
     .inline-block { display: inline-block; }
     .cursor-pointer { cursor: pointer; }
+    .kit-item { margin-bottom: 0.75rem; }
+    .kit-text { display: block; margin-bottom: 0.25rem; overflow-wrap: anywhere; word-break: break-word; }
+    .btn-copy { background: #374151; color: #fff; border: none; padding: 0.125rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; }
+    .btn-copy:hover { background: #4b5563; }
+    .btn-copy.bg-green-600 { background: #059669; }
   </style>
 </head>
 <body>
@@ -604,8 +609,73 @@
           <video controls class="w-full rounded" src="/files/${data.mp4}"></video>
           <p class="text-sm text-gray-400 mt-1">${data.mp4} (${data.size_mb} MB)</p></div>`;
       }
+      // Publishing kit
+      const kit = data.kit;
+      if (kit && kit.platforms) {
+        const fb = kit.platforms.facebook_reels;
+        const yt = kit.platforms.youtube_shorts;
+        html += `<div class="mt-4"><h3 class="font-semibold mb-2">Publishing Kit</h3>
+          <div class="text-xs text-gray-500 mb-2">Click any copy button to copy text to clipboard.</div>
+          <div class="bg-gray-900 rounded p-3 mb-2">
+            <div class="font-medium text-blue-300 mb-1">Facebook Reels</div>
+            <div class="kit-item mb-1">
+              <label class="text-xs text-gray-400">Title</label>
+              <div class="flex gap-1">
+                <span class="kit-text break-all">${escapeHtml(fb.title)}</span>
+                <button class="btn-copy btn-xs" onclick="copyText(this, '${escapeHtml(fb.title).replace(/'/g, "\\'")}')">Copy</button>
+              </div>
+            </div>
+            <div class="kit-item mb-1">
+              <label class="text-xs text-gray-400">Description</label>
+              <div class="flex gap-1">
+                <span class="kit-text break-all">${escapeHtml(fb.description)}</span>
+                <button class="btn-copy btn-xs" onclick="copyText(this, '${escapeHtml(fb.description).replace(/'/g, "\\'")}')">Copy</button>
+              </div>
+            </div>
+            <div class="kit-item mb-1">
+              <label class="text-xs text-gray-400">Hashtags</label>
+              <div class="flex gap-1">
+                <span class="kit-text break-all">${escapeHtml((fb.hashtags||[]).join(' '))}</span>
+                <button class="btn-copy btn-xs" onclick="copyText(this, '${escapeHtml((fb.hashtags||[]).join(' ')).replace(/'/g, "\\'")}')">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gray-900 rounded p-3 mt-2">
+            <div class="font-medium text-red-300 mb-1">YouTube Shorts</div>
+            <div class="kit-item mb-1">
+              <label class="text-xs text-gray-400">Title</label>
+              <div class="flex gap-1">
+                <span class="kit-text break-all">${escapeHtml(yt.title)}</span>
+                <button class="btn-copy btn-xs" onclick="copyText(this, '${escapeHtml(yt.title).replace(/'/g, "\\'")}')">Copy</button>
+              </div>
+            </div>
+            <div class="kit-item mb-1">
+              <label class="text-xs text-gray-400">Description</label>
+              <div class="flex gap-1">
+                <span class="kit-text break-all">${escapeHtml(yt.description)}</span>
+                <button class="btn-copy btn-xs" onclick="copyText(this, '${escapeHtml(yt.description).replace(/'/g, "\\'")}')">Copy</button>
+              </div>
+            </div>
+            <div class="kit-item mb-1">
+              <label class="text-xs text-gray-400">Hashtags</label>
+              <div class="flex gap-1">
+                <span class="kit-text break-all">${escapeHtml((yt.hashtags||[]).join(' '))}</span>
+                <button class="btn-copy btn-xs" onclick="copyText(this, '${escapeHtml((yt.hashtags||[]).join(' ')).replace(/'/g, "\\'")}')">Copy</button>
+              </div>
+            </div>
+          </div>
+          </div>`;
+      }
       html += `<div class="mt-3"><button class="btn-secondary btn-sm" onclick="openFolder()">Open Folder</button></div>`;
       el.innerHTML = html;
+    }
+    function copyText(btn, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('bg-green-600');
+        setTimeout(() => { btn.textContent = orig; btn.classList.remove('bg-green-600'); }, 1500);
+      });
     }
     function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function openFolder() {

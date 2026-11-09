@@ -814,6 +814,18 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
     )
     qa_check(mp4_path, timeline_seconds)
 
+    # Build publishing kit (Facebook Reels + YouTube Shorts) before deleting SRT
+    kit_path = build_publishing_kit(
+        storyboard, manifest, mp4_path, srt_path, stamp, slug
+    )
+    log(f"  publishing kit: {kit_path.name}")
+
+    # Clean up temporary SRT (only MP4 should exist in output)
+    try:
+        srt_path.unlink()
+    except OSError:
+        pass
+
     log("")
     log("=" * 60)
     log("=" * 60)

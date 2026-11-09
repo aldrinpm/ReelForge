@@ -390,10 +390,21 @@ def _run_worker(job_id, req):
         )
         mp4 = mp4s[-1] if mp4s else None
 
+        # Read publishing kit if it exists
+        kit = None
+        if mp4:
+            kit_path = mp4.with_suffix(".publishing.json")
+            if kit_path.exists():
+                try:
+                    kit = json.loads(kit_path.read_text(encoding="utf-8"))
+                except Exception:
+                    kit = None
+
         job["status"] = "done"
         job["result"] = {
             "mp4": str(mp4.relative_to(ROOT)) if mp4 else None,
             "size_mb": round(mp4.stat().st_size / 1_048_576, 1) if mp4 else 0,
+            "kit": kit,
         }
         console_log(f"Run {slug} COMPLETE: {mp4.name if mp4 else 'no mp4'}", "INFO")
         _put({"type": "done"})
