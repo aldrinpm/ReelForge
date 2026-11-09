@@ -613,97 +613,6 @@ def qa_check(mp4_path, timeline_seconds):
         f"{audio.get('codec_name')}, max_volume {max_volume} dB", indent=True)
 
 
-def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
-    title = str(storyboard.get("title", slug)).strip()
-    topic = str(storyboard.get("topic", slug)).strip()
-    description = str(storyboard.get("description", "")).strip() or None
-    hashtags_str = str(storyboard.get("hashtags", "")).strip()
-    narration = " ".join(
-        str(scene["narration"]).strip() for scene in manifest["scenes"]
-    )
-    sentences = re.split(r"(?<=[.!?]) +", narration)
-    lead = " ".join(sentences[:2]).strip()
-
-    caveat_list = []
-    for note in storyboard.get("fact_check_notes", [])[:3]:
-        note = re.sub(r"[.\s]+$", "", str(note).strip())
-        if note:
-            caveat_list.append(note + ".")
-    caveats = " ".join(caveat_list)
-    sources = "; ".join(
-        str(entry.get("source_name", "")).strip()
-        for entry in storyboard.get("source_suggestions", [])[:4]
-    ).rstrip("; ")
-
-    words = re.findall(r"[A-Za-z]{5,}", f"{title} {topic}")
-    seen = set()
-    topic_tags = []
-    for word in words:
-        lowered = word.lower()
-        if lowered in STOPWORDS:
-            continue
-        tag = "#" + lowered
-        if tag not in seen:
-            seen.add(tag)
-            topic_tags.append(tag)
-    topic_tags = topic_tags[:6]
-
-    total = round(sum(float(s["duration_seconds"]) for s in manifest["scenes"]))
-    duration_str = f"{total}-second" if total != 1 else "1-second"
-
-    if hashtags_str:
-        hashtags_list = [h.strip() for h in hashtags_str.split() if h.strip()]
-        fb_tags = hashtags_list[:9]
-        yt_tags = hashtags_list[:9]
-    else:
-        fb_tags = (topic_tags + ["#reels", "#learn", "#science"])[:9]
-        yt_tags = (["#Shorts"] + topic_tags)[:9]
-
-    kit = {
-        "video_file": mp4_path.relative_to(ROOT).as_posix(),
-        "subtitle_file": srt_path.relative_to(ROOT).as_posix(),
-        "duration_seconds": total,
-        "resolution": "1080x1920",
-        "aspect_ratio": "9:16",
-        "platforms": {
-            "facebook_reels": {
-                "title": title,
-                "description": description if description else (
-                    f"{lead} Runtime: {total}s. Visuals: custom scene images."
-                    + (f" Facts kept responsible: {caveats}" if caveats else "")
-                    + (f" Sources: {sources}" if sources else "")
-                ),
-                "hashtags": fb_tags,
-                "notes": (
-                    "Captions are burned into the video; Reels may also "
-                    "auto-generate captions. Keep the burned-in captions "
-                    "as primary."
-                ),
-            },
-            "youtube_shorts": {
-                "title": title,
-                "description": description if description else (
-                    f"{lead} In under a minute: {title.lower()}."
-                    + (f" Caveats: {caveats}" if caveats else "")
-                    + (f" Sources: {sources}" if sources else "")
-                    + " " + " ".join(yt_tags)
-                ),
-                "hashtags": yt_tags,
-                "notes": (
-                    f"Upload '{srt_path.name}' as the video's caption track "
-                    "(timing matches the timeline). Vertical 9:16 and "
-                    f"{total}s already qualify for Shorts."
-                ),
-            },
-        },
-    }
-
-    kit_path = mp4_path.with_suffix(".publishing.json")
-    kit_path.write_text(
-        json.dumps(kit, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
-    return kit_path
-
 def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
              overlay=True, overlay_duration=3.0, overlay_position="top",
              music=None, scenes=None, title=None, description=None,
@@ -833,11 +742,6 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
     if hashtags:
         storyboard["hashtags"] = hashtags
 
-    # Build publishing kit (Facebook Reels + YouTube Shorts) before deleting SRT
-    kit_path = build_publishing_kit(
-        storyboard, manifest, mp4_path, srt_path, stamp, slug
-    )
-    log(f"  publishing kit: {kit_path.name}")
 
     # Clean up temporary SRT (only MP4 should exist in output)
     try:
