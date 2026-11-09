@@ -268,7 +268,7 @@ def overlay_drawtext(scene, duration, settings):
         # Escape single quotes and backslashes for FFmpeg drawtext text= option
         safe_line = line.replace("\\", "\\\\").replace("'", "\\'")
         # Offset each line by fontsize + line_spacing so they stack vertically
-        line_y = f"({y_base}) + {i} * ({fontsize} + 10)"
+        line_y = f"({y_expr}) + {i} * ({fontsize} + 10)"
         filters.append(
             f",drawtext=fontfile='{fontfile}':text='{safe_line}'"
             f":expansion=none:"
