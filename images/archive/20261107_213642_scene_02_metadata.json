@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 10.0,
+  "narration": "When pressure becomes too great, the volcano erupts, shooting ash, gas and lava into the air. The explosion can send material high above the crater.",
+  "on_screen_text": "Eruption in progress",
+  "prompt": "A dramatic volcanic eruption scene with a plume of gray ash rising from the crater rim, glowing orange lava flowing down the slopes, billowing steam and gas clouds, mid-eruption moment captured, realistic but simplified for illustration, clear foreground and background separation",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_02.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 3.0
+}

@@ -1,0 +1,56 @@
+# Promotion gates — loop-engineering (ReelForge)
+# A stage/component may move L1->L2->L3 only when ALL applicable gates pass.
+
+version: 1
+verifier: qa_gates
+
+# Shared thresholds (canonical: _config/qa_thresholds.md)
+thresholds:
+  resolution: "1080x1920"
+  aspect_ratio: "9:16"
+  fps: 30
+  codec: "h264"
+  pix_fmt: "yuv420p"
+  audio_codec: "aac"
+  audio_sample_rate: 48000
+  max_volume_db: -0.3        # no clipping (target -1.0)
+  duration_min_s: 1          # hard floor
+  duration_max_s: 90         # Reels max (Shorts: 60)
+  scene_count_min: 1
+  scene_count_max: 12
+  subtitle_wording: "exact_match"   # verify_subtitles.py must pass
+
+# Promotion ladder
+levels:
+  L1:  # report-only
+    description: "Agent proposes; human runs the command."
+    requires: []
+  L2:  # assisted
+    description: "Agent drafts + shows plan; human approves before action."
+    requires:
+      - "stage CONTEXT.md written"
+      - "audit checklist present"
+  L3:  # unattended
+    description: "Runs without approval ONLY after verifier correct >= 5 consecutive runs."
+    requires:
+      - "verifier_passes_5_consecutive: true"
+      - "no_human_override_in_last_5_runs: true"
+      - "checkpoint_approved_by_user: true"
+
+# Component -> current level (mirror of STATE.md)
+components:
+  storyboard_generation: L2
+  image_staging: L2
+  narration: L3
+  subtitles: L3
+  assembly: L3
+  qa_publishing: L2
+  obsidian_run_note: L3
+  desktop_ui: L1
+
+# Anti-patterns that block promotion (see _core/anti-patterns.md)
+blockers:
+  - "running LLM + SD on 8GB GPU concurrently"
+  - "bundling FFmpeg or model weights into installer"
+  - "skipping verify_subtitles wording gate"
+  - "deleting superseded artifacts instead of archiving"

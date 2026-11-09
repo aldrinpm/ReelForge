@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 4.0,
+  "narration": "Every great idea starts with a vision.",
+  "on_screen_text": "Every Great Idea Starts With a Vision.",
+  "prompt": "dark cinematic technology background, hooded developer focused on coding, subtle blue and cyan lighting accents, digital particles floating, high contrast, professional corporate style",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

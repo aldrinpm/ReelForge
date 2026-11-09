@@ -1,0 +1,14 @@
+{
+  "scene_number": 4,
+  "duration_seconds": 9,
+  "narration": "Inside lies the singularity—a point where density is thought to be infinite.",
+  "on_screen_text": "The mysterious center",
+  "prompt": "Abstract scientific visualization of warped spacetime geometry and grid lines converging toward a dark central region, depicting the curvature of space, no literal visible singularity, no bright white dot, cinematic astrophysics documentary, scientifically inspired visualization, photorealistic space environment, dramatic cinematic lighting, deep navy and black background, subtle orange gold and blue highlights, high detail, professional space photography, vertical composition, no text, no captions, no labels, no watermark",
+  "negative_prompt": "text, captions, letters, numbers, watermark, logo, cartoon, anime, low quality, blurry, low resolution, oversaturated, distorted objects, duplicate objects, unrealistic geometry, artificial borders",
+  "seed": 12349,
+  "width": 512,
+  "height": 768,
+  "steps": 22,
+  "sampler": "DPM++ 2M",
+  "cfg_scale": 6.5
+}

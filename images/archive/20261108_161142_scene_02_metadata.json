@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 10.0,
+  "narration": "Next, we blend the terror with surreal, swirling shadows, using quick cuts and motion blur to keep viewers on edge while the wind intensifies.",
+  "on_screen_text": "Blend the Fear",
+  "prompt": "A misty clearing in the forest where shadowy, semi-transparent figures swirl with gusts of wind, motion blur trails, eerie greenish glow, cinematic color grading, 9:16 vertical format",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

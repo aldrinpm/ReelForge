@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 5.0,
+  "narration": "That vision takes shape through relentless engineering and precision execution.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise.",
+  "prompt": "Modern tech workstation with multiple monitors displaying sleek UI panels, dark charcoal background with electric blue highlights, developer hands typing, subtle camera pan to reveal depth, cinematic composition. Highly detailed, realistic rendering, soft shadows, 8K resolution.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

@@ -1,0 +1,14 @@
+{
+  "scene_number": 4,
+  "duration_seconds": 5.0,
+  "narration": "And markets are rattled: the Nasdaq fell five-point-five percent in one session.",
+  "on_screen_text": "MARKETS REACT | NASDAQ FALLS 5.5% | ABOUT $2.5 TRILLION ERASED | Source: Reuters, 6 Nov 2026",
+  "prompt": "Vertical 9:16 photorealistic editorial photograph of a financial trading floor with large market screens showing abstract red downward chart lines and numbers too soft to read, traders in distant silhouette, dramatic but realistic lighting, no recognizable exchange branding, no logos, no fabricated legible ticker symbols, no text overlay. Illustrative reconstruction, not actual news footage.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene4.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

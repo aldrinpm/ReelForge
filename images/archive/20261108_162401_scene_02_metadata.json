@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 5.0,
+  "narration": "Powered by innovation, built with expertise.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise.",
+  "prompt": "A modern workstation with a developer at a desk, multiple monitors displaying lines of code and UI mockups. Dark blue and cyan color grading adds a high‑tech vibe. Light reflections on the screens and a faint digital grid overlay enhance the futuristic atmosphere.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

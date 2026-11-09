@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 5.0,
+  "narration": "Powered by innovation, built with expertise — each line of work transforms raw potential into polished solutions.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise.",
+  "prompt": "Developer working at a desk surrounded by multiple monitors displaying code, cinematic color grading with deep blues and electric cyan highlights, professional workspace atmosphere",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 5.0,
+  "narration": "Experience the future of digital solutions with Transporter – building tomorrow, today.",
+  "on_screen_text": "TRANSPORTER\nBuilding Tomorrow, Today.",
+  "prompt": "Use the provided sample-website.jpg displayed inside a sleek, floating browser window with a slight 3‑D perspective. Add a soft parallax shift and a smooth zoom‑in on the website, then transition to a stylized Transporter logo with cyan illumination.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "sample website.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

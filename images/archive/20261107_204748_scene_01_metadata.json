@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 12.0,
+  "narration": "Volcanoes are openings in the Earth where molten rock, called magma, rises from deep inside our planet.",
+  "on_screen_text": "What is a volcano?",
+  "prompt": "A cross-section of the Earth showing crust, mantle, and a glowing magma chamber beneath, with simple 2D illustration style, vibrant colors, educational infographic",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_01.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

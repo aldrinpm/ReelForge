@@ -1,0 +1,13 @@
+{
+  "scene_number": 4,
+  "duration_seconds": 10.0,
+  "narration": "Inside lies the singularity, a point of infinite density predicted by classical general relativity — where known physics breaks down.",
+  "on_screen_text": "The mysterious center",
+  "prompt": "A tiny, bright white dot at the center of a dark void, with faint gravitational lensing effects around it",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_04.png",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

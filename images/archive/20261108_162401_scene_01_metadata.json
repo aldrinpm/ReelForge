@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 5.0,
+  "narration": "Great ideas begin with vision.",
+  "on_screen_text": "Great Ideas Begin With Vision.",
+  "prompt": "A dark, cinematic technology lab interior. A hooded developer sits at a desk, focused on a glowing code screen. Subtle blue and cyan lighting accents, floating digital particles, and faint code‑style overlays surround the figure. The composition has a sleek, futuristic feel suitable for a premium tech commercial.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

@@ -1,0 +1,25 @@
+{
+  "title": "The Water Cycle Explained",
+  "storyboard": "20261108_024806_test_run3_storyboard.json",
+  "contact_sheet": "",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 12.0,
+      "narration": "The sun heats water on Earth's surface, turning it into vapor that rises and forms clouds. When those clouds get heavy enough, rain falls back to the ground, completing the cycle.",
+      "on_screen_text": "Water vapor rises as clouds form",
+      "prompt": "A bright blue sky with fluffy white cumulus clouds above a calm turquoise ocean; sunlight reflecting off water surface; faint mist rising from the sea; soft green hills in background; photorealistic style, high detail, 8K resolution.",
+      "negative_prompt": "",
+      "motion_direction": "pan right to left",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_01.png"
+    }
+  ]
+}

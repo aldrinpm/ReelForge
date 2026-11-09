@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "Molten rock called magma contains dissolved gases. As it rises, pressure builds until...",
+  "on_screen_text": "Rising Magma",
+  "prompt": "Close-up of bubbling molten rock with gas bubbles rising upward, warm colors and dramatic lighting",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_02.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 3.0
+}

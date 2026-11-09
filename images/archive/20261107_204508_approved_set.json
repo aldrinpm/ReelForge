@@ -1,0 +1,73 @@
+{
+  "title": "How Volcanoes Work & Erupt",
+  "storyboard": "20261107_204122_qa_mixed_media_storyboard.json",
+  "contact_sheet": "contact_sheet_qa_mixed_media.jpg",
+  "approved_on": "2026-11-07",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 10,
+      "narration": "Deep beneath Earth's crust lies molten rock called magma. When pressure builds up it can force its way upward.",
+      "on_screen_text": "Magma deep underground",
+      "prompt": "Cross section of Earth showing a glowing orange magma chamber beneath gray crust, simple cartoon style, soft lighting",
+      "negative_prompt": "",
+      "motion_direction": "slow zoom in toward the magma chamber",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_01.png"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 10,
+      "narration": "As it rises through the crust the magma heats surrounding rock and can melt more material along its path.",
+      "on_screen_text": "Magma rising upward",
+      "prompt": "Vertical column of bright orange magma moving upward through layered gray rock, gentle heat haze effect",
+      "negative_prompt": "",
+      "motion_direction": "pan up following the rising magma",
+      "source_type": "clip",
+      "clip_duration": 3.0,
+      "image_source": "user_inbox:scene_02.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.gif",
+      "metadata": "scene_03_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 10,
+      "narration": "When pressure becomes too great it erupts, spewing lava ash and gas into the air.",
+      "on_screen_text": "Volcanic eruption in progress",
+      "prompt": "Explosive volcano with red lava flowing down slopes, dark gray ash plume rising, dramatic lighting",
+      "negative_prompt": "",
+      "motion_direction": "quick pan right to follow the lava flow",
+      "source_type": "gif",
+      "clip_duration": 2.0,
+      "image_source": "user_inbox:scene_03.gif"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 10,
+      "narration": "Eruptions reshape landscapes and create new land. Understanding them helps keep communities safe.",
+      "on_screen_text": "New land formed by lava",
+      "prompt": "Cooling lava solidifying into black rock, green plants beginning to grow over it, sunrise lighting",
+      "negative_prompt": "",
+      "motion_direction": "slow zoom out showing the whole scene",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_04.png"
+    }
+  ]
+}

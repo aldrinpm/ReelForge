@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 9.0,
+  "narration": "When the pressure is high enough, an explosive eruption blasts ash and rock into the sky. In quieter eruptions, lava flows gently across land.",
+  "on_screen_text": "Explosive vs Effusive Eruption",
+  "prompt": "Split view: left side shows a plume of ash erupting from a volcano; right side shows a river of lava flowing down a slope, realistic style",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_03.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 2.0
+}

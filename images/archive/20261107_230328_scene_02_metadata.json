@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 5.0,
+  "narration": "We combine creative design with technical precision to bring your concepts to life.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise",
+  "prompt": "A professional workspace with multiple monitors displaying web development tools and code editors; a developer seated at a desk, dark blue and cyan color grading, subtle camera pan across the scene.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

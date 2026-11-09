@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 10.0,
+  "narration": "Volcanoes are openings in Earth's crust where molten rock called magma can rise.",
+  "on_screen_text": "What is a volcano?",
+  "prompt": "Aerial view of a volcanic landscape with dark lava fields and steam rising, realistic style, high detail",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_01.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

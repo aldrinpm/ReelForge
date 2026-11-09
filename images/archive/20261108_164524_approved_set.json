@@ -1,0 +1,57 @@
+{
+  "title": "Transporter – Vision, Engineering, Delivery",
+  "storyboard": "20261108_163653_test_storyboard.json",
+  "contact_sheet": "contact_sheet_test.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 5,
+      "narration": "Great ideas begin with vision.",
+      "on_screen_text": "Great Ideas Begin With Vision.",
+      "prompt": "Use the provided dev1.gif showing a hooded developer at a dark workstation. Add subtle blue and cyan lighting accents, floating digital particles, and faint code‑style overlay graphics while preserving the original animation.",
+      "negative_prompt": "",
+      "motion_direction": "Gentle cinematic push‑in (slow zoom toward the developer) lasting the full 5 seconds, ending with a digital dissolve transition.",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 5.5,
+      "narration": "Powered by innovation, built with expertise.",
+      "on_screen_text": "Powered by Innovation. Built With Expertise.",
+      "prompt": "Use the provided dev2.mp4 of the developer at a multi‑monitor desk. Apply a dark‑blue/cyan color grade, add a faint vignette, and keep the original footage intact.",
+      "negative_prompt": "",
+      "motion_direction": "Subtle forward dolly zoom combined with a light sweep transition to the next scene.",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 5,
+      "narration": "Building tomorrow, today.",
+      "on_screen_text": "TRANSPORTER\nBuilding Tomorrow, Today.",
+      "prompt": "Display the sample-website.jpg inside a floating, slightly angled browser window. Add a soft 3D perspective, gentle parallax, and a smooth zoom‑in on the website. Finish with a cyan glow around the word TRANSPORTER and a brief cinematic sound effect.",
+      "negative_prompt": "",
+      "motion_direction": "Smooth zoom‑in on the website followed by an elegant logo reveal with a cyan illumination fade‑out.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

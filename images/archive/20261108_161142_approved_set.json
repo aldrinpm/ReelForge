@@ -1,0 +1,57 @@
+{
+  "title": "Crafting a Cinematic Horror Clip in 30 Seconds",
+  "storyboard": "20261108_160549_test123_storyboard.json",
+  "contact_sheet": "contact_sheet_test123.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 10.5,
+      "narration": "First, we unleash a storm—thunder cracks, lightning slashes across a twisted forest, and wind howls like a hurricane, setting the pulse racing.",
+      "on_screen_text": "Thunder & Lightning",
+      "prompt": "A dark, gnarled forest at night under a stormy sky, bright lightning bolts illuminating twisted trees, heavy clouds, rain, and visible motion blur of whipping wind, cinematic lighting, high detail, 9:16 vertical format",
+      "negative_prompt": "",
+      "motion_direction": "slow zoom in on lightning strike with a subtle left-to-right pan",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 10.5,
+      "narration": "Next, we blend the terror with surreal, swirling shadows, using quick cuts and motion blur to keep viewers on edge while the wind intensifies.",
+      "on_screen_text": "Blend the Fear",
+      "prompt": "A misty clearing in the forest where shadowy, semi-transparent figures swirl with gusts of wind, motion blur trails, eerie greenish glow, cinematic color grading, 9:16 vertical format",
+      "negative_prompt": "",
+      "motion_direction": "fast zoom out combined with a radial blur transition to the next scene",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 13.5,
+      "narration": "Finally, the storm clears to reveal a mysterious, glowing enchanted kingdom, a calm that feels both magical and unsettling, showing how contrast can heighten the horror experience.",
+      "on_screen_text": "Enchanted Kingdom",
+      "prompt": "A luminous, otherworldly kingdom perched on a cliff as sunrise breaks, towers of crystal and vines, soft golden light, faint mist, subtle sparkle effects, cinematic atmosphere, 9:16 vertical format",
+      "negative_prompt": "",
+      "motion_direction": "fade-in from black with a gentle upward pan",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

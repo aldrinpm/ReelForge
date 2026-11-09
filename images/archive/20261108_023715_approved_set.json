@@ -1,0 +1,25 @@
+{
+  "title": "The Boiling Point of Water",
+  "storyboard": "20261108_022202_test_run_storyboard.json",
+  "contact_sheet": "",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 10.0,
+      "narration": "At sea level, water boils at exactly 100 degrees Celsius—212 Fahrenheit. This isn't magic; it's physics in action.",
+      "on_screen_text": "Boiling Point",
+      "prompt": "A clear glass pot of water on a stove with steam rising, bright kitchen lighting, high detail, realistic style, Stable Diffusion 1.5 compatible",
+      "negative_prompt": "",
+      "motion_direction": "slow zoom in",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_01.png"
+    }
+  ]
+}

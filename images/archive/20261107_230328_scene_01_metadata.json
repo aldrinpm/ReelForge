@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 5.0,
+  "narration": "Every great idea starts as a spark of imagination.",
+  "on_screen_text": "Great Ideas Begin With Vision",
+  "prompt": "A dark cinematic technology environment featuring a hooded developer focused on code, subtle blue and cyan lighting accents, digital particles, and faint code-inspired overlays; high contrast, professional tech commercial aesthetic.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

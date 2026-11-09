@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9,
+  "narration": "Black holes are regions where gravity is so strong that nothing, not even light, can escape.",
+  "on_screen_text": "Gravity's ultimate trap",
+  "prompt": "A dark sphere surrounded by a swirling accretion disk of glowing gas and dust in deep space, with distant stars visible behind it, cinematic astrophysics documentary, scientifically inspired visualization, photorealistic space environment, dramatic cinematic lighting, deep navy and black background, subtle orange gold and blue highlights, high detail, professional space photography, vertical composition, no text, no captions, no labels, no watermark",
+  "negative_prompt": "text, captions, letters, numbers, watermark, logo, cartoon, anime, low quality, blurry, low resolution, oversaturated, distorted objects, duplicate objects, unrealistic geometry, artificial borders",
+  "seed": 12346,
+  "width": 512,
+  "height": 768,
+  "steps": 22,
+  "sampler": "DPM++ 2M",
+  "cfg_scale": 6.5
+}

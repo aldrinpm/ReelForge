@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 5.0,
+  "narration": "Every great digital experience starts with a single spark of vision.",
+  "on_screen_text": "Great Ideas Begin With Vision.",
+  "prompt": "A hooded developer in a dark futuristic workspace, surrounded by subtle blue and cyan lighting accents, digital particles floating around, faint code overlays on glass surfaces, cinematic depth of field. Photorealistic style, high detail, dramatic lighting, 8K resolution.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

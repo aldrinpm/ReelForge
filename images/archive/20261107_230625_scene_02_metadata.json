@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 10.0,
+  "narration": "Deep beneath the surface, intense heat turns solid rock into molten magma.",
+  "on_screen_text": "Magma forms deep inside",
+  "prompt": "Cross-section of Earth's mantle showing rising magma chamber with glowing orange core, scientific illustration style",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_02.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 3.0
+}

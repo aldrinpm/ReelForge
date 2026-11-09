@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Volcanoes are openings in Earth's crust where molten rock rises from deep underground. As magma accumulates beneath a volcano, pressure builds up over time.",
+  "on_screen_text": "Magma chamber filling",
+  "prompt": "A cross-section of a volcanic mountain with a glowing magma chamber at its base, simple educational illustration style, clear labels showing molten rock rising upward through cracks in the crust, soft warm lighting, clean background, suitable for Stable Diffusion 1.5",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_01.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Great ideas begin with vision. At Transporter, our developers imagine the future of web experiences.",
+  "on_screen_text": "Great Ideas Begin With Vision",
+  "prompt": "Vertical 9:16 dark cinematic technology environment, hooded developer working at a computer, subtle blue and cyan lighting accents, floating digital particles, semi‑transparent code‑style overlays, cinematic push‑in effect, high detail, realistic style",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

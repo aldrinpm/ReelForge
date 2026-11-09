@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 10.0,
+  "narration": "Finally, the storm clears to reveal a mysterious, glowing enchanted kingdom, a calm that feels both magical and unsettling, showing how contrast can heighten the horror experience.",
+  "on_screen_text": "Enchanted Kingdom",
+  "prompt": "A luminous, otherworldly kingdom perched on a cliff as sunrise breaks, towers of crystal and vines, soft golden light, faint mist, subtle sparkle effects, cinematic atmosphere, 9:16 vertical format",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "sample website.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

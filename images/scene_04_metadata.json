@@ -1,0 +1,14 @@
+{
+  "scene_number": 4,
+  "duration_seconds": 9.0,
+  "narration": "Take a breath, enjoy your morning, and start with purpose. Save this video and try it tomorrow!",
+  "on_screen_text": "TRY THIS TOMORROW! ☀️ SAVE THIS VIDEO FOR LATER! 👇",
+  "prompt": "vertical 9:16 composition, person smiling calmly in a bright morning kitchen, phone face down on counter, glass of water and planner nearby, natural sunlight, warm colors, realistic lifestyle photo, no text",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene4.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

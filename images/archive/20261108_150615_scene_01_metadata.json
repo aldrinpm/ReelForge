@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Start by deciding the hook of your 20‑second clip, then browse free stock libraries for short video snippets and royalty‑free tracks that match the mood.",
+  "on_screen_text": "Plan & Gather",
+  "prompt": "A bright home office desk with a laptop open to a free stock footage website, icons of a video camera, music notes, and a notebook with a sketch of a simple storyboard, warm lighting, realistic style",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

@@ -1,0 +1,37 @@
+{
+  "title": "Your Car, Your Ride – Book a Driver in Minutes!",
+  "storyboard": "20261107_182736_transport3r_storyboard.json",
+  "contact_sheet": "",
+  "approved_on": "2026-11-07",
+  "mode": "user_images_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Imagine needing a ride but not wanting to drive yourself. Enter our new booking service.",
+      "on_screen_text": "Your Car, Your Ride",
+      "prompt": "A person holding a modern smartphone displaying a ride-booking app interface, standing next to a clean sedan in soft daylight, realistic style with shallow depth of field.",
+      "negative_prompt": "",
+      "motion_direction": "slow pan right",
+      "image_source": "user_inbox:transporter-bg-image.jpg"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.png",
+      "metadata": "scene_02_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Pick up and drop-off points, choose your date and time – all on one simple screen.",
+      "on_screen_text": "Book Pickup & Drop-Off",
+      "prompt": "Close-up of a smartphone UI showing two location pins on a map with visible date/time selectors, clean modern design.",
+      "negative_prompt": "",
+      "motion_direction": "zoom in",
+      "image_source": "user_inbox:transporter-profile-image.jpg"
+    }
+  ]
+}

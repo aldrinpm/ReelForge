@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 5.0,
+  "narration": "Transporter transforms ideas into digital experiences—visit us today and start building the future.",
+  "on_screen_text": "Building Tomorrow, Today",
+  "prompt": "A sleek modern website interface presented inside a floating browser window with subtle 3D perspective and parallax; brand logo visible in the center, cinematic lighting, high‑resolution tech commercial style.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "sample website.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

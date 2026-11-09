@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "Next, gather or shoot footage, then pull out key moments to turn into eye‑catching GIFs and a bold still image that matches your brand.",
+  "on_screen_text": "Shoot • Clip • GIF + Image",
+  "prompt": "A split‑screen: left side shows a camera on a tripod filming a product, right side shows a computer screen with a timeline where a short clip is being selected and exported as a looping GIF, crisp digital art style",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

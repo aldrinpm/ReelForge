@@ -1,0 +1,14 @@
+{
+  "scene_number": 4,
+  "duration_seconds": 13.0,
+  "narration": "After cooling, hardened lava forms new rock layers on Earth's surface. Over time, repeated eruptions build up mountains and reshape landscapes.",
+  "on_screen_text": "Volcanic aftermath",
+  "prompt": "A newly formed volcanic landscape with dark basalt flows solidifying into jagged ridges, a calm scene showing the cooled crust overlying fresh lava",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_04.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

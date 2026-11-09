@@ -1,0 +1,25 @@
+{
+  "title": "Video Test",
+  "storyboard": "20261108_023715_test_run2_storyboard.json",
+  "contact_sheet": "",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Testing out video production with simple visuals.",
+      "on_screen_text": "Video Test",
+      "prompt": "abstract minimalist composition, vibrant geometric shapes floating in space, clean lines, soft lighting, neutral background, high detail, photorealistic style",
+      "negative_prompt": "",
+      "motion_direction": "pan slowly from left to right",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_01.png"
+    }
+  ]
+}

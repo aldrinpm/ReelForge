@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Volcanoes form at tectonic plate boundaries, where hot magma from Earth's interior rises toward the surface.",
+  "on_screen_text": "Plate Boundaries",
+  "prompt": "Cross-section of Earth showing moving tectonic plates with a glowing magma chamber beneath, realistic style suitable for Stable Diffusion 1.5",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_01.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

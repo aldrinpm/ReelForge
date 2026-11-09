@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Mornings feel chaotic? Stop scrolling and try this quick reset.",
+  "on_screen_text": "STOP DOING THIS IN THE MORNING! 🛑",
+  "prompt": "vertical 9:16 composition, young adult in bed in soft morning light, hand reaching toward a glowing smartphone on a nightstand, messy blanket, alarm clock, warm sunrise through window, realistic lifestyle photo, clean composition, no text",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene1.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

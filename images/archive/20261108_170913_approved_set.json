@@ -1,0 +1,57 @@
+{
+  "title": "Transporter – Vision to Digital Reality (15‑second Promo)",
+  "storyboard": "20261108_164524_test_storyboard.json",
+  "contact_sheet": "contact_sheet_test.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 5,
+      "narration": "Great ideas start with a vision, where creativity meets code.",
+      "on_screen_text": "Great Ideas Begin With Vision.",
+      "prompt": "Vertical cinematic dark tech lab, hooded developer seated at a computer, glowing blue and cyan code overlays, subtle digital particle effects, soft blue lighting accents, high contrast, 9:16 aspect ratio",
+      "negative_prompt": "",
+      "motion_direction": "Gentle push‑in zoom over the 5‑second clip",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 6.0,
+      "narration": "Our engineers turn that vision into reality, powered by innovation and expertise.",
+      "on_screen_text": "Powered by Innovation. Built With Expertise.",
+      "prompt": "Vertical modern workstation with multiple monitors displaying code, focused developer at desk, dark blue and cyan color grading, subtle cinematic lighting, slight lens flare, 9:16 aspect ratio",
+      "negative_prompt": "",
+      "motion_direction": "Slow forward dolly with a slight zoom",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 6.0,
+      "narration": "Transporter delivers cutting‑edge digital solutions—building tomorrow, today.",
+      "on_screen_text": "TRANSPORTER – Building Tomorrow, Today.",
+      "prompt": "Vertical floating browser window showing Transporter website screenshot, 3D perspective with parallax, cyan glow around edges, sleek UI elements visible, dark background, 9:16 aspect ratio",
+      "negative_prompt": "",
+      "motion_direction": "Smooth zoom‑in on the website then a light‑sweep reveal of the logo",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "title": "Transporter – 15‑Second Premium Tech Promo",
+  "storyboard": "20261108_161142_test_storyboard.json",
+  "contact_sheet": "contact_sheet_test.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 5,
+      "narration": "Great ideas begin with vision.",
+      "on_screen_text": "Great Ideas Begin With Vision.",
+      "prompt": "A dark, cinematic technology lab interior. A hooded developer sits at a desk, focused on a glowing code screen. Subtle blue and cyan lighting accents, floating digital particles, and faint code‑style overlays surround the figure. The composition has a sleek, futuristic feel suitable for a premium tech commercial.",
+      "negative_prompt": "",
+      "motion_direction": "Slow push‑in zoom (FFmpeg zoompan) to create depth",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 5.5,
+      "narration": "Powered by innovation, built with expertise.",
+      "on_screen_text": "Powered by Innovation. Built With Expertise.",
+      "prompt": "A modern workstation with a developer at a desk, multiple monitors displaying lines of code and UI mockups. Dark blue and cyan color grading adds a high‑tech vibe. Light reflections on the screens and a faint digital grid overlay enhance the futuristic atmosphere.",
+      "negative_prompt": "",
+      "motion_direction": "Gentle forward dolly zoom (FFmpeg pan and zoom) for subtle movement",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 5,
+      "narration": "Transporter – building tomorrow, today.",
+      "on_screen_text": "TRANSPORTER\nBuilding Tomorrow, Today.",
+      "prompt": "A floating vertical smartphone frame showing the Transporter website screenshot. The frame has a subtle 3D perspective, cyan glow edges, and a faint parallax effect as the background shifts. The website layout remains clear and recognizable.",
+      "negative_prompt": "",
+      "motion_direction": "Smooth zoom‑in with slight parallax (FFmpeg zoompan) ending on a logo‑style reveal",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

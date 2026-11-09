@@ -1,0 +1,73 @@
+{
+  "title": "How Volcanoes Work: Eruptions Explained",
+  "storyboard": "20261107_204508_qa_mixed_media_storyboard.json",
+  "contact_sheet": "contact_sheet_qa_mixed_media.jpg",
+  "approved_on": "2026-11-07",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 12,
+      "narration": "Volcanoes are openings in the Earth where molten rock, called magma, rises from deep inside our planet.",
+      "on_screen_text": "What is a volcano?",
+      "prompt": "A cross-section of the Earth showing crust, mantle, and a glowing magma chamber beneath, with simple 2D illustration style, vibrant colors, educational infographic",
+      "negative_prompt": "",
+      "motion_direction": "Zoom in",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_01.png"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 13,
+      "narration": "Magma forms when rocks melt due to intense heat and pressure deep underground. As it rises through cracks in the crust, it pushes against surrounding rock.",
+      "on_screen_text": "How does magma rise?",
+      "prompt": "A vertical slice of Earth's crust with a fissure showing glowing orange magma moving upward, simple 2D style, clear visual flow",
+      "negative_prompt": "",
+      "motion_direction": "Pan right",
+      "source_type": "clip",
+      "clip_duration": 3.0,
+      "image_source": "user_inbox:scene_02.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.gif",
+      "metadata": "scene_03_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 12,
+      "narration": "When pressure builds enough, an eruption occurs. Magma bursts through the surface as lava, ash, and gas, creating dramatic plumes that can reach high into the atmosphere.",
+      "on_screen_text": "The eruption",
+      "prompt": "A volcanic cone erupting with a fountain of bright orange lava and gray ash cloud rising upward, realistic but stylized for 2D animation",
+      "negative_prompt": "",
+      "motion_direction": "Zoom out",
+      "source_type": "gif",
+      "clip_duration": 2.0,
+      "image_source": "user_inbox:scene_03.gif"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 13,
+      "narration": "After cooling, hardened lava forms new rock layers on Earth's surface. Over time, repeated eruptions build up mountains and reshape landscapes.",
+      "on_screen_text": "Volcanic aftermath",
+      "prompt": "A newly formed volcanic landscape with dark basalt flows solidifying into jagged ridges, a calm scene showing the cooled crust overlying fresh lava",
+      "negative_prompt": "",
+      "motion_direction": "Pan left",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_04.png"
+    }
+  ]
+}

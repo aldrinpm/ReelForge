@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 9.0,
+  "narration": "Export the final cut in vertical 9:16, 1080×1920 resolution, under 30 megabytes, then share directly to Facebook Reels or YouTube Shorts.",
+  "on_screen_text": "Export & Share",
+  "prompt": "A modern smartphone held upright showing a vertical video thumbnail with play button, overlay icons for Facebook Reels and YouTube Shorts, soft background, realistic rendering",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "sample website.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

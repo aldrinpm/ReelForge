@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 5.0,
+  "narration": "Engineered through relentless innovation, we build robust solutions across multiple platforms.",
+  "on_screen_text": "Engineered Through Innovation.",
+  "prompt": "developer sitting at a modern desk with multiple monitors displaying code, natural lighting, slight motion blur to convey activity, color graded in cool tones, 9:16 vertical composition",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

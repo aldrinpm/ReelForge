@@ -1,0 +1,13 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Imagine booking a ride in seconds, without ever leaving home.",
+  "on_screen_text": "Your car, your route",
+  "prompt": "Vertical smartphone screen showing a sleek ride-booking app interface with city skyline background, UI displays 'Book Now' button and location icons, soft blue lighting, 9:16 aspect ratio",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "transporter-bg-image.jpg",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

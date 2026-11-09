@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 12.0,
+  "narration": "When pressure builds enough, an eruption occurs. Magma bursts through the surface as lava, ash, and gas, creating dramatic plumes that can reach high into the atmosphere.",
+  "on_screen_text": "The eruption",
+  "prompt": "A volcanic cone erupting with a fountain of bright orange lava and gray ash cloud rising upward, realistic but stylized for 2D animation",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_03.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 2.0
+}

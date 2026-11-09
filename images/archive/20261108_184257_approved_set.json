@@ -1,0 +1,73 @@
+{
+  "title": "The World Is On Edge – Global News Reel (Oct 9 – Nov 8 2026)",
+  "storyboard": "20261108_182741_test_storyboard.json",
+  "contact_sheet": "contact_sheet_test.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 6.0,
+      "narration": "Military tensions are escalating near the Strait of Hormuz.",
+      "on_screen_text": "Tensions Escalate Near Strait of Hormuz",
+      "prompt": "Vertical 9:16 photorealistic editorial documentary image, wide aerial view of commercial oil tankers moving through the narrow Strait of Hormuz, distant naval vessels on patrol, hazy overcast horizon, natural maritime lighting, realistic ship proportions, restrained colour palette, high‑detail photojournalism, no explosions, no flags, no text, no identifiable people. Illustrative reconstruction, not actual footage.",
+      "negative_prompt": "",
+      "motion_direction": "Slow aerial push‑in toward the tankers with subtle sea movement and atmospheric haze; restrained handheld micro‑motion.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:HUMANITY PAYS THE PRICE.jpg"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.png",
+      "metadata": "scene_02_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 6.0,
+      "narration": "In Yemen, another deadly strike was reported near Sanaa.",
+      "on_screen_text": "33 Reported Dead – Figure Not Independently Verified",
+      "prompt": "Vertical 9:16 realistic humanitarian photojournalism scene in an urban neighbourhood after an airstrike, damaged concrete buildings, dust, emergency responders searching rubble in the middle distance, civilians watching from a safe distance, subdued daylight, no graphic gore, no weapons, no text, no identifiable people. Illustrative reconstruction, not actual footage.",
+      "negative_prompt": "",
+      "motion_direction": "Slow lateral camera move across damaged masonry toward responders; drifting dust in sunlight; restrained documentary handheld movement.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:THE GLOBAL ECONOMY SHAKES.jpg"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 7.5,
+      "narration": "Across Europe, cyber incidents and security alerts are disrupting daily life.",
+      "on_screen_text": "Bomb Alerts Disrupt Flights • Cyber Incidents Raise Fears",
+      "prompt": "Vertical 9:16 photorealistic editorial image inside a modern airport terminal, large departure board with abstract unreadable flight rows, travelers shown as distant silhouettes, airport staff in background, cool moody lighting, subtle red alert reflections, no readable logos or text, no identifiable people. Illustrative reconstruction, not actual footage.",
+      "negative_prompt": "",
+      "motion_direction": "Controlled push toward the departure board with a brief digital‑glitch transition; subtle background movement.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:THE INVISIBLE WAR.jpg"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 7.0,
+      "narration": "And markets are rattled: the Nasdaq fell five-point-five percent in one session.",
+      "on_screen_text": "Nasdaq Down 5.5% • $2.5 Trillion Erased",
+      "prompt": "Vertical 9:16 photorealistic editorial photograph of a financial trading floor, large market screens showing abstract red downward chart lines and blurred numbers, traders as distant silhouettes, dramatic realistic lighting, no recognizable exchange branding, no logos, no legible ticker symbols, no text overlay. Illustrative reconstruction, not actual footage.",
+      "negative_prompt": "",
+      "motion_direction": "Fast controlled push toward a red downward chart on a screen, subtle parallax across the trading floor, ending on a clean dark frame for final headline.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:THE MIDDLE EAST ERUPTS.jpg"
+    }
+  ]
+}

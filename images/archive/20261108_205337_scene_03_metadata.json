@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 9.0,
+  "narration": "Across Europe, bomb alerts disrupted at least 25 European flights, while cyber incidents raised fears about infrastructure security; perpetrators were not identified.",
+  "on_screen_text": "EUROPE: FLIGHTS AND INFRASTRUCTURE DISRUPTED\nAttribution unresolved — Guardian, 6 Nov 2026",
+  "prompt": "Vertical 9:16 photorealistic editorial image inside a modern airport terminal, large departure board with abstract unreadable flight rows, travelers seen only as distant silhouettes, airport operations staff in the background, cool moody lighting, subtle red alert reflections but no actual emergency, no readable airline logos, no text, no identifiable people. Illustrative reconstruction, not actual news footage.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene3.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

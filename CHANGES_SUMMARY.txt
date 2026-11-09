@@ -1,0 +1,77 @@
+================================================================================
+BACKGROUND MUSIC FIX - CHANGES SUMMARY
+================================================================================
+
+ISSUE: Background music was not audible in generated videos.
+       Only the narrator voice was hearable.
+
+================================================================================
+CHANGES MADE
+================================================================================
+
+File: /e/AI-Video-Production/scripts/assemble_video.py
+
+1. Line 47: Changed BED_OFFSET_DB from 9.0 to 6.0
+   BEFORE: BED_OFFSET_DB = 9.0            # bed level below the narration (mean)
+   AFTER:  BED_OFFSET_DB = 6.0            # bed level below the narration (changed from 9.0 to make music audible)
+   
+   IMPACT: Music volume increased by ~3x (9dB -> 6dB = +3dB gain)
+   - At -9dB: Music is ~35% of narration volume (very quiet)
+   - At -6dB: Music is ~50% of narration volume (clearly audible background)
+
+2. Line 516: Reduced fade_in duration
+   BEFORE: fade_in = min(1.0, timeline * 0.12)
+   AFTER:  fade_in = min(0.5, timeline * 0.08)
+   
+   IMPACT: For short videos, music reaches full volume faster
+   - 10s video: fade_in = 0.5s (was 1.0s)
+   - 45s video: fade_in = 0.5s (was 1.0s)
+
+3. Line 517: Reduced fade_out duration
+   BEFORE: fade_out = min(2.0, timeline * 0.15)
+   AFTER:  fade_out = min(1.0, timeline * 0.10)
+   
+   IMPACT: For short videos, music stays at full volume longer
+   - 10s video: fade_out = 1.0s (was 1.5s)
+   - 45s video: fade_out = 1.0s (was 2.0s)
+
+================================================================================
+VERIFICATION
+================================================================================
+
+Run the test script:
+  python /e/AI-Video-Production/test_music_fix.py
+
+Expected output:
+  [PASS] BED_OFFSET_DB = 6.0 (CORRECT - music will be audible)
+  [PASS] fade_in = min(0.5, timeline * 0.08) (CORRECT)
+  [PASS] fade_out = min(1.0, timeline * 0.1) (CORRECT)
+  All checks passed! Background music should now be audible.
+
+================================================================================
+TESTING
+================================================================================
+
+To test the fix:
+1. Add a background music file to your project
+2. Run the pipeline with: --music path/to/your/music.mp3
+3. Verify the console output shows:
+   "Background music: your_music.mp3 (-X.X dB gain, bed ≈ 6 dB under the narration, proportional fades)"
+4. Listen to the generated video - music should be clearly audible
+
+================================================================================
+TECHNICAL DETAILS
+================================================================================
+
+Audio Level Reference:
+  0 dB   = Full volume (100%)
+  -3 dB  = ~70% volume (clearly audible)
+  -6 dB  = ~50% volume (good background level) <-- NOW
+  -9 dB  = ~35% volume (very quiet) <-- BEFORE
+  -12 dB = ~25% volume (barely audible)
+  -15 dB = ~18% volume (essentially inaudible)
+
+The fix ensures music is mixed at industry-standard background levels
+while still keeping the narration as the primary audio focus.
+
+================================================================================

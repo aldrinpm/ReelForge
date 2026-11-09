@@ -1,0 +1,14 @@
+{
+  "scene_number": 4,
+  "duration_seconds": 11.0,
+  "narration": "Understanding volcanoes helps us stay safe and appreciate how our planet constantly changes beneath our feet.",
+  "on_screen_text": "Safe science",
+  "prompt": "A peaceful mountain landscape with a dormant volcano in the distance, soft morning light, subtle steam rising from vents, no active eruption, clean composition suitable for educational content, simple illustrative style",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_04.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

@@ -1,0 +1,9 @@
+[11:56:31] [INFO] Backend started
+[11:56:31] [DEBUG] ROOT=E:\AI-Video-Production
+[11:56:31] [DEBUG] Config: E:\AI-Video-Production\config.json
+[11:56:32] [INFO] LM Studio: ok (8 models, qwythos=yes)
+[11:56:32] [DEBUG] FFmpeg: ok (ffmpeg version 9.0.2-essentials_build-ww)
+[11:56:32] [INFO] Health lm_studio: init -> ok
+[11:56:32] [INFO] Health ffmpeg: init -> ok
+[11:56:32] [INFO] Health espeak: init -> ok
+[11:56:32] [INFO] Health venv_tts: init -> ok

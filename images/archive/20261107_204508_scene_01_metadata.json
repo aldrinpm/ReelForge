@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 10.0,
+  "narration": "Deep beneath Earth's crust lies molten rock called magma. When pressure builds up it can force its way upward.",
+  "on_screen_text": "Magma deep underground",
+  "prompt": "Cross section of Earth showing a glowing orange magma chamber beneath gray crust, simple cartoon style, soft lighting",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_01.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

@@ -1,0 +1,13 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "Pick up and drop-off points, choose your date and time – all on one simple screen.",
+  "on_screen_text": "Book Pickup & Drop-Off",
+  "prompt": "Close-up of a smartphone UI showing two location pins on a map with visible date/time selectors, clean modern design.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "transporter-profile-image.jpg",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

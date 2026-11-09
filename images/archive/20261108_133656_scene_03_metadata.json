@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 9.0,
+  "narration": "The final product appears on screens worldwide, delivering the original idea to users—this is the promise of companies like Transporter, shaping tomorrow's digital landscape.",
+  "on_screen_text": "Building Tomorrow, Today",
+  "prompt": "Floating browser window showing a clean, modern website layout, subtle 3D perspective and parallax, cyan illumination around edges, beside it the bold sans‑serif word TRANSPORTER, background dark charcoal with electric blue accents, vertical 9:16 format",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "sample website.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

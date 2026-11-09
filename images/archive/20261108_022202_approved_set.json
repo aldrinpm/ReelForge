@@ -1,0 +1,73 @@
+{
+  "title": "How Volcanoes Work and Erupt",
+  "storyboard": "20261107_230625_qa_mixed_media_storyboard.json",
+  "contact_sheet": "contact_sheet_qa_mixed_media.jpg",
+  "approved_on": "2026-11-07",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Volcanoes form at tectonic plate boundaries, where hot magma from Earth's interior rises toward the surface.",
+      "on_screen_text": "Plate Boundaries",
+      "prompt": "Cross-section of Earth showing moving tectonic plates with a glowing magma chamber beneath, realistic style suitable for Stable Diffusion 1.5",
+      "negative_prompt": "",
+      "motion_direction": "slow zoom in on the plate boundary",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_01.png"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 9,
+      "narration": "Molten rock called magma contains dissolved gases. As it rises, pressure builds until...",
+      "on_screen_text": "Rising Magma",
+      "prompt": "Close-up of bubbling molten rock with gas bubbles rising upward, warm colors and dramatic lighting",
+      "negative_prompt": "",
+      "motion_direction": "pan down to reveal a vent opening",
+      "source_type": "clip",
+      "clip_duration": 3.0,
+      "image_source": "user_inbox:scene_02.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.gif",
+      "metadata": "scene_03_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 10.5,
+      "narration": "When the pressure is high enough, an explosive eruption blasts ash and rock into the sky. In quieter eruptions, lava flows gently across land.",
+      "on_screen_text": "Explosive vs Effusive Eruption",
+      "prompt": "Split view: left side shows a plume of ash erupting from a volcano; right side shows a river of lava flowing down a slope, realistic style",
+      "negative_prompt": "",
+      "motion_direction": "pan from the explosive plume to the lava flow",
+      "source_type": "gif",
+      "clip_duration": 2.0,
+      "image_source": "user_inbox:scene_03.gif"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Over time, cooled lava hardens into rock, building mountains like Mount St. Helens.",
+      "on_screen_text": "New Crust Forms",
+      "prompt": "A mountain peak with hardened layers of lava against a sunrise sky, cinematic composition",
+      "negative_prompt": "",
+      "motion_direction": "slow zoom out to reveal the full landscape",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_04.png"
+    }
+  ]
+}

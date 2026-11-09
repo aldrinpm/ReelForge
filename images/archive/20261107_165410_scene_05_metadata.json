@@ -1,0 +1,13 @@
+{
+  "scene_number": 5,
+  "duration_seconds": 9.0,
+  "narration": "Near black holes, spacetime curves dramatically — bending light into arcs, distorting time, and warping space all around them.",
+  "on_screen_text": "Warping space and time",
+  "prompt": "A galaxy with a central supermassive black hole, light rays curving around it",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_05.png",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

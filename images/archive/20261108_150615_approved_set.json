@@ -1,0 +1,57 @@
+{
+  "title": "DIY 20‑Second Video Clip in Under a Minute",
+  "storyboard": "20261108_133656_test2_storyboard.json",
+  "contact_sheet": "contact_sheet_test2.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 10.0,
+      "narration": "Start by deciding the hook of your 20‑second clip, then browse free stock libraries for short video snippets and royalty‑free tracks that match the mood.",
+      "on_screen_text": "Plan & Gather",
+      "prompt": "A bright home office desk with a laptop open to a free stock footage website, icons of a video camera, music notes, and a notebook with a sketch of a simple storyboard, warm lighting, realistic style",
+      "negative_prompt": "",
+      "motion_direction": "Slow zoom‑in on the laptop screen",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 10.0,
+      "narration": "Import the clips into a free editor, drag them onto the timeline, trim each to the right length, and add a quick fade transition to keep the flow smooth.",
+      "on_screen_text": "Edit Fast",
+      "prompt": "Generic video editing interface showing a horizontal timeline with three short video thumbnails, a playhead at the center, and a simple fade transition icon, neutral colors, realistic UI mockup",
+      "negative_prompt": "",
+      "motion_direction": "Horizontal pan from left to right across the timeline",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 13.0,
+      "narration": "Export the final cut in vertical 9:16, 1080×1920 resolution, under 30 megabytes, then share directly to Facebook Reels or YouTube Shorts.",
+      "on_screen_text": "Export & Share",
+      "prompt": "A modern smartphone held upright showing a vertical video thumbnail with play button, overlay icons for Facebook Reels and YouTube Shorts, soft background, realistic rendering",
+      "negative_prompt": "",
+      "motion_direction": "Fade‑in of the phone, then slight upward tilt",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

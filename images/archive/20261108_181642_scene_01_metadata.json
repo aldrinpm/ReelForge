@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 5.0,
+  "narration": "Great ideas start with a vision.",
+  "on_screen_text": "Great Ideas Begin With Vision.",
+  "prompt": "Use the provided dev1.gif of a hooded developer at a dark, cinematic workstation. Add subtle blue and cyan lighting accents, floating digital particles, and faint code‑style overlay graphics while preserving the original animation.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

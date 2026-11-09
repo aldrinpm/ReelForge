@@ -1,0 +1,13 @@
+{
+  "scene_number": 6,
+  "duration_seconds": 9.5,
+  "narration": "Theoretical physics also predicts Hawking radiation — black holes may slowly evaporate over eons through faint quantum effects.",
+  "on_screen_text": "Fading away? Hawking radiation",
+  "prompt": "A black hole with faint, shimmering particles of energy escaping from its edge into space",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_06.png",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

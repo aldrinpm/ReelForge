@@ -1,0 +1,13 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Tired of hailing unreliable rideshares? DriveYourWay lets you book a qualified driver to take your own car from any spot to any destination.",
+  "on_screen_text": "Tired of unreliable rideshares?",
+  "prompt": "vertical video frame, frustrated commuter standing on city sidewalk looking at phone showing red no drivers available badge, urban street background, realistic style",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "transporter-bg-image.jpg",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

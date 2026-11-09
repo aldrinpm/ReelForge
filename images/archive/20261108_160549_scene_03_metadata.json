@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 9.0,
+  "narration": "Ready to launch? Connect with Transporter today and future‑proof your online presence.",
+  "on_screen_text": "Get Started → www.transporter.tech",
+  "prompt": "Futuristic control room with a glowing globe of interconnected nodes, Transporter contact icons (phone, email, website) hovering, sleek typography, vertical 9:16",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "sample website.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

@@ -1,0 +1,13 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "Pick up, drop off, choose date and time. See a transparent PHP estimate before confirming.",
+  "on_screen_text": "Pickup • Destination • Date/Time",
+  "prompt": "vertical video frame, close-up of sleek mobile app interface showing pickup and destination input fields highlighted in blue with calendar picker visible, clean modern design",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "transporter-profile-image.jpg",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

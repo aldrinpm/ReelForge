@@ -1,0 +1,57 @@
+{
+  "title": "Transporter: From Vision to Digital Experience",
+  "storyboard": "20261108_125949_test_storyboard.json",
+  "contact_sheet": "contact_sheet_test.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 8.0,
+      "narration": "Great ideas begin with vision. Transporter turns focused engineering into digital experiences.",
+      "on_screen_text": "Great Ideas Begin With Vision.",
+      "prompt": "Vertical 9:16 cinematic frame, dark technology workspace, hooded developer concentrating at glowing monitors, original animated character preserved, subtle blue and cyan rim lighting, floating digital particles, translucent code-inspired overlays, deep black and charcoal background, electric blue highlights, premium commercial aesthetic, sharp focus, high contrast, no distortion, portrait orientation, 1080x1920",
+      "negative_prompt": "",
+      "motion_direction": "Gentle cinematic push-in using FFmpeg zoompan, slow zoom from 1.0 to 1.08 over 5 seconds with a slight upward pan, followed by a smooth digital transition.",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 6.5,
+      "narration": "Powered by innovation, built with expertise, and refined for real-world results.",
+      "on_screen_text": "Powered by Innovation. Built With Expertise.",
+      "prompt": "Vertical 9:16 cinematic frame, developer working at a desk with multiple monitors, original composition preserved, subtle dark blue and cyan color grading, professional workstation, keyboard, soft monitor glow, dark charcoal environment, electric blue accents, premium technology commercial, realistic lighting, no distortion, portrait orientation, 1080x1920",
+      "negative_prompt": "",
+      "motion_direction": "Subtle slow zoom-in and gentle horizontal pan using FFmpeg zoompan from 1.0 to 1.05 over 5 seconds, followed by an elegant light sweep transition.",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 5,
+      "narration": "This is Transporter—building tomorrow, today.",
+      "on_screen_text": "TRANSPORTER — Building Tomorrow, Today.",
+      "prompt": "Vertical 9:16 cinematic frame, premium floating browser window displaying a recognizable modern website screenshot, subtle 3D perspective, parallax depth, dark background, cyan glow edges, clean white UI elements, bold sans-serif typography, company name TRANSPORTER prominently displayed, tagline Building Tomorrow Today, elegant logo-style reveal, cinematic lighting, no distortion, portrait orientation, 1080x1920",
+      "negative_prompt": "",
+      "motion_direction": "Smooth zoom-in from 1.0 to 1.12 with a slight parallax pan over 5 seconds, ending with a fade into the final brand reveal.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

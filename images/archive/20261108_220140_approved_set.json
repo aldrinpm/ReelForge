@@ -1,0 +1,73 @@
+{
+  "title": "The World Is On Edge: Four Global Flashpoints",
+  "storyboard": "20261108_214400_test333_storyboard.json",
+  "contact_sheet": "contact_sheet_test333.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 13.0,
+      "narration": "The world is on edge. Military tensions are escalating near the Strait of Hormuz, a key route for global oil shipments. Reports describe limited defensive strikes, not a full-scale war.",
+      "on_screen_text": "TENSIONS NEAR HORMUZ",
+      "prompt": "Vertical 9:16 photorealistic editorial documentary image, wide aerial view of commercial oil tankers moving through a narrow strategic sea passage, distant naval vessels on patrol, hazy horizon, tense overcast atmosphere, natural maritime lighting, realistic ship proportions, restrained color palette, high-detail photojournalism, no explosions, no visible national flags, no text, no logos, no identifiable real people, illustrative reconstruction not actual news footage",
+      "negative_prompt": "",
+      "motion_direction": "Slow 5 percent zoom-in with slight right pan over 9 seconds, subtle sea movement, hard cut to next scene",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene1.jpg"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.png",
+      "metadata": "scene_02_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 11.0,
+      "narration": "In Yemen, a deadly strike was reported near Sanaa. The reported death toll comes from a Houthi-run health ministry and has not been independently verified.",
+      "on_screen_text": "YEMEN: REPORTED STRIKE",
+      "prompt": "Vertical 9:16 realistic humanitarian photojournalism scene in an urban neighborhood after an airstrike, damaged concrete buildings and dust, emergency responders carefully searching rubble in the middle distance, civilians observing from a safe distance, subdued daylight, respectful non-graphic depiction, no visible bodies, no gore, no weapons in foreground, no text, no logos, no identifiable real people, illustrative reconstruction not actual news footage",
+      "negative_prompt": "",
+      "motion_direction": "Slow left-to-right pan across damaged masonry toward responders, drifting dust, restrained handheld feel, hard cut to next scene",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene2.jpg"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 12.5,
+      "narration": "Across Europe, bomb alerts and cyber incidents are disrupting flights and raising fears about infrastructure. Investigators had not identified perpetrators in the cited report.",
+      "on_screen_text": "EUROPE: ALERTS AND CYBER",
+      "prompt": "Vertical 9:16 photorealistic editorial image inside a modern airport terminal, large departure board with abstract unreadable flight rows, travelers as distant silhouettes, airport operations staff in background, cool moody lighting, subtle red alert reflections but no actual emergency, no readable airline logos, no text, no identifiable people, illustrative reconstruction not actual news footage",
+      "negative_prompt": "",
+      "motion_direction": "Controlled zoom toward departure board, subtle screen flicker, quick cross-dissolve with slight horizontal jitter at end",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene3.jpg"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 12.0,
+      "narration": "Markets are rattled: the Nasdaq fell 5.5 percent in one session, erasing about 2.5 trillion dollars in value. That is a reported single-session move.",
+      "on_screen_text": "NASDAQ: 5.5% DROP",
+      "prompt": "Vertical 9:16 photorealistic editorial photograph of a financial trading floor with large market screens showing abstract red downward chart lines and numbers too soft to read, traders in distant silhouette, dramatic but realistic lighting, no recognizable exchange branding, no logos, no fabricated legible ticker symbols, no text overlay, illustrative reconstruction not actual news footage",
+      "negative_prompt": "",
+      "motion_direction": "Fast controlled push toward red downward chart, subtle parallax, end on clean dark frame",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene4.jpg"
+    }
+  ]
+}

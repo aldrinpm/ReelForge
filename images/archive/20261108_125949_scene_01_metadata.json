@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 5.0,
+  "narration": "Every great app starts with a vision.",
+  "on_screen_text": "Great Ideas Begin With Vision.",
+  "prompt": "A hooded developer in a dark cinematic environment, focused on a glowing computer screen, subtle blue and cyan lighting accents, floating digital particles, code-inspired overlay lines, professional technology commercial aesthetic",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

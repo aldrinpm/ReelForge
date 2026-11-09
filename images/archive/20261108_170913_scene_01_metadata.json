@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 5.0,
+  "narration": "Great ideas start with a vision, where creativity meets code.",
+  "on_screen_text": "Great Ideas Begin With Vision.",
+  "prompt": "Vertical cinematic dark tech lab, hooded developer seated at a computer, glowing blue and cyan code overlays, subtle digital particle effects, soft blue lighting accents, high contrast, 9:16 aspect ratio",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

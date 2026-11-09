@@ -1,0 +1,73 @@
+{
+  "title": "The World Is On Edge: Four Flashpoints",
+  "storyboard": "20261108_220612_test_storyboard.json",
+  "contact_sheet": "contact_sheet_test.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 19.0,
+      "narration": "Military tensions are escalating near the Strait of Hormuz, after limited U.S. defensive strikes on Iranian targets. Shipping and energy flows remain under pressure.",
+      "on_screen_text": "Tensions escalate near Strait of Hormuz",
+      "prompt": "Vertical 9:16 photorealistic editorial documentary image, wide aerial view of commercial oil tankers moving through a narrow strategic sea passage, distant naval vessels on patrol, hazy horizon, tense overcast atmosphere, natural maritime lighting, realistic ship proportions, restrained color palette, high-detail photojournalism, no explosions, no visible national flags, no text, no logos, no identifiable real people. Illustrative reconstruction, not actual news footage.",
+      "negative_prompt": "",
+      "motion_direction": "Slow digital zoom-in toward the tankers with a subtle horizontal pan; gentle sea movement implied by framing; no invented attack or explosion.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene1.jpg"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.png",
+      "metadata": "scene_02_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 23.0,
+      "narration": "In Yemen, a deadly strike was reported near Sanaa. A Houthi-run health ministry said at least 33 people were killed; Reuters said it could not independently verify that figure, and Saudi Arabia said it was investigating.",
+      "on_screen_text": "Yemen: 33 reported dead, unverified",
+      "prompt": "Vertical 9:16 realistic humanitarian photojournalism scene in an urban neighborhood after an airstrike, damaged concrete buildings and dust, emergency responders carefully searching rubble in the middle distance, civilians observing from a safe distance, subdued daylight, respectful non-graphic depiction, no visible bodies, no gore, no weapons in foreground, no text, no logos, no identifiable real people. Illustrative reconstruction, not actual news footage.",
+      "negative_prompt": "",
+      "motion_direction": "Slow horizontal pan across damaged masonry toward responders; drifting dust in sunlight; restrained documentary movement; no graphic imagery.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene2.jpg"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 28.0,
+      "narration": "Across Europe, bomb alerts disrupted at least 25 flights, alongside reported cyber incidents affecting infrastructure such as supermarket refrigeration and France's national blood-service cold storage. Investigators had not identified perpetrators.",
+      "on_screen_text": "Europe: flight alerts and cyber incidents",
+      "prompt": "Vertical 9:16 photorealistic editorial image inside a modern airport terminal, large departure board with abstract unreadable flight rows, travelers seen only as distant silhouettes, airport operations staff in the background, cool moody lighting, subtle red alert reflections but no actual emergency, no readable airline logos, no text, no identifiable people. Illustrative reconstruction, not actual news footage.",
+      "negative_prompt": "",
+      "motion_direction": "Controlled push toward the departure board; subtle screen flicker and background movement; brief digital glitch transition at the end.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene3.jpg"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 24.5,
+      "narration": "And markets were rattled: Reuters reported the Nasdaq fell 5.5% in one Thursday session, wiping about $2.5 trillion from its market value, amid concerns about AI investment costs and tighter regulation.",
+      "on_screen_text": "Nasdaq falls 5.5% in one session",
+      "prompt": "Vertical 9:16 photorealistic editorial photograph of a financial trading floor with large market screens showing abstract red downward chart lines and numbers too soft to read, traders in distant silhouette, dramatic but realistic lighting, no recognizable exchange branding, no logos, no fabricated legible ticker symbols, no text overlay. Illustrative reconstruction, not actual news footage.",
+      "negative_prompt": "",
+      "motion_direction": "Fast controlled zoom toward a red downward chart on a screen; subtle parallax across the trading floor; end on a clean dark frame.",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene4.jpg"
+    }
+  ]
+}

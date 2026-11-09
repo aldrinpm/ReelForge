@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 5.0,
+  "narration": "Powered by innovation, built with expertise.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise.",
+  "prompt": "Use the provided dev2.mp4 showing a developer at a multi‑monitor desk; apply dark blue and cyan color grading, subtle light sweep transition, and a slight forward camera movement.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

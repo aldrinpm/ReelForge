@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "Powered by innovation, built with expertise. Our team crafts seamless digital solutions that turn concepts into reality.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise.",
+  "prompt": "Vertical 9:16 modern workstation, developer seated at a desk with multiple monitors, dark blue and cyan color grading, subtle light reflections, minimal background, realistic rendering",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

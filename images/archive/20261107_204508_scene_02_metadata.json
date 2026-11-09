@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 10.0,
+  "narration": "As it rises through the crust the magma heats surrounding rock and can melt more material along its path.",
+  "on_screen_text": "Magma rising upward",
+  "prompt": "Vertical column of bright orange magma moving upward through layered gray rock, gentle heat haze effect",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_02.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 3.0
+}

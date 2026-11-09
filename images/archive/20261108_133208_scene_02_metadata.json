@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 5.0,
+  "narration": "Powered by innovation, built with expertise, and refined for real-world results.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise.",
+  "prompt": "Vertical 9:16 cinematic frame, developer working at a desk with multiple monitors, original composition preserved, subtle dark blue and cyan color grading, professional workstation, keyboard, soft monitor glow, dark charcoal environment, electric blue accents, premium technology commercial, realistic lighting, no distortion, portrait orientation, 1080x1920",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

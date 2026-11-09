@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "Put your phone face down. Take one minute offline, and drink a glass of water before opening any app.",
+  "on_screen_text": "STEP 1: THE 60-SECOND OFFLINE RULE 📵",
+  "prompt": "vertical 9:16 composition, wooden table in morning sunlight, smartphone placed face down beside a clear glass of water, small plant, soft shadows, minimalist lifestyle photo, realistic, no text",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene2.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

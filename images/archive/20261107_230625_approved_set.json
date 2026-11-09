@@ -1,0 +1,73 @@
+{
+  "title": "How Volcanoes Work and Erupt",
+  "storyboard": "20261107_230328_qa_mixed_media_storyboard.json",
+  "contact_sheet": "contact_sheet_qa_mixed_media.jpg",
+  "approved_on": "2026-11-07",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 10.0,
+      "narration": "Volcanoes are openings in Earth's crust where molten rock called magma can rise.",
+      "on_screen_text": "What is a volcano?",
+      "prompt": "Aerial view of a volcanic landscape with dark lava fields and steam rising, realistic style, high detail",
+      "negative_prompt": "",
+      "motion_direction": "slow pan right to left across the scene",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_01.png"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 10.0,
+      "narration": "Deep beneath the surface, intense heat turns solid rock into molten magma.",
+      "on_screen_text": "Magma forms deep inside",
+      "prompt": "Cross-section of Earth's mantle showing rising magma chamber with glowing orange core, scientific illustration style",
+      "negative_prompt": "",
+      "motion_direction": "zoom in on the magma chamber",
+      "source_type": "clip",
+      "clip_duration": 3.0,
+      "image_source": "user_inbox:scene_02.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.gif",
+      "metadata": "scene_03_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 10.0,
+      "narration": "As gases expand within the magma, pressure builds until it can no longer be contained.",
+      "on_screen_text": "Pressure rises",
+      "prompt": "Volcanic vent with thick gray ash plume and steam erupting upward, dramatic lighting",
+      "negative_prompt": "",
+      "motion_direction": "pan up following the rising ash column",
+      "source_type": "gif",
+      "clip_duration": 2.0,
+      "image_source": "user_inbox:scene_03.gif"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 10.0,
+      "narration": "When the overlying rock breaks, magma reaches the surface and erupts.",
+      "on_screen_text": "Eruption!",
+      "prompt": "Explosive volcano eruption with lava flowing down a crater rim and smoke billowing into sky",
+      "negative_prompt": "",
+      "motion_direction": "zoom out to reveal full landscape after eruption",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_04.png"
+    }
+  ]
+}

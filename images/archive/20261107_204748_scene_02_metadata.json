@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 13.0,
+  "narration": "Magma forms when rocks melt due to intense heat and pressure deep underground. As it rises through cracks in the crust, it pushes against surrounding rock.",
+  "on_screen_text": "How does magma rise?",
+  "prompt": "A vertical slice of Earth's crust with a fissure showing glowing orange magma moving upward, simple 2D style, clear visual flow",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_02.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 3.0
+}

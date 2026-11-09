@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 5.0,
+  "narration": "Powered by innovation and built on expertise.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise.",
+  "prompt": "Modern workstation with three monitors displaying code, developer typing intently, dark blue and cyan color grading, subtle camera pan right then slight zoom, cinematic depth",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

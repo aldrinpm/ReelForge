@@ -1,0 +1,57 @@
+{
+  "title": "Transporter: How Modern Web Development Works",
+  "storyboard": "20261108_133301_test1_storyboard.json",
+  "contact_sheet": "contact_sheet_test1.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 9,
+      "narration": "Every great digital product starts with a vision—a spark of an idea that needs the right tools to become reality.",
+      "on_screen_text": "Great Ideas Begin With Vision",
+      "prompt": "Cinematic dark technology lab, hooded developer seated at a glowing computer, blue and cyan lighting accents, floating digital particles, faint code overlay on the background, high detail, vertical 9:16 orientation, premium futuristic atmosphere",
+      "negative_prompt": "",
+      "motion_direction": "Slow push-in zoom toward the developer to create depth",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 12.0,
+      "narration": "Turning that vision into a functional website requires engineering—using modern frameworks, responsive design, and cloud infrastructure to build fast, secure experiences.",
+      "on_screen_text": "Powered by Innovation. Built With Expertise.",
+      "prompt": "Sleek modern workstation with five monitors displaying lines of code, UI mockups, and cloud icons, dark blue and cyan color grading, focused developer at desk, subtle ambient glow, vertical 9:16 composition",
+      "negative_prompt": "",
+      "motion_direction": "Gentle left‑to‑right pan across the monitors",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 12.0,
+      "narration": "The final product appears on screens worldwide, delivering the original idea to users—this is the promise of companies like Transporter, shaping tomorrow's digital landscape.",
+      "on_screen_text": "Building Tomorrow, Today",
+      "prompt": "Floating browser window showing a clean, modern website layout, subtle 3D perspective and parallax, cyan illumination around edges, beside it the bold sans‑serif word TRANSPORTER, background dark charcoal with electric blue accents, vertical 9:16 format",
+      "negative_prompt": "",
+      "motion_direction": "Smooth zoom into the website followed by a quick logo reveal with a light flare",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Imagine needing a ride but not wanting to drive yourself. Enter our new booking service.",
+  "on_screen_text": "Your Car, Your Ride",
+  "prompt": "A person holding a modern smartphone displaying a ride-booking app interface, standing next to a clean sedan in soft daylight, realistic style with shallow depth of field.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "transporter-bg-image.jpg",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

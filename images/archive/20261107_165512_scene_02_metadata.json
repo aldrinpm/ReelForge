@@ -1,0 +1,13 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "One way they form is when a massive star runs out of fuel and collapses under its own weight into an extremely dense core.",
+  "on_screen_text": "From giant star to darkness",
+  "prompt": "A dying red supergiant star collapsing inward, with visible shockwaves and a bright core shrinking",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_02.png",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

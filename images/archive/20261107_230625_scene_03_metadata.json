@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 10.0,
+  "narration": "As gases expand within the magma, pressure builds until it can no longer be contained.",
+  "on_screen_text": "Pressure rises",
+  "prompt": "Volcanic vent with thick gray ash plume and steam erupting upward, dramatic lighting",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_03.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 2.0
+}

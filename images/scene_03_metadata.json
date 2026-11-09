@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 9.0,
+  "narration": "Open your planner. Write only three priorities for today. Start with the task that matters most; let the rest wait.",
+  "on_screen_text": "STEP 2: WRITE JUST THREE PRIORITIES 📝",
+  "prompt": "vertical 9:16 composition, open paper planner on a desk, handwritten three bullet priorities, pen resting on page, coffee mug nearby, soft window light, top-down lifestyle photo, realistic, no text",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene3.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

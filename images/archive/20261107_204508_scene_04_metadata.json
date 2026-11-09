@@ -1,0 +1,14 @@
+{
+  "scene_number": 4,
+  "duration_seconds": 10.0,
+  "narration": "Eruptions reshape landscapes and create new land. Understanding them helps keep communities safe.",
+  "on_screen_text": "New land formed by lava",
+  "prompt": "Cooling lava solidifying into black rock, green plants beginning to grow over it, sunrise lighting",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_04.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Every great digital product starts with a vision—a spark of an idea that needs the right tools to become reality.",
+  "on_screen_text": "Great Ideas Begin With Vision",
+  "prompt": "Cinematic dark technology lab, hooded developer seated at a glowing computer, blue and cyan lighting accents, floating digital particles, faint code overlay on the background, high detail, vertical 9:16 orientation, premium futuristic atmosphere",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

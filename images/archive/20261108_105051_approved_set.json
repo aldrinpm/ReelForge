@@ -1,0 +1,57 @@
+{
+  "title": "Transporter — Vision to Reality in 15 Seconds",
+  "storyboard": "20261108_030815_webdev21_storyboard.json",
+  "contact_sheet": "contact_sheet_webdev21.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 5.5,
+      "narration": "Every great digital experience starts with a single spark of vision.",
+      "on_screen_text": "Great Ideas Begin With Vision.",
+      "prompt": "A hooded developer in a dark futuristic workspace, surrounded by subtle blue and cyan lighting accents, digital particles floating around, faint code overlays on glass surfaces, cinematic depth of field. Photorealistic style, high detail, dramatic lighting, 8K resolution.",
+      "negative_prompt": "",
+      "motion_direction": "gentle push-in (zoom)",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 6.0,
+      "narration": "That vision takes shape through relentless engineering and precision execution.",
+      "on_screen_text": "Powered by Innovation. Built With Expertise.",
+      "prompt": "Modern tech workstation with multiple monitors displaying sleek UI panels, dark charcoal background with electric blue highlights, developer hands typing, subtle camera pan to reveal depth, cinematic composition. Highly detailed, realistic rendering, soft shadows, 8K resolution.",
+      "negative_prompt": "",
+      "motion_direction": "subtle pan (left to right)",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9.5,
+      "narration": "Now, see the result—a seamless web platform built to transform ideas into reality. Transporter: building tomorrow, today.",
+      "on_screen_text": "TRANSPORTER — Building Tomorrow, Today.",
+      "prompt": "A floating browser window showing a modern website interface, parallax effect as if the screen is slightly tilted, cyan glow around edges, smooth zoom-in motion, TRANSPORTER logo centered at bottom with tagline 'Building Tomorrow, Today' in bold sans-serif typography. Clean futuristic style, high contrast, 8K resolution.",
+      "negative_prompt": "",
+      "motion_direction": "smooth zoom-in and fade to brand reveal",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "scene_number": 5,
+  "duration_seconds": 9,
+  "narration": "Near black holes, spacetime curves dramatically, bending light and distorting time.",
+  "on_screen_text": "Warping space and time",
+  "prompt": "A black hole in deep space bending light from a visible background star field and distant galaxies, clear and obvious gravitational lensing with curved light paths, cinematic astrophysics documentary, scientifically inspired visualization, photorealistic space environment, dramatic cinematic lighting, deep navy and black background, subtle orange gold and blue highlights, high detail, professional space photography, vertical composition, no text, no captions, no labels, no watermark",
+  "negative_prompt": "text, captions, letters, numbers, watermark, logo, cartoon, anime, low quality, blurry, low resolution, oversaturated, distorted objects, duplicate objects, unrealistic geometry, artificial borders",
+  "seed": 12350,
+  "width": 512,
+  "height": 768,
+  "steps": 22,
+  "sampler": "DPM++ 2M",
+  "cfg_scale": 6.5
+}

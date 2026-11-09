@@ -1,0 +1,93 @@
+{
+  "title": "How Black Holes Work",
+  "storyboard": "output/20261107_123353_How_black_holes_work.json",
+  "contact_sheet": "contact_sheet_qa_full_pipeline.jpg",
+  "approved_on": "2026-11-07",
+  "mode": "user_images_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Black holes are regions of space where gravity is so strong that nothing can escape — not matter, and not even light itself.",
+      "on_screen_text": "Gravity's ultimate trap",
+      "prompt": "A dark sphere surrounded by a swirling accretion disk of glowing gas and dust in deep space, with distant stars visible behind it",
+      "negative_prompt": "",
+      "motion_direction": "Slow zoom into the black hole",
+      "image_source": "user_inbox:scene_01.png"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.png",
+      "metadata": "scene_02_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "One way they form is when a massive star runs out of fuel and collapses under its own weight into an extremely dense core.",
+      "on_screen_text": "From giant star to darkness",
+      "prompt": "A dying red supergiant star collapsing inward, with visible shockwaves and a bright core shrinking",
+      "negative_prompt": "",
+      "motion_direction": "Pan left across the collapsing star",
+      "image_source": "user_inbox:scene_02.png"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 10.0,
+      "narration": "The boundary where escape becomes impossible is the event horizon — the point of no return, where the black hole’s pull always wins.",
+      "on_screen_text": "The point of no return",
+      "prompt": "A clear outline of a black sphere with a glowing ring around it, representing the event horizon",
+      "negative_prompt": "",
+      "motion_direction": "Zoom out to show more of the surrounding space",
+      "image_source": "user_inbox:scene_03.png"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 10,
+      "narration": "Inside lies the singularity, a point of infinite density predicted by classical general relativity — where known physics breaks down.",
+      "on_screen_text": "The mysterious center",
+      "prompt": "A tiny, bright white dot at the center of a dark void, with faint gravitational lensing effects around it",
+      "negative_prompt": "",
+      "motion_direction": "Pan right to reveal more of the singularity's surroundings",
+      "image_source": "user_inbox:scene_04.png"
+    },
+    {
+      "scene_number": 5,
+      "image": "scene_05.png",
+      "metadata": "scene_05_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9.5,
+      "narration": "Near black holes, spacetime curves dramatically — bending light into arcs, distorting time, and warping space all around them.",
+      "on_screen_text": "Warping space and time",
+      "prompt": "A galaxy with a central supermassive black hole, light rays curving around it",
+      "negative_prompt": "",
+      "motion_direction": "Slow pan across the warped region",
+      "image_source": "user_inbox:scene_05.png"
+    },
+    {
+      "scene_number": 6,
+      "image": "scene_06.png",
+      "metadata": "scene_06_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9.5,
+      "narration": "Theoretical physics also predicts Hawking radiation — black holes may slowly evaporate over eons through faint quantum effects.",
+      "on_screen_text": "Fading away? Hawking radiation",
+      "prompt": "A black hole with faint, shimmering particles of energy escaping from its edge into space",
+      "negative_prompt": "",
+      "motion_direction": "Zoom out to show the whole scene and then fade",
+      "image_source": "user_inbox:scene_06.png"
+    }
+  ]
+}

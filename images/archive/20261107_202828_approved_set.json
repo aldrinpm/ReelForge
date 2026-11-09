@@ -1,0 +1,37 @@
+{
+  "title": "DriveYourWay - Book Your Own Car Ride",
+  "storyboard": "20261107_194908_transport3r_storyboard.json",
+  "contact_sheet": "",
+  "approved_on": "2026-11-07",
+  "mode": "user_images_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 11.0,
+      "narration": "Tired of hailing unreliable rideshares? DriveYourWay lets you book a qualified driver to take your own car from any spot to any destination.",
+      "on_screen_text": "Tired of unreliable rideshares?",
+      "prompt": "vertical video frame, frustrated commuter standing on city sidewalk looking at phone showing red no drivers available badge, urban street background, realistic style",
+      "negative_prompt": "",
+      "motion_direction": "slow pan right",
+      "image_source": "user_inbox:transporter-bg-image.jpg"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.png",
+      "metadata": "scene_02_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Pick up, drop off, choose date and time. See a transparent PHP estimate before confirming.",
+      "on_screen_text": "Pickup • Destination • Date/Time",
+      "prompt": "vertical video frame, close-up of sleek mobile app interface showing pickup and destination input fields highlighted in blue with calendar picker visible, clean modern design",
+      "negative_prompt": "",
+      "motion_direction": "zoom in",
+      "image_source": "user_inbox:transporter-profile-image.jpg"
+    }
+  ]
+}

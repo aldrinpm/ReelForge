@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 5.0,
+  "narration": "Transporter – building tomorrow, today.",
+  "on_screen_text": "TRANSPORTER\nBuilding Tomorrow, Today.",
+  "prompt": "A floating vertical smartphone frame showing the Transporter website screenshot. The frame has a subtle 3D perspective, cyan glow edges, and a faint parallax effect as the background shifts. The website layout remains clear and recognizable.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "sample website.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

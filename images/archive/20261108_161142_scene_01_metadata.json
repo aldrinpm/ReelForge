@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 10.0,
+  "narration": "First, we unleash a storm—thunder cracks, lightning slashes across a twisted forest, and wind howls like a hurricane, setting the pulse racing.",
+  "on_screen_text": "Thunder & Lightning",
+  "prompt": "A dark, gnarled forest at night under a stormy sky, bright lightning bolts illuminating twisted trees, heavy clouds, rain, and visible motion blur of whipping wind, cinematic lighting, high detail, 9:16 vertical format",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

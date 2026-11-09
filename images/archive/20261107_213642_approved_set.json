@@ -1,0 +1,73 @@
+{
+  "title": "How Volcanoes Work and Erupt",
+  "storyboard": "20261107_204748_qa_mixed_media_storyboard.json",
+  "contact_sheet": "contact_sheet_qa_mixed_media.jpg",
+  "approved_on": "2026-11-07",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 12.0,
+      "narration": "Volcanoes are openings in Earth's crust where molten rock rises from deep underground. As magma accumulates beneath a volcano, pressure builds up over time.",
+      "on_screen_text": "Magma chamber filling",
+      "prompt": "A cross-section of a volcanic mountain with a glowing magma chamber at its base, simple educational illustration style, clear labels showing molten rock rising upward through cracks in the crust, soft warm lighting, clean background, suitable for Stable Diffusion 1.5",
+      "negative_prompt": "",
+      "motion_direction": "slow pan right across the cross-section",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_01.png"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 11.0,
+      "narration": "When pressure becomes too great, the volcano erupts, shooting ash, gas and lava into the air. The explosion can send material high above the crater.",
+      "on_screen_text": "Eruption in progress",
+      "prompt": "A dramatic volcanic eruption scene with a plume of gray ash rising from the crater rim, glowing orange lava flowing down the slopes, billowing steam and gas clouds, mid-eruption moment captured, realistic but simplified for illustration, clear foreground and background separation",
+      "negative_prompt": "",
+      "motion_direction": "zoom in on the erupting vent",
+      "source_type": "clip",
+      "clip_duration": 3.0,
+      "image_source": "user_inbox:scene_02.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.gif",
+      "metadata": "scene_03_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 12,
+      "narration": "Over thousands of years these eruptions shape new landscapes, creating mountains and even islands. Each eruption adds layers that harden over time.",
+      "on_screen_text": "Landscape forming",
+      "prompt": "A wide view of a volcanic region after repeated eruptions showing layered rock formations, small island emerging from the sea, cooling lava fields with vegetation beginning to grow on edges, calm daylight scene, educational diagram style, clear visual hierarchy",
+      "negative_prompt": "",
+      "motion_direction": "pan left across the landscape",
+      "source_type": "gif",
+      "clip_duration": 2.0,
+      "image_source": "user_inbox:scene_03.gif"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 11,
+      "narration": "Understanding volcanoes helps us stay safe and appreciate how our planet constantly changes beneath our feet.",
+      "on_screen_text": "Safe science",
+      "prompt": "A peaceful mountain landscape with a dormant volcano in the distance, soft morning light, subtle steam rising from vents, no active eruption, clean composition suitable for educational content, simple illustrative style",
+      "negative_prompt": "",
+      "motion_direction": "slow fade out",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene_04.png"
+    }
+  ]
+}

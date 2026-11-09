@@ -1,0 +1,57 @@
+{
+  "title": "Transporter – Vision to Reality",
+  "storyboard": "20261108_162943_test_storyboard.json",
+  "contact_sheet": "contact_sheet_test.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 9,
+      "narration": "Great ideas begin with vision. At Transporter, our developers imagine the future of web experiences.",
+      "on_screen_text": "Great Ideas Begin With Vision",
+      "prompt": "Vertical 9:16 dark cinematic technology environment, hooded developer working at a computer, subtle blue and cyan lighting accents, floating digital particles, semi‑transparent code‑style overlays, cinematic push‑in effect, high detail, realistic style",
+      "negative_prompt": "",
+      "motion_direction": "slow push‑in zoom toward the developer with gentle particle drift",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 9,
+      "narration": "Powered by innovation, built with expertise. Our team crafts seamless digital solutions that turn concepts into reality.",
+      "on_screen_text": "Powered by Innovation. Built With Expertise.",
+      "prompt": "Vertical 9:16 modern workstation, developer seated at a desk with multiple monitors, dark blue and cyan color grading, subtle light reflections, minimal background, realistic rendering",
+      "negative_prompt": "",
+      "motion_direction": "gentle left‑to‑right pan across the monitors with a slight zoom",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9.5,
+      "narration": "Transporter – building tomorrow, today. Experience our cutting‑edge web platform and see how we transform ideas into digital experiences.",
+      "on_screen_text": "TRANSPORTER – Building Tomorrow, Today",
+      "prompt": "Vertical 9:16 floating browser window showing the sample-website screenshot, 3D perspective with subtle parallax, cyan glow around edges, premium metallic frame, background dark charcoal with electric blue accents",
+      "negative_prompt": "",
+      "motion_direction": "smooth zoom into the website followed by a logo reveal with a light sweep and cyan illumination",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

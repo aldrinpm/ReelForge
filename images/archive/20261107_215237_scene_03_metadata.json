@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 6.0,
+  "narration": "Turning ideas into digital experiences—see Transporter in action. Building tomorrow, today.",
+  "on_screen_text": "TRANSPORTER — Building Tomorrow, Today",
+  "prompt": "modern website UI screenshot, clean layout, vibrant colors, floating effect as if the screen is slightly tilted, high resolution, no distortion",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "sample website.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 5.0,
+  "narration": "Great ideas begin with vision. Transporter turns focused engineering into digital experiences.",
+  "on_screen_text": "Great Ideas Begin With Vision.",
+  "prompt": "Vertical 9:16 cinematic frame, dark technology workspace, hooded developer concentrating at glowing monitors, original animated character preserved, subtle blue and cyan rim lighting, floating digital particles, translucent code-inspired overlays, deep black and charcoal background, electric blue highlights, premium commercial aesthetic, sharp focus, high contrast, no distortion, portrait orientation, 1080x1920",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

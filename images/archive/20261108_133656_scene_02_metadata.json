@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "Turning that vision into a functional website requires engineering—using modern frameworks, responsive design, and cloud infrastructure to build fast, secure experiences.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise.",
+  "prompt": "Sleek modern workstation with five monitors displaying lines of code, UI mockups, and cloud icons, dark blue and cyan color grading, focused developer at desk, subtle ambient glow, vertical 9:16 composition",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

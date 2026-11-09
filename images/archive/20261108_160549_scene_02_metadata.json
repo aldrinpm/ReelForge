@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "From responsive websites to custom web apps, our expert developers blend cutting‑edge code with modern design to accelerate your business.",
+  "on_screen_text": "Web Development • UI/UX Design • Cloud Solutions",
+  "prompt": "Modern workspace showing a developer’s screen with clean code, responsive website mockups, and floating holographic UI panels, dark background with blue accents, vertical 9:16",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

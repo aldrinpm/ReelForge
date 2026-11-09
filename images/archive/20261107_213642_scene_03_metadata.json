@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 12.0,
+  "narration": "Over thousands of years these eruptions shape new landscapes, creating mountains and even islands. Each eruption adds layers that harden over time.",
+  "on_screen_text": "Landscape forming",
+  "prompt": "A wide view of a volcanic region after repeated eruptions showing layered rock formations, small island emerging from the sea, cooling lava fields with vegetation beginning to grow on edges, calm daylight scene, educational diagram style, clear visual hierarchy",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_03.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 2.0
+}

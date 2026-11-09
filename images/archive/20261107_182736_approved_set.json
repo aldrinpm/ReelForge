@@ -1,0 +1,37 @@
+{
+  "title": "Your Car, Your Ride – Transparent Booking Made Simple",
+  "storyboard": "20261107_181752_transport3r_storyboard.json",
+  "contact_sheet": "",
+  "approved_on": "2026-11-07",
+  "mode": "user_images_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9.0,
+      "narration": "Imagine booking a ride in seconds, without ever leaving home.",
+      "on_screen_text": "Your car, your route",
+      "prompt": "Vertical smartphone screen showing a sleek ride-booking app interface with city skyline background, UI displays 'Book Now' button and location icons, soft blue lighting, 9:16 aspect ratio",
+      "negative_prompt": "",
+      "motion_direction": "pan right",
+      "image_source": "user_inbox:transporter-bg-image.jpg"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.png",
+      "metadata": "scene_02_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9.0,
+      "narration": "Choose your exact pickup and destination on an interactive map.",
+      "on_screen_text": "Pick up & drop off",
+      "prompt": "Close-up of a hand tapping on a digital map interface on a phone, pins marking start and end points, bright daylight, vertical 9:16 composition",
+      "negative_prompt": "",
+      "motion_direction": "zoom in",
+      "image_source": "user_inbox:transporter-profile-image.jpg"
+    }
+  ]
+}

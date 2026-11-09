@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "Import the clips into a free editor, drag them onto the timeline, trim each to the right length, and add a quick fade transition to keep the flow smooth.",
+  "on_screen_text": "Edit Fast",
+  "prompt": "Generic video editing interface showing a horizontal timeline with three short video thumbnails, a playhead at the center, and a simple fade transition icon, neutral colors, realistic UI mockup",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

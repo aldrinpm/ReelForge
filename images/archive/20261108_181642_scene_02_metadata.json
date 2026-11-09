@@ -1,0 +1,14 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 5.0,
+  "narration": "Innovation powers every line of code, and expertise turns concepts into reality.",
+  "on_screen_text": "Powered by Innovation. Built With Expertise.",
+  "prompt": "Use the provided dev2.mp4 showing the developer at a multi‑monitor desk. Apply a subtle dark‑blue and cyan color grade, add a faint light sweep across the screen edges, and keep a slight forward dolly movement to enhance depth.",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev2.mp4",
+  "source_type": "clip",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 5.042
+}

@@ -1,0 +1,14 @@
+{
+  "scene_number": 6,
+  "duration_seconds": 9,
+  "narration": "Theoretical physics also predicts Hawking radiation—black holes may slowly evaporate over eons.",
+  "on_screen_text": "Fading away? Hawking radiation",
+  "prompt": "A black hole with faint theoretical quantum effects appearing as subtle shimmering energy fluctuations just outside the event horizon, no particles escaping from inside the event horizon, cinematic astrophysics documentary, scientifically inspired visualization, photorealistic space environment, dramatic cinematic lighting, deep navy and black background, subtle orange gold and blue highlights, high detail, professional space photography, vertical composition, no text, no captions, no labels, no watermark",
+  "negative_prompt": "text, captions, letters, numbers, watermark, logo, cartoon, anime, low quality, blurry, low resolution, oversaturated, distorted objects, duplicate objects, unrealistic geometry, artificial borders",
+  "seed": 12351,
+  "width": 512,
+  "height": 768,
+  "steps": 22,
+  "sampler": "DPM++ 2M",
+  "cfg_scale": 6.5
+}

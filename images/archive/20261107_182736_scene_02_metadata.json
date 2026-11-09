@@ -1,0 +1,13 @@
+{
+  "scene_number": 2,
+  "duration_seconds": 9.0,
+  "narration": "Choose your exact pickup and destination on an interactive map.",
+  "on_screen_text": "Pick up & drop off",
+  "prompt": "Close-up of a hand tapping on a digital map interface on a phone, pins marking start and end points, bright daylight, vertical 9:16 composition",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "transporter-profile-image.jpg",
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768",
+  "width": 512,
+  "height": 768
+}

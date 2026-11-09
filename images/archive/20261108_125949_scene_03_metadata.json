@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 5.0,
+  "narration": "From concept to reality—Transporter builds tomorrow today.",
+  "on_screen_text": "Building Tomorrow, Today.",
+  "prompt": "A sleek web page shown inside a floating glass browser window with subtle 3D perspective and parallax, glowing cyan edges, bold TRANSPORTER logo in modern sans-serif typeface, cinematic reveal",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "sample website.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

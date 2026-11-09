@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Virtual environments
+venv-tts/
+venv/
+
+# Models / weights (kept on E:, never committed)
+models/
+
+# Graphify (regenerated locally)
+graphify-out/
+
+# Obsidian (vault is personal; keep structure but ignore run notes if desired)
+# vault/1. Projects/   # uncomment to ignore generated run notes
+
+# Runtime artifacts
+temp/
+logs/
+inbox/
+
+# Large media
+*.mp4
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# Secrets
+config.json
+*.env
+# Build output / packaged app
+build/
+dist/
+
+# Pipeline output (generated videos, srt, publishing kits)
+output/
+audio/
+subtitles/
+
+# Personal vault notes
+vault/
+
+# Working scratch + tool caches
+scratchpad/
+clips/
+.freebuff/
+nul
+
+# Logs
+*.log

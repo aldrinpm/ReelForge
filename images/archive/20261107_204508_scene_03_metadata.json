@@ -1,0 +1,14 @@
+{
+  "scene_number": 3,
+  "duration_seconds": 10.0,
+  "narration": "When pressure becomes too great it erupts, spewing lava ash and gas into the air.",
+  "on_screen_text": "Volcanic eruption in progress",
+  "prompt": "Explosive volcano with red lava flowing down slopes, dark gray ash plume rising, dramatic lighting",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_03.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 2.0
+}

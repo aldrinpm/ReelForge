@@ -1,0 +1,57 @@
+{
+  "title": "Transporter — A technology company that transforms ideas into digital experiences.",
+  "storyboard": "20261107_213642_webdev1_storyboard.json",
+  "contact_sheet": "contact_sheet_webdev1.jpg",
+  "approved_on": "2026-11-07",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.gif",
+      "metadata": "scene_01_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 4,
+      "narration": "Every great idea starts with a vision.",
+      "on_screen_text": "Every Great Idea Starts With a Vision.",
+      "prompt": "dark cinematic technology background, hooded developer focused on coding, subtle blue and cyan lighting accents, digital particles floating, high contrast, professional corporate style",
+      "negative_prompt": "",
+      "motion_direction": "slow push-in",
+      "source_type": "gif",
+      "clip_duration": 1.62,
+      "image_source": "user_inbox:dev1.gif"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.mp4",
+      "metadata": "scene_02_metadata.json",
+      "width": 0,
+      "height": 0,
+      "duration_seconds": 7.5,
+      "narration": "Engineered through relentless innovation, we build robust solutions across multiple platforms.",
+      "on_screen_text": "Engineered Through Innovation.",
+      "prompt": "developer sitting at a modern desk with multiple monitors displaying code, natural lighting, slight motion blur to convey activity, color graded in cool tones, 9:16 vertical composition",
+      "negative_prompt": "",
+      "motion_direction": "gentle zoom",
+      "source_type": "clip",
+      "clip_duration": 5.042,
+      "image_source": "user_inbox:dev2.mp4"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 8.0,
+      "narration": "Turning ideas into digital experiences—see Transporter in action. Building tomorrow, today.",
+      "on_screen_text": "TRANSPORTER — Building Tomorrow, Today",
+      "prompt": "modern website UI screenshot, clean layout, vibrant colors, floating effect as if the screen is slightly tilted, high resolution, no distortion",
+      "negative_prompt": "",
+      "motion_direction": "pan across UI then fade to brand reveal",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:sample website.jpg"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "At sea level, water boils at exactly 100 degrees Celsius—212 Fahrenheit. This isn't magic; it's physics in action.",
+  "on_screen_text": "Boiling Point",
+  "prompt": "A clear glass pot of water on a stove with steam rising, bright kitchen lighting, high detail, realistic style, Stable Diffusion 1.5 compatible",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_01.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}

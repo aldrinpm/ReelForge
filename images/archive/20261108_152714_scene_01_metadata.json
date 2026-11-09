@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "First, define your goal and sketch a quick storyboard so every second counts.",
+  "on_screen_text": "Plan • Storyboard • Goal",
+  "prompt": "A bright modern workspace with a laptop open to a storyboard template, sticky notes with sketches, a coffee mug, and a digital timer, viewed from slightly above, vibrant colors, clean style",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "dev1.gif",
+  "source_type": "gif",
+  "width": 0,
+  "height": 0,
+  "clip_duration_seconds": 1.62
+}

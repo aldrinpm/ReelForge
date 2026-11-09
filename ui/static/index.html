@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ReelForge</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #111827; color: #f3f4f6; font-family: system-ui, -apple-system, sans-serif; min-height: 100vh; }
+    .container { max-width: 1024px; margin: 0 auto; padding: 1.5rem; }
+    header { background: #1f2937; border-bottom: 1px solid #374151; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.25rem; font-weight: 700; }
+    nav { display: flex; gap: 0.25rem; }
+    .tab { padding: 0.5rem 1rem; cursor: pointer; color: #9ca3af; border: none; border-bottom: 2px solid transparent; background: none; font-size: 0.875rem; }
+    .tab:hover { color: #fff; }
+    .tab-active { border-bottom-color: #3b82f6; color: #fff; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .card { background: #1f2937; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; }
+    .card h3 { font-weight: 600; margin-bottom: 0.5rem; }
+    input, textarea, select { width: 100%; background: #374151; border: 1px solid #4b5563; border-radius: 0.375rem; padding: 0.5rem 0.75rem; color: #f3f4f6; font-size: 0.875rem; }
+    textarea { resize: vertical; }
+    button { cursor: pointer; border: none; border-radius: 0.375rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+    .btn-secondary { background: #4b5563; color: #fff; }
+    .btn-secondary:hover { background: #374151; }
+    .btn-danger { background: #dc2626; color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-sm { padding: 0.25rem 0.75rem; font-size: 0.75rem; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 0.5rem; }
+    .dot-ok { background: #22c55e; }
+    .dot-down { background: #ef4444; }
+    .dot-degraded { background: #eab308; }
+    .health-row { display: flex; align-items: center; margin-bottom: 0.25rem; font-size: 0.875rem; }
+    .log-box { background: #111827; border: 1px solid #374151; border-radius: 0.375rem; padding: 0.75rem; height: 18rem; overflow: auto; font-family: monospace; font-size: 0.75rem; color: #86efac; white-space: pre-wrap; user-select: text; }
+    .kit-field { background: #111827; border: 1px solid #374151; border-radius: 0.375rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #f3f4f6; margin-bottom: 0.5rem; cursor: pointer; user-select: text; -webkit-user-select: text; overflow-wrap: anywhere; word-break: break-word; }
+.log-wrapper { position: relative; }
+.log-wrapper.expanded { position: fixed; top: 4rem; left: 2rem; right: 2rem; bottom: 2rem; z-index: 9999; border-radius: 0.5rem; box-shadow: 0 0 2rem rgba(0,0,0,0.5); background: #1f2937; display: flex; flex-direction: column; }
+.log-wrapper.expanded .log-box { height: auto; flex: 1; min-height: 0; border-radius: 0; border: none; background: transparent; }
+.log-wrapper.expanded .log-header { position: sticky; top: 0; background: #1f2937; border-bottom: 1px solid #374151; border-radius: 0.5rem 0.5rem 0 0; padding: 0.5rem 0.75rem; z-index: 1; }
+.log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.btn-expand { background: #374151; color: #fff; border: none; border-radius: 0.375rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; cursor: pointer; }
+.btn-expand:hover { background: #4b5563; }
+    .progress-bar { width: 100%; background: #374151; border-radius: 0.5rem; height: 1rem; overflow: hidden; }
+    .progress-fill { background: #2563eb; height: 100%; border-radius: 0.5rem; transition: width 0.3s; }
+    video { width: 100%; border-radius: 0.5rem; }
+    /* The video element box is height-synced to the contact sheet below
+       (JS). object-fit: contain keeps the full frame visible — pure
+       display scaling, the MP4 is never re-encoded, so quality is
+       unaffected. */
+    .video-fit { display: flex; justify-content: center; }
+    .video-fit video { width: auto; height: auto; max-width: 100%;
+                       object-fit: contain; background: #111827; }
+    img { max-width: 100%; border-radius: 0.5rem; }
+    .text-sm { font-size: 0.875rem; }
+    .text-xs { font-size: 0.75rem; }
+    .text-gray-400 { color: #9ca3af; }
+    .text-gray-500 { color: #6b7280; }
+    .text-green-400 { color: #4ade80; }
+    .text-red-400 { color: #f87171; }
+    .text-blue-300 { color: #93c5fd; }
+    .hidden { display: none; }
+    .space-y-1 > * + * { margin-top: 0.25rem; }
+    .space-y-2 > * + * { margin-top: 0.5rem; }
+    .space-y-3 > * + * { margin-top: 0.75rem; }
+    .space-y-4 > * + * { margin-top: 1rem; }
+    .mb-1 { margin-bottom: 0.25rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-3 { margin-bottom: 0.75rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-3 { margin-top: 0.75rem; }
+    .p-3 { padding: 0.75rem; }
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .rounded { border-radius: 0.5rem; }
+    .h-24 { height: 6rem; }
+    .h-48 { height: 12rem; }
+    .h-96 { height: 24rem; }
+    .w-full { width: 100%; }
+    .flex { display: flex; }
+    .gap-1 { gap: 0.25rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .grid { display: grid; }
+    .grid-cols-2 { grid-template-columns: 1fr 1fr; }
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+    .font-medium { font-weight: 500; }
+    .text-xl { font-size: 1.25rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .font-mono { font-family: monospace; }
+    .bg-gray-700 { background: #374151; }
+    .bg-gray-800 { background: #1f2937; }
+    .bg-gray-900 { background: #111827; }
+    .overflow-auto { overflow: auto; }
+    .max-h-64 { max-height: 16rem; }
+    .border-b { border-bottom: 1px solid #374151; }
+    .border-gray-700 { border-color: #374151; }
+    .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .block { display: block; }
+    .inline-block { display: inline-block; }
+    .cursor-pointer { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ReelForge</h1>
+    <nav>
+      <button class="tab" data-tab="dashboard">Dashboard</button>
+      <button class="tab" data-tab="newrun">New Run</button>
+      <button class="tab" data-tab="progress">Progress</button>
+      <button class="tab" data-tab="result">Result</button>
+      <button class="tab" data-tab="settings">Settings</button>
+      <button class="tab" data-tab="history">History</button>
+      <button class="tab" data-tab="console">Console</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Dashboard -->
+    <div id="dashboard" class="section">
+      <h2 class="text-2xl font-semibold mb-4">Dashboard</h2>
+      <div class="grid2 mb-6">
+        <div class="card">
+          <h3>Service Health</h3>
+          <div id="health-panel">Loading...</div>
+        </div>
+        <div class="card">
+          <h3>Quick Config</h3>
+          <div id="config-panel">Loading...</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Recent Runs</h3>
+        <div id="runs-panel">No runs yet.</div>
+      </div>
+    </div>
+
+    <!-- New Run -->
+    <div id="newrun" class="section">
+      <h2 class="text-2xl font-semibold mb-4">New Run</h2>
+      <div class="card space-y-4">
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Run name</label>
+          <input type="text" id="run-name" placeholder="my_video">
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-sm text-gray-400">Topic / prompt</label>
+            <div class="flex gap-2">
+              <button class="btn-secondary btn-sm" onclick="browsePromptFile()">Browse .txt</button>
+              <button class="btn-secondary btn-sm" onclick="clearPrompt()">Clear</button>
+            </div>
+          </div>
+          <textarea id="run-prompt" class="h-24" placeholder="Type/paste your video topic or full creative brief, or attach a .txt file..."></textarea>
+          <input type="file" id="run-prompt-file" accept=".txt,text/plain" class="hidden" onchange="onPromptFilePicked()">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Media files</label>
+          <div class="flex gap-2 mb-2">
+            <button class="btn-secondary btn-sm" onclick="pickFiles()">Select Files</button>
+            <button class="btn-secondary btn-sm" onclick="clearFiles()">Clear</button>
+          </div>
+          <div id="file-list" class="text-sm text-gray-300 space-y-1"></div>
+        </div>
+        <div class="grid2">
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Voice</label>
+            <select id="run-voice"><option value="">Default (config)</option></select>
+            <div class="flex items-center gap-2 mt-1">
+              <button class="btn-secondary btn-sm" onclick="previewRunVoice()">Preview</button>
+              <span id="run-voice-status" class="text-xs text-gray-500"></span>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">LLM model</label>
+            <select id="run-model"><option value="">Default (config)</option></select>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-overlay" checked> Burn overlays</label>
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-writenote"> Write Obsidian note</label>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Background music (optional)</label>
+          <div class="flex items-center gap-2 mb-2">
+            <button class="btn-secondary btn-sm" onclick="pickMusic()">Browse Music</button>
+            <button class="btn-secondary btn-sm" onclick="clearMusic()">Clear</button>
+            <span id="music-name" class="text-sm"></span>
+          </div>
+          <div class="text-xs text-gray-500">Looped under the narration, auto-leveled below the voice, with fade in/out.</div>
+        </div>
+        <div class="flex gap-3">
+          <button class="btn-primary" id="start-btn" onclick="startRun()">Start Run</button>
+          <button class="btn-secondary" onclick="showTab('dashboard')">Cancel</button>
+        </div>
+        <div id="run-status" class="text-sm"></div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div id="progress" class="section">
+      <h2 class="text-2xl font-semibold mb-4">Run Progress</h2>
+      <div class="card">
+        <div class="progress-bar mb-3"><div id="progress-fill" class="progress-fill" style="width:0%"></div></div>
+        <div id="current-stage" class="text-sm text-gray-400 mb-2">No active run.</div>
+        <div class="log-wrapper" id="progress-log-wrapper">
+          <div class="log-header">
+            <span class="text-sm text-gray-400">Progress Log</span>
+            <button class="btn-expand" id="progress-expand-btn" onclick="toggleLogExpand('progress-log-wrapper', 'progress-expand-btn')">Expand</button>
+          </div>
+          <pre id="progress-log" class="log-box"></pre>
+        </div>
+        <button class="btn-danger mt-3" onclick="cancelRun()">Cancel Run</button>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="result" class="section">
+      <h2 class="text-2xl font-semibold mb-4">Run Result</h2>
+      <div class="card space-y-4">
+        <div id="result-content" class="text-gray-500">No completed run yet.</div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div id="settings" class="section">
+      <h2 class="text-2xl font-semibold mb-4">Settings</h2>
+      <div class="card space-y-4">
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">LLM Provider</label>
+          <select id="s-llm-provider">
+            <option value="lmstudio">LM Studio (local)</option>
+            <option value="ollama">Ollama (local)</option>
+            <option value="openai">OpenAI (cloud)</option>
+            <option value="openrouter">OpenRouter (cloud)</option>
+            <option value="groq">Groq (cloud)</option>
+            <option value="together">Together (cloud)</option>
+            <option value="custom" selected>Custom</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">LLM Model</label>
+          <input type="text" id="s-llm-model" value="beam">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">LLM Base URL</label>
+          <input type="text" id="s-llm-url" value="https://ollama.com/api" placeholder="https://ollama.com/api">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">LLM API Key</label>
+          <input type="password" id="s-llm-key" placeholder="(or set env var)">
+        </div>
+        <div class="grid2">
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Temperature</label>
+            <input type="number" step="0.1" id="s-temperature" value="0.4">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Max Tokens</label>
+            <input type="number" id="s-max-tokens" value="131072">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">TTS Voice</label>
+          <select id="s-tts-voice"></select>
+          <div class="flex items-center gap-2 mt-1">
+            <button class="btn-secondary btn-sm" onclick="previewSettingsVoice()">Preview</button>
+            <span id="s-voice-status" class="text-xs text-gray-500"></span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">TTS Speed</label>
+          <input type="number" step="0.1" id="s-tts-speed" value="1">
+        </div>
+        <div class="flex gap-2">
+          <button class="btn-primary" onclick="saveSettings()">Save</button>
+          <button class="btn-secondary" onclick="loadSettings()">Reload</button>
+          <button class="btn-secondary" onclick="resetSettings()">Reset to defaults</button>
+          <button class="btn-secondary" onclick="runDoctor()">Run Loop Doctor</button>
+        </div>
+        <pre id="doctor-output" class="text-xs text-green-400 mt-3 h-48 overflow-auto bg-gray-900 rounded p-3 hidden"></pre>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div id="history" class="section">
+      <h2 class="text-2xl font-semibold mb-4">Run History</h2>
+      <div class="card">
+        <div id="history-panel" class="space-y-2">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Console -->
+    <div id="console" class="section">
+      <h2 class="text-2xl font-semibold mb-4">Console (all background activity)</h2>
+      <div class="card">
+        <div class="flex gap-2 mb-2">
+          <button class="btn-secondary btn-sm" onclick="clearConsole()">Clear</button>
+          <button class="btn-secondary btn-sm" onclick="toggleAutoScroll()">Auto-scroll: <span id="auto-scroll-state">ON</span></button>
+        </div>
+        <div class="log-wrapper" id="console-log-wrapper">
+          <div class="log-header">
+            <span class="text-sm text-gray-400">Console Log</span>
+            <button class="btn-expand" id="console-expand-btn" onclick="toggleLogExpand('console-log-wrapper', 'console-expand-btn')">Expand</button>
+          </div>
+          <pre id="console-log" class="log-box">Loading history...</pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Tab switching
+    function showTab(name) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(name).classList.add('active');
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+      document.querySelector(`.tab[data-tab="${name}"]`).classList.add('tab-active');
+    }
+    document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+
+    // State
+    let selectedFiles = [];
+    let currentJob = null;
+    let eventSource = null;
+    let consoleAutoScroll = true;
+    let result = null;
+    let srtText = '';
+
+    // Health
+    function loadHealth() {
+      fetch('/health').then(r=>r.json()).then(d => {
+        let html = '';
+        for (const [k, v] of Object.entries(d)) {
+          if (k === 'config_exists') continue;
+          const status = v.status || 'unknown';
+          const cls = status === 'ok' ? 'dot-ok' : (status === 'degraded' ? 'dot-degraded' : 'dot-down');
+          html += `<div class="health-row"><span class="dot ${cls}"></span><span class="font-medium">${k}</span><span class="text-gray-500 text-xs ml-2">${status}</span></div>`;
+        }
+        document.getElementById('health-panel').innerHTML = html;
+      }).catch(e => { document.getElementById('health-panel').textContent = 'Error: ' + e.message; });
+    }
+    function loadConfigPanel() {
+      fetch('/config').then(r=>r.json()).then(d => {
+        document.getElementById('config-panel').innerHTML = `<div class="text-sm">LLM: ${d.llm?.provider || '?'} / ${(d.llm?.model || '?').split('/').pop()}</div><div class="text-sm">Voice: ${d.tts?.voice || '?'}</div>`;
+      }).catch(e => {});
+    }
+    function loadRuns() {
+      fetch('/runs').then(r=>r.json()).then(d => {
+        const el = document.getElementById('runs-panel');
+        if (d.runs && d.runs.length) {
+          el.innerHTML = d.runs.slice(0,5).map(r => `<div class="flex justify-between text-sm border-b border-gray-700 py-1"><span>${r.name}</span><span class="text-gray-500">${r.size_mb} MB</span></div>`).join('');
+        } else { el.innerHTML = '<div class="text-gray-500 text-sm">No runs yet.</div>'; }
+      }).catch(e => {});
+    }
+
+    // Files
+    async function pickFiles() {
+      document.getElementById('run-status').textContent = 'pickFiles called';
+      // Use pywebview native dialog if available, fall back to backend
+      if (window.pywebview && window.pywebview.api && window.pywebview.api.pick_files) {
+        try {
+          document.getElementById('run-status').textContent = 'Using pywebview file picker';
+          const files = await window.pywebview.api.pick_files();
+          if (files && Array.isArray(files) && files.length) {
+            selectedFiles = files;
+            renderFileList();
+            document.getElementById('run-status').textContent = 'Files selected via pywebview: ' + files.length;
+            return;
+          }
+          if (files && files.error) { alert('File picker error: ' + files.error); return; }
+        } catch(e) { 
+          document.getElementById('run-status').textContent = 'pywebview pick_files failed: ' + e.message; 
+        }
+      }
+      // Fallback to backend tkinter
+      try {
+        document.getElementById('run-status').textContent = 'Using backend file picker';
+        const res = await fetch('/pick-files', { method: 'POST' });
+        const data = await res.json();
+        if (data.files && data.files.length) { selectedFiles = data.files; renderFileList(); document.getElementById('run-status').textContent = 'Files selected via backend: ' + data.files.length; }
+      } catch(e) { 
+        document.getElementById('run-status').textContent = 'Could not open file picker: ' + e.message; 
+      }
+    }
+    function clearFiles() { selectedFiles = []; renderFileList(); }
+    function renderFileList() {
+      const el = document.getElementById('file-list');
+      if (selectedFiles.length === 0) { el.innerHTML = '<div class="text-gray-500 text-sm">No files selected.</div>'; return; }
+      el.innerHTML = selectedFiles.map((f, i) => `<div class="text-sm"><span class="text-gray-500">${i+1}.</span> ${f.split(/[\\\\/]/).pop()}</div>`).join('');
+    }
+
+    // Load the topic/prompt from a .txt file instead of typing/pasting.
+    function browsePromptFile() {
+      document.getElementById('run-prompt-file').click();
+    }
+    function clearPrompt() {
+      const box = document.getElementById('run-prompt');
+      box.value = '';
+      box.focus();
+      document.getElementById('run-status').textContent = 'Prompt cleared.';
+    }
+    function decodePromptText(buffer) {
+      // UTF-8 BOM is stripped automatically; detect UTF-16 BOMs, then try
+      // strict UTF-8 and fall back to Windows ANSI (cp1252) for legacy
+      // .txt files saved without an encoding declaration.
+      const head = new Uint8Array(buffer.slice(0, 2));
+      if (head[0] === 0xFF && head[1] === 0xFE) return new TextDecoder('utf-16le').decode(buffer);
+      if (head[0] === 0xFE && head[1] === 0xFF) return new TextDecoder('utf-16be').decode(buffer);
+      try { return new TextDecoder('utf-8', { fatal: true }).decode(buffer); }
+      catch (e) { return new TextDecoder('windows-1252').decode(buffer); }
+    }
+    function onPromptFilePicked() {
+      const input = document.getElementById('run-prompt-file');
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const isTxt = /\.txt$/i.test(file.name) || file.type === 'text/plain';
+      if (!isTxt) {
+        alert('Please choose a .txt file (got: ' + file.name + ')');
+        input.value = '';
+        return;
+      }
+      const box = document.getElementById('run-prompt');
+      const replaced = box.value.trim() !== '';
+      const status = document.getElementById('run-status');
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = decodePromptText(reader.result).trim();
+        box.value = text;
+        box.focus();
+        status.textContent = 'Loaded prompt from "' + file.name + '" (' +
+          text.length + ' chars)' + (replaced ? ' — replaced existing text' : '');
+      };
+      reader.onerror = () =>
+        alert('Could not read file: ' + (reader.error && reader.error.message || 'unknown error'));
+      reader.readAsArrayBuffer(file);
+      input.value = ''; // allow re-selecting the same file later
+    }
+
+    // Voices + models
+    async function loadVoices() {
+      try { const r = await fetch('/voices'); const d = await r.json();
+        const sel = document.getElementById('run-voice');
+        const ssel = document.getElementById('s-tts-voice');
+        (d.voices || []).forEach(v => {
+          const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o);
+          const o2 = o.cloneNode(true); ssel.appendChild(o2);
+        });
+      } catch(e) {}
+    }
+    async function previewVoice(voice, statusId) {
+      const status = document.getElementById(statusId);
+      const prev = status ? status.textContent : '';
+      if (status) { status.className = 'text-xs text-gray-500'; status.textContent = 'Generating...'; }
+      try {
+        const r = await fetch('/voice/preview', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ voice: voice || null })
+        });
+        const d = await r.json();
+        if (!d.ok) throw new Error(d.error || 'preview generation failed');
+        if (status) { status.className = 'text-xs text-green-400'; status.textContent = 'Preview: ' + d.voice; }
+        new Audio(d.url + '?t=' + Date.now()).play().catch(() => {});
+      } catch(e) {
+        if (status) { status.className = 'text-xs text-red-400'; status.textContent = 'Preview failed: ' + e.message; }
+        else { alert('Preview failed: ' + e.message); }
+      }
+    }
+    function previewRunVoice() {
+      previewVoice(document.getElementById('run-voice').value, 'run-voice-status');
+    }
+    function previewSettingsVoice() {
+      previewVoice(document.getElementById('s-tts-voice').value, 's-voice-status');
+    }
+    async function loadModels() {
+      try { const r = await fetch('/models'); const d = await r.json();
+        const sel = document.getElementById('run-model');
+        (d.models || []).forEach(m => {
+          const o = document.createElement('option'); o.value = m; o.textContent = m.split('/').pop(); sel.appendChild(o);
+        });
+      } catch(e) {}
+    }
+
+    // Background music selection (real path needed by the pipeline)
+    let selectedMusic = null;
+    function musicDisplayName(p) { return p.split(/[\\\/]/).pop(); }
+    function renderMusic() {
+      const el = document.getElementById('music-name');
+      el.textContent = selectedMusic ? musicDisplayName(selectedMusic) : '';
+      el.className = selectedMusic ? 'text-sm text-green-400' : 'text-sm text-gray-300';
+    }
+    async function pickMusic() {
+      const status = document.getElementById('run-status');
+      if (window.pywebview && window.pywebview.api && window.pywebview.api.pick_music) {
+        try {
+          status.textContent = 'Using native music picker';
+          const p = await window.pywebview.api.pick_music();
+          if (p && !p.error) {
+            selectedMusic = p; renderMusic();
+            status.textContent = 'Music selected: ' + musicDisplayName(p);
+            return;
+          }
+          if (p && p.error) { alert('Music picker error: ' + p.error); return; }
+        } catch(e) { status.textContent = 'Native music picker failed: ' + e.message; }
+      }
+      // Fallback to backend tkinter dialog
+      try {
+        status.textContent = 'Using backend music picker';
+        const res = await fetch('/pick-music', { method: 'POST' });
+        const data = await res.json();
+        if (data.file) {
+          selectedMusic = data.file; renderMusic();
+          status.textContent = 'Music selected: ' + musicDisplayName(data.file);
+        }
+      } catch(e) { status.textContent = 'Could not open music picker: ' + e.message; }
+    }
+    function clearMusic() {
+      selectedMusic = null; renderMusic();
+      document.getElementById('run-status').textContent = 'Background music cleared.';
+    }
+
+    // Run
+    async function startRun() {
+      const name = document.getElementById('run-name').value.trim();
+      const prompt = document.getElementById('run-prompt').value.trim();
+      document.getElementById('run-status').textContent = 'startRun called: name=' + name + ', files=' + selectedFiles.length;
+      if (!name) { alert('Enter a run name'); return; }
+      if (selectedFiles.length === 0) { alert('Select at least one media file'); return; }
+      const btn = document.querySelector('#newrun button.btn-primary');
+      btn.disabled = true; btn.textContent = 'Starting...';
+      try {
+        const res = await fetch('/run', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name, prompt, media: selectedFiles,
+            voice: document.getElementById('run-voice').value || null,
+            llm: null,
+            llm_model: document.getElementById('run-model').value || null,
+            overlay: document.getElementById('run-overlay').checked,
+            write_run_note: document.getElementById('run-writenote').checked,
+            music: (selectedMusic && typeof selectedMusic === 'string') ? selectedMusic : null
+          })
+        });
+        document.getElementById('run-status').textContent = 'Fetch response status: ' + res.status;
+        let data;
+        try {
+          data = await res.json();
+        } catch (jsonErr) {
+          document.getElementById('run-status').textContent = 'JSON parse error: ' + jsonErr.message;
+          const text = await res.text();
+          document.getElementById('run-status').textContent += ' | Response: ' + text.substring(0, 200);
+          return;
+        }
+        document.getElementById('run-status').textContent = 'Fetch response data: ' + JSON.stringify(data);
+        if (data.error) { alert('Error: ' + data.error); return; }
+        if (!data.job_id) { alert('No job_id in response: ' + JSON.stringify(data)); return; }
+        currentJob = data.job_id;
+        document.getElementById('run-status').textContent = 'Started job ' + data.job_id;
+        showTab('progress');
+        startProgress(data.job_id);
+      } catch(e) {
+        document.getElementById('run-status').textContent = 'Error: ' + e.message;
+      } finally {
+        btn.disabled = false; btn.textContent = 'Start Run';
+      }
+    }
+
+    function startProgress(jobId) {
+      document.getElementById('progress-log').textContent = '';
+      document.getElementById('progress-fill').style.width = '0%';
+      document.getElementById('current-stage').textContent = 'Starting...';
+      if (eventSource) eventSource.close();
+      var url = '/run/' + jobId + '/stream';
+      document.getElementById('progress-log').textContent += 'Connecting to SSE: ' + url + '\n';
+      eventSource = new EventSource(url);
+      eventSource.onopen = function() { document.getElementById('progress-log').textContent += 'SSE connection opened\n'; };
+      eventSource.onerror = function(err) {
+        document.getElementById('progress-log').textContent += 'SSE error: ' + JSON.stringify(err) + ' (readyState: ' + eventSource.readyState + ')\n';
+        if (eventSource.readyState === EventSource.CLOSED) {
+          document.getElementById('progress-log').textContent += 'SSE connection closed unexpectedly\n';
+        }
+      };
+      eventSource.onmessage = function(e) {
+        document.getElementById('progress-log').textContent += 'SSE message received\n';
+        const d = JSON.parse(e.data);
+        const log = document.getElementById('progress-log');
+        if (d.type === 'log') { log.textContent += d.line + '\n'; log.scrollTop = log.scrollHeight; }
+        if (d.type === 'stage') { document.getElementById('current-stage').textContent = d.stage; const __m = d.stage.match(/^\s*\[(\d+)\/(\d+)\]/); if (__m) { const __p = Math.min(100, Math.round(parseInt(__m[1],10)/parseInt(__m[2],10)*100)); document.getElementById('progress-fill').style.width = __p + '%'; } log.textContent += '\n=== ' + d.stage + ' ===\n'; }
+        if (d.type === 'progress') { document.getElementById('progress-fill').style.width = d.percent + '%'; }
+        if (d.type === 'done') {
+          eventSource.close();
+          document.getElementById('progress-fill').style.width = '100%';
+          log.textContent += '\n=== DONE ===\n';
+          loadResult(jobId);
+          showTab('result');
+        }
+        if (d.type === 'error') {
+          eventSource.close();
+          log.textContent += '\n=== ERROR: ' + d.message + ' ===\n';
+        }
+      };
+    }
+
+    function cancelRun() {
+      if (currentJob) fetch('/run/' + currentJob + '/cancel', { method: 'POST' });
+    }
+
+    async function loadResult(jobId) {
+      const res = await fetch('/run/' + jobId + '/result');
+      const data = await res.json();
+      renderResult(data, jobId);
+    }
+    // Shared result renderer: used by a fresh run (jobId set, note button on)
+    // and by History -> View (jobId null, no live job to write a note for).
+    async function renderResult(data, jobId) {
+      const el = document.getElementById('result-content');
+      result = data;
+      if (data.status !== 'done') { el.textContent = 'Status: ' + data.status + (data.error ? ' — ' + data.error : ''); return; }
+      let html = '';
+      if (data.mp4) {
+        const player = data.contact_sheet
+          ? `<div class="video-fit"><video controls id="result-video" preload="metadata" src="/files/${data.mp4}"></video></div>`
+          : `<video controls class="w-full rounded" src="/files/${data.mp4}"></video>`;
+        html += `<div class="mb-4"><h3 class="font-semibold mb-2">Video</h3>${player}<p class="text-sm text-gray-400 mt-1">${data.mp4} (${data.size_mb} MB)</p></div>`;
+      }
+      if (data.contact_sheet) {
+        html += `<div class="mb-4"><h3 class="font-semibold mb-2">Contact Sheet</h3><img id="contact-sheet-img" src="/files/${data.contact_sheet}" class="w-full rounded" alt="Contact sheet"></div>`;
+      }
+      if (data.srt) {
+        try {
+          const srtRes = await fetch('/files/' + data.srt);
+          const srtText = await srtRes.text();
+          html += `<div class="mb-4"><h3 class="font-semibold mb-2">Subtitles (SRT)</h3><pre class="text-xs text-gray-300 bg-gray-900 rounded p-3 h-48 overflow-auto">${escapeHtml(srtText)}</pre></div>`;
+        } catch(e) {}
+      }
+      if (data.kit) {
+        html += `<div class="mb-4"><h3 class="font-semibold mb-2">Publishing Kit</h3>
+          <div class="text-xs text-gray-500 mb-2">Click inside any field, then Ctrl+C / Cmd+C to copy.</div>`;
+        const fb = data.kit.platforms?.facebook_reels;
+        const yt = data.kit.platforms?.youtube_shorts;
+        if (fb) {
+          html += `<div class="bg-gray-900 rounded p-3 mb-2">
+            <div class="font-medium text-blue-300 mb-1">Facebook Reels</div>
+            <div class="kit-field" data-copy="${escapeHtml(fb.title)}">${escapeHtml(fb.title)}</div>
+            <div class="kit-field" data-copy="${escapeHtml(fb.description)}">${escapeHtml(fb.description)}</div>
+            <div class="kit-field" data-copy="${escapeHtml((fb.hashtags||[]).join(' '))}">${escapeHtml((fb.hashtags||[]).join(' '))}</div>
+            <button class="btn-secondary btn-sm" onclick="copyKitFields(this)">Copy all (Facebook)</button>
+          </div>`;
+        }
+        if (yt) {
+          html += `<div class="bg-gray-900 rounded p-3 mb-2">
+            <div class="font-medium text-red-300 mb-1">YouTube Shorts</div>
+            <div class="kit-field" data-copy="${escapeHtml(yt.title)}">${escapeHtml(yt.title)}</div>
+            <div class="kit-field" data-copy="${escapeHtml(yt.description)}">${escapeHtml(yt.description)}</div>
+            <div class="kit-field" data-copy="${escapeHtml((yt.hashtags||[]).join(' '))}">${escapeHtml((yt.hashtags||[]).join(' '))}</div>
+            <button class="btn-secondary btn-sm" onclick="copyKitFields(this)">Copy all (YouTube)</button>
+          </div>`;
+        }
+        html += `</div>`;
+      }
+      html += `<div class="mt-3 flex gap-2">
+        <button class="btn-secondary btn-sm" onclick="openFolder()">Open Folder</button>
+        ${jobId ? `<button class="btn-secondary btn-sm" id="write-note-btn" onclick="writeRunNote('${jobId}')">Write Run Note</button>` : ''}
+      </div>`;
+      el.innerHTML = html;
+      syncVideoToContactSheet();
+    }
+    async function writeRunNote(jobId) {
+      const btn = document.getElementById('write-note-btn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Writing...'; }
+      try {
+        const r = await fetch('/run/' + jobId + '/write-note', { method: 'POST' });
+        const d = await r.json();
+        if (!d.ok) throw new Error(d.error || 'write-run-note failed');
+        alert('Run note written: ' + (d.note || 'see vault/1. Projects/'));
+        loadHistory();
+      } catch (e) {
+        alert('Could not write run note: ' + e.message);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Write Run Note'; }
+      }
+    }
+    // Match the video element's height to the contact sheet image's
+    // rendered height, sizing the video to fit that height using its own
+    // aspect ratio. Display scaling only — the MP4 file is never
+    // re-encoded, so quality is unaffected; object-fit: contain means the
+    // full frame always stays visible (no cropping).
+    function applyVideoFit(video, sheet) {
+      const sheetHeight = Math.round(sheet.getBoundingClientRect().height);
+      if (sheetHeight <= 0) return; // sheet not laid out yet; load/resize retries
+      video.style.height = sheetHeight + 'px';
+      if (video.videoWidth && video.videoHeight) {
+        const maxBox = video.parentElement ? video.parentElement.clientWidth : 0;
+        const fitWidth = Math.round(sheetHeight * video.videoWidth / video.videoHeight);
+        video.style.width = Math.min(maxBox, fitWidth) + 'px';
+      }
+    }
+    function syncVideoToContactSheet() {
+      const video = document.getElementById('result-video');
+      const sheet = document.getElementById('contact-sheet-img');
+      if (!video || !sheet) return;
+      if (sheet.complete && sheet.naturalWidth) applyVideoFit(video, sheet);
+      else sheet.addEventListener('load', () => applyVideoFit(video, sheet), { once: true });
+      video.addEventListener('loadedmetadata', () => applyVideoFit(video, sheet), { once: true });
+    }
+    window.addEventListener('resize', () => {
+      const video = document.getElementById('result-video');
+      const sheet = document.getElementById('contact-sheet-img');
+      if (video && sheet) applyVideoFit(video, sheet);
+    });
+    function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function copyKitFields(btn) {
+      const parent = btn && btn.parentElement ? btn.parentElement : null;
+      const fields = parent ? Array.from(parent.querySelectorAll('.kit-field')) : [];
+      const text = fields.map(f => (f.textContent || '').trim()).filter(Boolean).join('\n\n');
+      const msg = text;
+      const write = (t) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+        const ta = document.createElement('textarea');
+        ta.value = t; ta.style.position='fixed'; ta.style.top='-1000px';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch(e) {}
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      };
+      write(msg || '').then(() => {
+        const s = document.getElementById('run-status');
+        if (s) { s.textContent = 'Copied to clipboard'; setTimeout(() => s.textContent = '', 1500); }
+      }).catch(() => { alert('Copied:\\n\\n' + msg); });
+    }
+    function openFolder() {
+      const mp4 = result && result.mp4 ? String(result.mp4).replace(/\\/g, '/') : '';
+      const dir = mp4 ? mp4.split('/').slice(0, -1).join('/') : 'output';
+      fetch('/open-folder', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ path: dir }) })
+        .then(r => r.json()).then(d => { if (!d.ok) throw new Error(d.error || 'Open Folder failed'); })
+        .catch(err => {
+          if (window.pywebview && window.pywebview.api && window.pywebview.api.open_folder) {
+            try { window.pywebview.api.open_folder(dir); return; } catch(e) { }
+          }
+          alert('Could not open folder: ' + err.message);
+        });
+    }
+
+    async function loadSettings() {
+      try {
+        const r = await fetch('/config'); const d = await r.json();
+        document.getElementById('s-llm-provider').value = d.llm?.provider || 'lmstudio';
+        document.getElementById('s-llm-model').value = d.llm?.model || '';
+        document.getElementById('s-llm-url').value = d.llm?.base_url || '';
+        document.getElementById('s-llm-key').value = d.llm?.api_key || '';
+        document.getElementById('s-temperature').value = d.llm?.temperature ?? 0.4;
+        document.getElementById('s-max-tokens').value = d.llm?.max_tokens ?? 4500;
+        document.getElementById('s-tts-speed').value = d.tts?.speed ?? 1.0;
+        const voiceSel = document.getElementById('s-tts-voice');
+        voiceSel.innerHTML = '';
+        (await (await fetch('/voices')).json()).voices.forEach(v => {
+          const o = document.createElement('option'); o.value = v; o.textContent = v; if (v === (d.tts?.voice || 'af_heart')) o.selected = true; voiceSel.appendChild(o);
+        });
+      } catch(e) { console.error(e); }
+    }
+    async function saveSettings() {
+      const cfg = {
+        llm: {
+          provider: document.getElementById('s-llm-provider').value,
+          model: document.getElementById('s-llm-model').value,
+          base_url: document.getElementById('s-llm-url').value,
+          api_key: document.getElementById('s-llm-key').value,
+          temperature: parseFloat(document.getElementById('s-temperature').value),
+          max_tokens: parseInt(document.getElementById('s-max-tokens').value),
+        },
+        tts: {
+          voice: document.getElementById('s-tts-voice').value,
+          speed: parseFloat(document.getElementById('s-tts-speed').value),
+        }
+      };
+      const v = await fetch('/config/validate', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({config: cfg}) });
+      const vd = await v.json();
+      if (!vd.valid) { alert('Validation errors:\n' + vd.errors.join('\n')); return; }
+      await fetch('/config', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({config: cfg}) });
+      alert('Saved');
+    }
+    async function resetSettings() {
+      if (!confirm('Reset the editable settings to built-in defaults? This overwrites the current llm/tts values in config.json.')) return;
+      try {
+        const r = await fetch('/config/defaults');
+        const d = await r.json();
+        if (!d.config) throw new Error(d.error || 'defaults unavailable');
+        const cfg = d.config;
+        document.getElementById('s-llm-provider').value = cfg.llm.provider;
+        document.getElementById('s-llm-model').value = cfg.llm.model;
+        document.getElementById('s-llm-url').value = cfg.llm.base_url;
+        document.getElementById('s-llm-key').value = cfg.llm.api_key;
+        document.getElementById('s-temperature').value = cfg.llm.temperature;
+        document.getElementById('s-max-tokens').value = cfg.llm.max_tokens;
+        document.getElementById('s-tts-speed').value = cfg.tts.speed;
+        const vs = document.getElementById('s-tts-voice');
+        if (vs) {
+          if (!Array.from(vs.options).some(o => o.value === cfg.tts.voice)) {
+            const o = document.createElement('option'); o.value = cfg.tts.voice; o.textContent = cfg.tts.voice; vs.appendChild(o);
+          }
+          vs.value = cfg.tts.voice;
+        }
+        alert('Defaults loaded. Click Save to write them to config.json.');
+      } catch(e) { alert('Could not load defaults: ' + e.message); }
+    }
+    async function runDoctor() {
+      const el = document.getElementById('doctor-output');
+      el.classList.remove('hidden');
+      el.textContent = 'Running...';
+      const res = await fetch('/doctor', { method: 'POST' });
+      const data = await res.json();
+      el.textContent = data.output || 'No output';
+    }
+
+    async function loadHistory() {
+      try {
+        const r = await fetch('/runs'); const d = await r.json();
+        const el = document.getElementById('history-panel');
+        if (d.runs && d.runs.length) {
+          el.innerHTML = d.runs.map(r => {
+            const slug = r.name.replace(/^\d{8}_\d{6}_/, '');
+            return `<div class="flex justify-between items-center text-sm border-b border-gray-700 py-2"><div><div class="font-medium">${r.name}</div><div class="text-gray-500 text-xs">${r.size_mb} MB</div></div><div class="flex gap-2"><button class="btn-secondary btn-sm" onclick="rerun('${slug}')">Re-run</button><button class="btn-secondary btn-sm" onclick="viewResult('${r.name}')">View</button></div></div>`;
+          }).join('');
+        } else { el.innerHTML = '<div class="text-gray-500 text-sm">No runs yet.</div>'; }
+      } catch(e) {}
+    }
+    async function rerun(slug) {
+      try {
+        const r = await fetch('/inbox/' + encodeURIComponent(slug));
+        const d = await r.json();
+        document.getElementById('run-name').value = d.name || slug;
+        document.getElementById('run-prompt').value = d.prompt || '';
+        selectedFiles = d.media || [];
+        renderFileList();
+        showTab('newrun');
+      } catch(e) { alert('Could not load run details: ' + e.message); }
+    }
+    async function viewResult(name) {
+      showTab('result');
+      const el = document.getElementById('result-content');
+      el.textContent = 'Loading ' + name + '...';
+      try {
+        const r = await fetch('/run-by-name/' + encodeURIComponent(name) + '/result');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        await renderResult(await r.json(), null);
+      } catch(e) {
+        el.textContent = 'Could not load result: ' + e.message;
+      }
+    }
+
+    // Console
+    function clearConsole() {
+      document.getElementById('console-log').textContent = '';
+    }
+    function toggleAutoScroll() {
+      consoleAutoScroll = !consoleAutoScroll;
+      document.getElementById('auto-scroll-state').textContent = consoleAutoScroll ? 'ON' : 'OFF';
+    }
+    function toggleLogExpand(logId, btnId) {
+      const logEl = document.getElementById(logId);
+      const btnEl = document.getElementById(btnId);
+      if (!logEl || !btnEl) return;
+      const isExpanded = logEl.classList.toggle('expanded');
+      btnEl.textContent = isExpanded ? 'Collapse' : 'Expand';
+      if (isExpanded) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+    function appendConsole(line) {
+      const el = document.getElementById('console-log');
+      if (el) { el.textContent += line + '\n'; if (consoleAutoScroll) el.scrollTop = el.scrollHeight; }
+    }
+
+    // Console stream
+    const consoleEs = new EventSource('/console/stream');
+    consoleEs.onmessage = function(e) {
+      try {
+        const d = JSON.parse(e.data);
+        if (d.type === 'console') appendConsole(d.line);
+      } catch(err) {}
+    };
+
+    // Init
+    document.addEventListener('DOMContentLoaded', function() {
+      showTab('dashboard');
+      loadHealth(); loadConfigPanel(); loadRuns(); loadVoices(); loadModels(); loadSettings(); loadHistory();
+      // Load console history
+      fetch('/console/history').then(r=>r.json()).then(d => {
+        const el = document.getElementById('console-log');
+        if (d.lines && d.lines.length) { el.textContent = d.lines.join('\n') + '\n'; if (consoleAutoScroll) el.scrollTop = el.scrollHeight; }
+        else { el.textContent = 'No console history yet.'; }
+      }).catch(e => {});
+      setInterval(loadHealth, 5000);
+      setInterval(loadRuns, 10000);
+    });
+  </script>
+</body>
+</html>

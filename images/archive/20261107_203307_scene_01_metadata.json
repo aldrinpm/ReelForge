@@ -1,0 +1,14 @@
+{
+  "scene_number": 1,
+  "duration_seconds": 9.0,
+  "narration": "Volcanoes are openings in Earth's crust where molten rock called magma can reach the surface.",
+  "on_screen_text": "What is a volcano?",
+  "prompt": "Vertical close-up of an active volcano with bright orange lava flowing down its slopes, dark ash plume rising into a cloudy sky, dramatic lighting",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "scene_01.png",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=increase,crop=512:768"
+}
