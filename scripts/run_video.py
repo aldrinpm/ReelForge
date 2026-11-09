@@ -733,7 +733,6 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
             raise PipelineError(f"Unsupported file type: {p.name}")
         media_types.append(t)
 
-    log(f"  Topic: {prompt[:120]}{'…' if len(prompt) > 120 else ''}", indent=True)
     log(f"  Media ({len(sources)}): "
         f"{[(p.name, t) for p, t in zip(sources, media_types)]}", indent=True)
 
