@@ -333,7 +333,7 @@ def _run_worker(job_id, req):
         job["slug"] = slug
 
         # Build command - pass media files directly, no inbox copy
-        cmd = [BASE_PY, str(SCRIPTS / "run_video.py"), slug,
+        cmd = [BASE_PY, str(SCRIPTS / "run_video.py"), "--name", slug,
                "--media"] + [str(m) for m in (req.media or [])]
         # Write scenes to a temp JSON file for the pipeline
         scenes_path = OUTPUT_DIR / f"{slug}_scenes.json"

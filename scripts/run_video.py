@@ -838,6 +838,10 @@ def main():
         "--scenes", default=None,
         help="Path to scenes JSON file",
     )
+    parser.add_argument(
+        "--name", default=None,
+        help="Run name (slug) for output file naming",
+    )
     parser.add_argument("--no-open", action="store_true",
                         help="Do not open the output folder at the end")
     parser.add_argument("--voice", default=None, help="TTS voice (e.g. af_heart)")
@@ -859,8 +863,7 @@ def main():
     )
     args = parser.parse_args()
 
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_name = f"run_{ts}"
+    run_name = args.name or f"run_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
     global log
     # Provisional logger before the real one exists (pre-slug failures).
