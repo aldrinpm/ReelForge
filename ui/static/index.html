@@ -365,9 +365,9 @@
       row.innerHTML = `
         <div class="flex gap-2 items-start">
           <span class="text-xs text-gray-500 w-10">${num}</span>
-          <textarea class="scene-narration flex-1 h-20 text-sm" placeholder="Narration for this scene..."></textarea>
-          <input type="text" class="scene-overlay w-40 text-sm" placeholder="Overlay text" maxlength="35" oninput="checkOverlayLimit(this)" onpaste="setTimeout(() => checkOverlayLimit(this), 0)">
+          <input type="text" class="scene-overlay w-40 text-sm" placeholder="Overlay text" maxlength="35" onpaste="return checkOverlayPaste(this)" oninput="checkOverlayLimit(this)">
           <span class="text-xs text-red-400 hidden overlay-warn">Max 35 chars</span>
+          <textarea class="scene-narration flex-1 h-20 text-sm" placeholder="Narration for this scene..."></textarea>
           <input type="number" class="scene-duration w-16 text-sm" value="${duration}" step="0.5" min="1">
           <button class="btn-danger btn-sm" onclick="removeScene(this)">Remove</button>
         </div>
@@ -375,15 +375,23 @@
       list.appendChild(row);
     }
 
-    function checkOverlayLimit(input) {
-      const warn = input.parentElement.querySelector('.overlay-warn');
-      if (input.value.length > 35) {
+    function checkOverlayPaste(input) {
+      const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+      const currentValue = input.value || '';
+      const start = input.selectionStart || 0;
+      const end = input.selectionEnd || 0;
+      const before = currentValue.substring(0, start);
+      const after = currentValue.substring(end);
+      const newLength = before.length + pastedText.length + after.length;
+      if (newLength > 35) {
+        const warn = input.parentElement.querySelector('.overlay-warn');
         warn.classList.remove('hidden');
-        input.value = input.value.slice(0, 35);
         alert('Overlay text too long. Max 35 characters allowed.');
-      } else {
-        warn.classList.add('hidden');
+        return false;
       }
+      const warn = input.parentElement.querySelector('.overlay-warn');
+      warn.classList.add('hidden');
+      return true;
     }
 
     function removeScene(btn) {
