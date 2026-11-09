@@ -238,7 +238,7 @@ def validate_storyboard(storyboard, source):
             f"{source}: scene numbers are {numbers}; expected 1..{n}."
         )
     for scene in scenes:
-        for key in ("narration_segment", "image_prompt", "duration_seconds"):
+        for key in ("narration_segment", "duration_seconds"):
             if not str(scene.get(key, "")).strip():
                 raise PipelineError(
                     f"{source}: scene {scene['scene_number']} "
