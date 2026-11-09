@@ -155,6 +155,21 @@
       <h2 class="text-2xl font-semibold mb-4">New Run</h2>
       <div class="card space-y-4">
         <div>
+          <label class="block text-sm text-gray-400 mb-1">Title</label>
+          <input type="text" class="w-full text-sm bg-gray-700 border border-gray-600 rounded px-2 py-1" id="run-title" placeholder="Video title for social media">
+          <button class="btn-copy btn-xs mt-1" onclick="copyText(this, document.getElementById('run-title').value)">Copy</button>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Description</label>
+          <textarea class="w-full text-sm bg-gray-700 border border-gray-600 rounded px-2 py-1 h-24" id="run-description" placeholder="Video description for social media"></textarea>
+          <button class="btn-copy btn-xs mt-1" onclick="copyText(this, document.getElementById('run-description').value)">Copy</button>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Hashtags</label>
+          <input type="text" class="w-full text-sm bg-gray-700 border border-gray-600 rounded px-2 py-1" id="run-hashtags" placeholder="#tag1 #tag2 #tag3">
+          <button class="btn-copy btn-xs mt-1" onclick="copyText(this, document.getElementById('run-hashtags').value)">Copy</button>
+        </div>
+        <div>
           <label class="block text-sm text-gray-400 mb-1">Media files</label>
           <div class="flex gap-2 mb-2">
             <button class="btn-secondary btn-sm" onclick="pickFiles()">Select Files</button>
@@ -185,21 +200,6 @@
             <label class="block text-sm text-gray-400 mb-1">Speed</label>
             <input type="number" step="0.1" min="0.5" max="2.0" value="1.0" id="run-tts-speed">
           </div>
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">Title</label>
-          <input type="text" class="w-full text-sm bg-gray-700 border border-gray-600 rounded px-2 py-1" id="run-title" placeholder="Video title for social media">
-          <button class="btn-copy btn-xs mt-1" onclick="copyText(this, document.getElementById('run-title').value)">Copy</button>
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">Description</label>
-          <textarea class="w-full text-sm bg-gray-700 border border-gray-600 rounded px-2 py-1 h-24" id="run-description" placeholder="Video description for social media"></textarea>
-          <button class="btn-copy btn-xs mt-1" onclick="copyText(this, document.getElementById('run-description').value)">Copy</button>
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">Hashtags</label>
-          <input type="text" class="w-full text-sm bg-gray-700 border border-gray-600 rounded px-2 py-1" id="run-hashtags" placeholder="#tag1 #tag2 #tag3">
-          <button class="btn-copy btn-xs mt-1" onclick="copyText(this, document.getElementById('run-hashtags').value)">Copy</button>
         </div>
         <div class="flex items-center gap-4">
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-save-defaults"> Save as default</label>
