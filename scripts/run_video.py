@@ -616,6 +616,8 @@ def qa_check(mp4_path, timeline_seconds):
 def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
     title = str(storyboard.get("title", slug)).strip()
     topic = str(storyboard.get("topic", slug)).strip()
+    description = str(storyboard.get("description", "")).strip() or None
+    hashtags_str = str(storyboard.get("hashtags", "")).strip()
     narration = " ".join(
         str(scene["narration"]).strip() for scene in manifest["scenes"]
     )
@@ -649,8 +651,13 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
     total = round(sum(float(s["duration_seconds"]) for s in manifest["scenes"]))
     duration_str = f"{total}-second" if total != 1 else "1-second"
 
-    fb_tags = (topic_tags + ["#reels", "#learn", "#science"])[:9]
-    yt_tags = (["#Shorts"] + topic_tags)[:9]
+    if hashtags_str:
+        hashtags_list = [h.strip() for h in hashtags_str.split() if h.strip()]
+        fb_tags = hashtags_list[:9]
+        yt_tags = hashtags_list[:9]
+    else:
+        fb_tags = (topic_tags + ["#reels", "#learn", "#science"])[:9]
+        yt_tags = (["#Shorts"] + topic_tags)[:9]
 
     kit = {
         "video_file": mp4_path.relative_to(ROOT).as_posix(),
@@ -660,8 +667,8 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
         "aspect_ratio": "9:16",
         "platforms": {
             "facebook_reels": {
-                "title": f"{title} â€” {total}-Second Explainer",
-                "description": (
+                "title": title,
+                "description": description if description else (
                     f"{lead} Runtime: {total}s. Visuals: custom scene images."
                     + (f" Facts kept responsible: {caveats}" if caveats else "")
                     + (f" Sources: {sources}" if sources else "")
@@ -674,8 +681,8 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
                 ),
             },
             "youtube_shorts": {
-                "title": f"{title} â€” in {total} Seconds",
-                "description": (
+                "title": title,
+                "description": description if description else (
                     f"{lead} In under a minute: {title.lower()}."
                     + (f" Caveats: {caveats}" if caveats else "")
                     + (f" Sources: {sources}" if sources else "")
@@ -689,10 +696,6 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
                 ),
             },
         },
-        "pin_comment_suggestion": (
-            caveat_list[0].rstrip(".") if caveat_list else ""
-        ),
-        "generated_for": f"{stamp}_{slug} via run_video.py (user images)",
     }
 
     kit_path = mp4_path.with_suffix(".publishing.json")
@@ -701,10 +704,10 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
     )
     return kit_path
 
-
 def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
              overlay=True, overlay_duration=3.0, overlay_position="top",
-             music=None, scenes=None):
+             music=None, scenes=None, title=None, description=None,
+             hashtags=None):
     slug = slugify(run_name)
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -822,6 +825,13 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
         "source_suggestions": [],
         "scenes": scenes,
     }
+    # Override with user-provided title/description/hashtags if given
+    if title:
+        storyboard["title"] = title
+    if description:
+        storyboard["description"] = description
+    if hashtags:
+        storyboard["hashtags"] = hashtags
 
     # Build publishing kit (Facebook Reels + YouTube Shorts) before deleting SRT
     kit_path = build_publishing_kit(
@@ -881,6 +891,18 @@ def main():
         help="Background music track (mp3/wav/m4a/...); mixed under "
              "the narration with fades"
     )
+    parser.add_argument(
+        "--title", default=None,
+        help="Social media title"
+    )
+    parser.add_argument(
+        "--description", default=None,
+        help="Social media description"
+    )
+    parser.add_argument(
+        "--hashtags", default=None,
+        help="Social media hashtags"
+    )
     args = parser.parse_args()
 
     run_name = args.name or f"run_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -899,7 +921,8 @@ def main():
         return pipeline(run_name, args.media, args.no_open,
                         args.voice, args.tts_speed or 1.0,
                         args.overlay, args.overlay_duration,
-                        args.overlay_position, args.music, scenes)
+                        args.overlay_position, args.music, scenes,
+                        args.title, args.description, args.hashtags)
     except PipelineError as error:
         log("PIPELINE FAILED — " + str(error))
         return 1

@@ -312,6 +312,9 @@ class RunRequest(BaseModel):
     overlay_position: str = "top"
     scenes: list = []   # list of {scene_number, narration_segment, on_screen_text, duration_seconds}
     music: Optional[str] = None  # background music track (absolute path)
+    title: Optional[str] = None  # social media title
+    description: Optional[str] = None  # social media description
+    hashtags: Optional[str] = None  # social media hashtags
 
 
 def re_slug(name):
@@ -358,6 +361,12 @@ def _run_worker(job_id, req):
         else:
             cmd += ["--overlay-duration", str(req.overlay_duration),
                     "--overlay-position", req.overlay_position]
+        if req.title:
+            cmd += ["--title", req.title]
+        if req.description:
+            cmd += ["--description", req.description]
+        if req.hashtags:
+            cmd += ["--hashtags", req.hashtags]
         cmd += ["--no-open"]
 
         _put({"type": "log", "line": f"Command: {' '.join(cmd)}"})
