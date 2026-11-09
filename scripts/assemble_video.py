@@ -259,17 +259,25 @@ def overlay_drawtext(scene, duration, settings):
         _font_path = "C:/Windows/Fonts/arial.ttf"
     fontfile = _font_path.replace(":", "\\:")
 
-    # Render text at natural width so long lines and multi-line text
-    # (newlines preserved from textfile) are never cropped at either edge.
-    # Each line is centered with x=(w-text_w)/2.
-    return (
-        f",drawtext=fontfile='{fontfile}':textfile='{txt_ff}'"
-        f":expansion=none:"
-        f"fontsize={fontsize}:fontcolor=white:borderw=3:bordercolor=black:"
-        f"box=1:boxcolor=black@0.35:boxborderw=12:"
-        f"x=(w-text_w)/2:y={y_expr}:"
-        f"enable='between(t,{start:.2f},{end:.2f})'"
-    )
+    # Split text into individual lines (preserve newlines from textarea).
+    # Each line gets its own drawtext filter so every line is centered
+    # independently and never cropped at either frame edge.
+    lines = text.split("\n")
+    filters = []
+    for i, line in enumerate(lines):
+        # Escape single quotes and backslashes for FFmpeg drawtext text= option
+        safe_line = line.replace("\\", "\\\\").replace("'", "\\'")
+        # Offset each line by fontsize + line_spacing so they stack vertically
+        line_y = f"({y_base}) + {i} * ({fontsize} + 10)"
+        filters.append(
+            f",drawtext=fontfile='{fontfile}':text='{safe_line}'"
+            f":expansion=none:"
+            f"fontsize={fontsize}:fontcolor=white:borderw=3:bordercolor=black:"
+            f"box=1:boxcolor=black@0.35:boxborderw=12:"
+            f"x=(w-text_w)/2:y={line_y}:"
+            f"enable='between(t,{start:.2f},{end:.2f})'"
+        )
+    return "".join(filters)
 def normalize_image(scene, src, out, target_len, overlay_settings=None):
     """Image -> 1080x1920 full-frame static clip of target_len seconds.
 
