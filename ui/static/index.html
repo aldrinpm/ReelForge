@@ -366,7 +366,7 @@
         <div class="flex gap-2 items-start">
           <span class="text-xs text-gray-500 w-10">${num}</span>
           <textarea class="scene-narration flex-1 h-20 text-sm" placeholder="Narration for this scene..."></textarea>
-          <input type="text" class="scene-overlay w-40 text-sm" placeholder="Overlay text" maxlength="35" oninput="checkOverlayLimit(this)">
+          <input type="text" class="scene-overlay w-40 text-sm" placeholder="Overlay text" maxlength="35" oninput="checkOverlayLimit(this)" onpaste="setTimeout(() => checkOverlayLimit(this), 0)">
           <span class="text-xs text-red-400 hidden overlay-warn">Max 35 chars</span>
           <input type="number" class="scene-duration w-16 text-sm" value="${duration}" step="0.5" min="1">
           <button class="btn-danger btn-sm" onclick="removeScene(this)">Remove</button>
@@ -379,6 +379,8 @@
       const warn = input.parentElement.querySelector('.overlay-warn');
       if (input.value.length > 35) {
         warn.classList.remove('hidden');
+        input.value = input.value.slice(0, 35);
+        alert('Overlay text too long. Max 35 characters allowed.');
       } else {
         warn.classList.add('hidden');
       }
