@@ -88,10 +88,8 @@ def _probe_ffmpeg():
                            creationflags=subprocess.CREATE_NO_WINDOW)
         ver = (r.stdout or "").splitlines()[0] if r.returncode == 0 else ""
         status = "ok" if r.returncode == 0 else "down"
-        console_log(f"FFmpeg: {status} ({ver[:40]})", "DEBUG" if status == "ok" else "WARN")
         return {"status": status, "version": ver[:60]}
     except Exception as e:
-        console_log(f"FFmpeg probe failed: {e}", "ERROR")
         return {"status": "down", "error": str(e)}
 
 
