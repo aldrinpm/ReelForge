@@ -308,6 +308,7 @@ class RunRequest(BaseModel):
     prompt: str = ""
     media: list = []   # list of absolute file paths (optional; else reads inbox/<name>/)
     voice: Optional[str] = None
+    speed: float = 1.0
     overlay: bool = True
     overlay_duration: float = 3.0
     overlay_position: str = "top"
@@ -372,6 +373,8 @@ def _run_worker(job_id, req):
         cmd = [BASE_PY, str(SCRIPTS / "run_video.py"), slug]
         if req.voice:
             cmd += ["--voice", req.voice]
+        if req.speed and req.speed != 1.0:
+            cmd += ["--tts-speed", str(req.speed)]
         if req.music:
             # Defensive: coerce non-string/NaN values to a string path
             try:
