@@ -1,4 +1,4 @@
-﻿"""One-click end-to-end video pipeline (Task 8 orchestrator).
+"""One-click end-to-end video pipeline (Task 8 orchestrator).
 
 Usage:
     python run_video.py <run-name> [--storyboard PATH] [--no-open]
@@ -702,99 +702,71 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
     return kit_path
 
 
-def pipeline(run_name, storyboard_arg, no_open, write_run_note=False, args=None):
+def pipeline(run_name, media_files, prompt, no_open, voice=None, speed=1.0,
+             overlay=True, overlay_duration=3.0, overlay_position="top",
+             music=None):
     slug = slugify(run_name)
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    args = args or argparse.Namespace()
     cfg = cfg_mod.load_config()
-    tts_overrides = {
-        "voice": getattr(args, "voice", None),
-        "speed": getattr(args, "tts_speed", None),
-    }
-    tts_cfg = cfg_mod.resolve_tts_config(cfg, tts_overrides)
+    tts_cfg = {"voice": voice or "af_heart", "speed": speed}
     LOGS_DIR.mkdir(exist_ok=True)
     global log
     log = Log(LOGS_DIR / f"{stamp}_{slug}.log")
 
     log(f"=== run_video.py | {slug} | {stamp} ===")
-    run_dir = INBOX / run_name
-    if not run_dir.is_dir():
-        raise PipelineError(
-            f"Inbox folder not found: {run_dir}\n"
-            f"    FIX: create {run_dir} with prompt.txt + 6 images."
-        )
 
     # 0. Preflight
-    log("[1/7] Preflight")
-    topic, sources, media_types = read_inbox(run_dir, slug)
-    log(f"  Topic: {topic[:120]}{'â€¦' if len(topic) > 120 else ''}", indent=True)
+    log("[1/6] Preflight")
+    if not prompt:
+        raise PipelineError("Prompt is required.")
+    if not media_files:
+        raise PipelineError("At least one media file is required.")
+
+    sources = []
+    media_types = []
+    for m in media_files:
+        p = Path(m)
+        if not p.exists() or not p.is_file():
+            raise PipelineError(f"Media file not found: {m}")
+        sources.append(p)
+        t = media_type(p)
+        if t is None:
+            raise PipelineError(f"Unsupported file type: {p.name}")
+        media_types.append(t)
+
+    log(f"  Topic: {prompt[:120]}{'…' if len(prompt) > 120 else ''}", indent=True)
     log(f"  Media ({len(sources)}): "
         f"{[(p.name, t) for p, t in zip(sources, media_types)]}", indent=True)
 
-    # 1. Storyboard
-    if storyboard_arg:
-        storyboard_path = Path(storyboard_arg)
-        if not storyboard_path.exists():
-            raise PipelineError(f"Storyboard not found: {storyboard_path}")
-        storyboard = json.loads(
-            storyboard_path.read_text(encoding="utf-8-sig")
-        )
-        storyboard_rel = (
-            storyboard_path.relative_to(ROOT).as_posix()
-            if storyboard_path.is_relative_to(ROOT)
-            else str(storyboard_path)
-        )
-        log("[2/7] Storyboard: using provided "
-            f"{storyboard_path.name} (LM Studio not needed)")
-    else:
-        log("[2/7] Storyboard: generating locally from prompt")
-        storyboard = generate_storyboard_locally(topic, len(sources))
-        storyboard_name = f"{stamp}_{slug}_storyboard.json"
-        storyboard_path = OUTPUT_DIR / storyboard_name
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        storyboard_path.write_text(
-            json.dumps(storyboard, indent=2, ensure_ascii=False),
-            encoding="utf-8",
-        )
-        storyboard_rel = storyboard_name
-        total_dur = sum(float(s["duration_seconds"]) for s in storyboard["scenes"])
-        log(f"  Storyboard ready: {len(storyboard['scenes'])} scenes, "
-            f"{total_dur}s total", indent=True)
-
-    scenes = validate_storyboard(storyboard, storyboard_path.name)
+    # 1. Storyboard (generated locally from prompt, no LLM)
+    log("[2/6] Storyboard: generating locally from prompt")
+    storyboard = generate_storyboard_locally(prompt, len(sources))
+    scenes = validate_storyboard(storyboard, "local")
     n = len(sources)
-    if n == 0:
-        raise PipelineError("No images found in inbox.")
     if len(scenes) > n:
-        # More scenes than images: keep only first N to match staged images
         scenes = scenes[:n]
-        # renumber
         for idx, sc in enumerate(scenes, start=1):
             sc['scene_number'] = idx
     if len(scenes) != n:
-        # fallback: repeat scenes? no. fail with actionable message
         raise PipelineError(
-            f"Storyboard has {len(scenes)} scenes but inbox has "
-            f"{n} images. Add {n+len(scenes)}? Add {n} more images or change "
-            f"topic to request {n} scenes."
+            f"Storyboard has {len(scenes)} scenes but {n} media files provided."
         )
     storyboard_title = str(storyboard.get("title", "")).strip() or slug
 
-    # 2. Stage workspace
-    log("[3/7] Staging images + manifest (archiving previous run first)")
-    archive_workspace(stamp)
+    # 2. Stage images directly (no inbox, no archive)
+    log("[3/6] Staging images (normalize + manifest)")
     if not IMAGES_DIR.exists():
         IMAGES_DIR.mkdir()
     stage_images_and_manifest(scenes, sources, media_types, slug,
-                              storyboard_rel, storyboard_title)
+                              None, storyboard_title)
 
     # 3. Narration + auto-fit
-    log("[4/7] Narration (Kokoro, CPU) + auto-fit scene durations")
+    log("[4/6] Narration (Kokoro, CPU) + auto-fit scene durations")
     generate_narration_and_fit(scenes, tts_cfg)
 
-    # 4. Subtitles + verification gate
-    log("[5/7] Subtitles + verification")
+    # 4. Subtitles + verification (temporary SRT for burned captions)
+    log("[5/6] Subtitles + verification")
     srt_path = SUBTITLES_DIR / f"{slug}.srt"
     run_step(
         [BASE_PY, str(SCRIPTS / "generate_subtitles.py"),
@@ -806,19 +778,19 @@ def pipeline(run_name, storyboard_arg, no_open, write_run_note=False, args=None)
         "subtitle verification", cwd=ROOT,
     )
 
-    # 5. Assembly
-    log("[6/7] Assembly (crossfades + burned captions)")
+    # 5. Assembly -> MP4 only (burned captions, no SRT sidecar)
+    log("[6/6] Assembly (crossfades + burned captions)")
     mp4_path = OUTPUT_DIR / f"{stamp}_{slug}.mp4"
     assemble_cmd = [
         str(VENV_PY), str(SCRIPTS / "assemble_video.py"),
         "--srt", str(srt_path), "--out", str(mp4_path),
-        ("--no-overlay" if not getattr(args, "overlay", True) else "--overlay"),
-        "--overlay-duration", str(getattr(args, "overlay_duration", 3.0)),
-        "--overlay-position", getattr(args, "overlay_position", "top"),
-        "--overlay-fontsize", str(getattr(args, "overlay_fontsize", 52)),
+        ("--no-overlay" if not overlay else "--overlay"),
+        "--overlay-duration", str(overlay_duration),
+        "--overlay-position", overlay_position,
+        "--overlay-fontsize", "52",
     ]
-    if getattr(args, "music", None):
-        music_file = Path(args.music)
+    if music:
+        music_file = Path(music)
         if not music_file.is_file():
             raise PipelineError(f"Background music file not found: {music_file}")
         if music_file.suffix.lower() not in MUSIC_EXTS:
@@ -832,54 +804,48 @@ def pipeline(run_name, storyboard_arg, no_open, write_run_note=False, args=None)
     if not mp4_path.exists():
         raise PipelineError("Assembly reported success but no MP4 exists.")
 
-    # 6. QA + publishing kit
-    log("[7/7] QA + publishing kit")
+    # Clean up temporary SRT (only MP4 should exist in output)
+    try:
+        srt_path.unlink()
+    except OSError:
+        pass
+
+    # QA
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     timeline_seconds = sum(
         float(scene["duration_seconds"]) for scene in manifest["scenes"]
     )
     qa_check(mp4_path, timeline_seconds)
 
-    sidecar_srt = mp4_path.with_suffix(".srt")
-    shutil.copyfile(str(srt_path), str(sidecar_srt))
-    kit_path = build_publishing_kit(
-        storyboard, manifest, mp4_path, srt_path, stamp, slug
-    )
-
     log("")
     log("=" * 60)
     log("=" * 60)
     log("READY TO UPLOAD:")
-    log(f"  video:    {mp4_path.name} ({mp4_path.stat().st_size / 1_048_576:.1f} MB)")
-    log(f"  captions: {sidecar_srt.name} (+ burned in)")
-    log(f"  kit:      {kit_path.name}")
-    log(f"  log:      {log.path}")
-    log("  storyboard: " + storyboard_rel)
-    if write_run_note:
-        try:
-            run_step(
-                [BASE_PY, str(SCRIPTS / "write_run_note.py"), "--mp4", str(mp4_path)],
-                "run note (Obsidian)", cwd=ROOT,
-            )
-        except PipelineError as note_err:
-            log(f"  WARNING: run note failed (non-fatal): {note_err}", indent=True)
+    log(f"  video:  {mp4_path.name} ({mp4_path.stat().st_size / 1_048_576:.1f} MB)")
+    log(f"  log:    {log.path}")
+    log("")
 
     return 0
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="One-click video pipeline: inbox/<name> -> finished MP4."
+        description="One-click video pipeline: media + prompt -> finished MP4."
     )
-    parser.add_argument("run_name", help="Folder name under inbox/")
     parser.add_argument(
-        "--storyboard", default=None,
-        help="Use an existing storyboard JSON instead of LM Studio",
+        "--media", nargs="+", default=[],
+        help="Media files (images/clips) for the video",
+    )
+    parser.add_argument(
+        "prompt", nargs="?", default=None,
+        help="Video topic / prompt (positional or via --prompt)",
+    )
+    parser.add_argument(
+        "--prompt", default=None,
+        help="Video topic / prompt",
     )
     parser.add_argument("--no-open", action="store_true",
                         help="Do not open the output folder at the end")
-    parser.add_argument("--write-run-note", action="store_true",
-                        help="Write an Obsidian (PARA) run note to vault/1. Projects/")
     parser.add_argument("--voice", default=None, help="TTS voice (e.g. af_heart)")
     parser.add_argument("--tts-speed", type=float, default=None, dest="tts_speed")
     parser.add_argument("--overlay", dest="overlay", action="store_true", default=True,
@@ -899,19 +865,28 @@ def main():
     )
     args = parser.parse_args()
 
+    prompt = args.prompt
+    if not prompt:
+        parser.error("A prompt/topic is required.")
+
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_name = f"run_{ts}"
+
     global log
     # Provisional logger before the real one exists (pre-slug failures).
     LOGS_DIR.mkdir(exist_ok=True)
     log = Log(LOGS_DIR / "boot.log")
 
     try:
-        return pipeline(args.run_name, args.storyboard, args.no_open,
-                        args.write_run_note, args)
+        return pipeline(run_name, args.media, prompt, args.no_open,
+                        args.voice, args.tts_speed or 1.0,
+                        args.overlay, args.overlay_duration,
+                        args.overlay_position, args.music)
     except PipelineError as error:
-        log("PIPELINE FAILED â€” " + str(error))
+        log("PIPELINE FAILED — " + str(error))
         return 1
     except Exception:  # noqa: BLE001 - log everything, fail loudly
-        log("PIPELINE FAILED â€” unexpected error:\n"
+        log("PIPELINE FAILED — unexpected error:\n"
             + traceback.format_exc())
         return 1
 

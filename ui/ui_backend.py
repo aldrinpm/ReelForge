@@ -312,43 +312,7 @@ class RunRequest(BaseModel):
     overlay: bool = True
     overlay_duration: float = 3.0
     overlay_position: str = "top"
-    write_run_note: bool = False
     music: Optional[str] = None  # background music track (absolute path)
-
-
-def _prepare_inbox(job_id, req):
-    """Create inbox/<name>/ with prompt.txt + media files (copied). Returns (slug, inbox_dir)."""
-    slug = re_slug(req.name)
-    inbox_dir = ROOT / "inbox" / slug
-    inbox_dir.mkdir(parents=True, exist_ok=True)
-    if req.prompt.strip():
-        (inbox_dir / "prompt.txt").write_text(req.prompt.strip(), encoding="utf-8")
-    for m in req.media:
-        src = Path(m)
-        if src.exists() and src.is_file():
-            dst = inbox_dir / src.name
-            # Skip if source and destination are the same file
-            try:
-                same = src.resolve() == dst.resolve()
-            except Exception:
-                same = False
-            if same:
-                console_log(f"Skipping same-file copy: {src}", "DEBUG")
-                continue
-            console_log(f"Copying {src} -> {dst}", "DEBUG")
-            shutil.copy2(str(src), str(dst))
-    if req.music:
-        try:
-            src = Path(str(req.music))
-            if src.is_file():
-                dst = inbox_dir / src.name
-                if src.resolve() != dst.resolve():
-                    console_log(f"Anchoring music into inbox: {src.name}", "DEBUG")
-                    shutil.copy2(str(src), str(dst))
-                req.music = str(dst)
-        except Exception as e:
-            console_log(f"Could not anchor music into inbox: {e}", "WARN")
-    return slug, inbox_dir
 
 
 def re_slug(name):
@@ -365,44 +329,28 @@ def _run_worker(job_id, req):
         history.append(msg)
     try:
         console_log(f"Starting run: {req.name}", "INFO")
-        slug, inbox_dir = _prepare_inbox(job_id, req)
+        slug = re_slug(req.name)
         job["slug"] = slug
-        console_log(f"Inbox prepared: {inbox_dir} ({len(list(inbox_dir.iterdir()))} files)", "INFO")
 
-        # Build command
-        cmd = [BASE_PY, str(SCRIPTS / "run_video.py"), slug]
+        # Build command - pass media files directly, no inbox copy
+        cmd = [BASE_PY, str(SCRIPTS / "run_video.py"), slug,
+               "--media"] + [str(m) for m in (req.media or [])]
         if req.voice:
             cmd += ["--voice", req.voice]
         if req.speed and req.speed != 1.0:
             cmd += ["--tts-speed", str(req.speed)]
         if req.music:
-            # Defensive: coerce non-string/NaN values to a string path
-            try:
-                req.music = str(req.music).strip()
-            except Exception:
-                req.music = None
-            # Skip malformed values (e.g. a leftover JS object leaked through as JSON)
-            if req.music and not req.music.startswith("{") and not req.music.startswith("["):
-                music_path = Path(req.music)
-                if not music_path.is_file():
-                    console_log(f"Music file NOT found: {req.music}", "WARN")
-                    raise FileNotFoundError(f"Music file not found: {req.music}")
-                console_log(f"Background music: {music_path.name}", "INFO")
-                cmd += ["--music", str(music_path)]
-            else:
-                # Keep a diagnostic either way (malformed path leak or truly unselected)
-                if req.music:
-                    console_log(f"Music value ignored (not a path): {req.music}", "WARN")
-                else:
-                    console_log("No background music selected (skipped)", "DEBUG")
-                req.music = None
+            music_path = Path(str(req.music).strip())
+            if not music_path.is_file():
+                console_log(f"Music file NOT found: {req.music}", "WARN")
+                raise FileNotFoundError(f"Music file not found: {req.music}")
+            console_log(f"Background music: {music_path.name}", "INFO")
+            cmd += ["--music", str(music_path)]
         if not req.overlay:
             cmd += ["--no-overlay"]
         else:
             cmd += ["--overlay-duration", str(req.overlay_duration),
                     "--overlay-position", req.overlay_position]
-        if req.write_run_note:
-            cmd += ["--write-run-note"]
         cmd += ["--no-open"]
 
         _put({"type": "log", "line": f"Command: {' '.join(cmd)}"})
@@ -434,19 +382,11 @@ def _run_worker(job_id, req):
             key=lambda p: p.stat().st_mtime,
         )
         mp4 = mp4s[-1] if mp4s else None
-        kit = mp4.with_suffix(".publishing.json") if mp4 else None
-        srt = mp4.with_suffix(".srt") if mp4 else None
-        # Contact sheet (cosmetic)
-        cs_matches = sorted((ROOT / "images").glob(f"contact_sheet*.jpg"), key=lambda p: p.stat().st_mtime)
-        cs = cs_matches[-1] if cs_matches else None
 
         job["status"] = "done"
         job["result"] = {
             "mp4": str(mp4.relative_to(ROOT)) if mp4 else None,
             "size_mb": round(mp4.stat().st_size / 1_048_576, 1) if mp4 else 0,
-            "kit": json.loads(kit.read_text(encoding="utf-8")) if kit and kit.exists() else None,
-            "srt": str(srt.relative_to(ROOT)) if srt and srt.exists() else None,
-            "contact_sheet": str(cs.relative_to(ROOT)) if cs and cs.exists() else None,
         }
         console_log(f"Run {slug} COMPLETE: {mp4.name if mp4 else 'no mp4'}", "INFO")
         _put({"type": "done"})
@@ -534,17 +474,10 @@ def run_by_name_result(stem: str):
     mp4 = ROOT / "output" / f"{stem}.mp4"
     if not mp4.exists():
         raise HTTPException(404, "Run not found")
-    kit = mp4.with_name(mp4.stem + ".publishing.json")
-    srt = mp4.with_name(mp4.stem + ".srt")
-    cs_matches = sorted((ROOT / "images").glob("contact_sheet*.jpg"), key=lambda p: p.stat().st_mtime)
-    cs = cs_matches[-1] if cs_matches else None
     return {
         "status": "done",
         "mp4": str(mp4.relative_to(ROOT)),
         "size_mb": round(mp4.stat().st_size / 1_048_576, 1),
-        "kit": json.loads(kit.read_text(encoding="utf-8")) if kit.exists() else None,
-        "srt": str(srt.relative_to(ROOT)) if srt.exists() else None,
-        "contact_sheet": str(cs.relative_to(ROOT)) if cs and cs.exists() else None,
     }
 
 
@@ -567,32 +500,6 @@ def serve_file(file_path: str):
     except ValueError:
         raise HTTPException(403, "Forbidden")
     return FileResponse(str(full))
-
-
-# --- Inbox details (for re-run) ---
-
-@app.get("/inbox/{name}")
-def inbox_details(name: str):
-    import re
-    slug = re.sub(r"[^A-Za-z0-9_-]+", "_", name).strip("_")
-    inbox_dir = ROOT / "inbox" / slug
-    if not inbox_dir.exists():
-        # Try to find by partial match
-        matches = [d for d in (ROOT / "inbox").iterdir() if d.is_dir() and slug.lower() in d.name.lower()]
-        if matches:
-            inbox_dir = matches[0]
-            slug = inbox_dir.name
-        else:
-            raise HTTPException(404, f"Inbox folder not found: {name}")
-    prompt = ""
-    prompt_path = inbox_dir / "prompt.txt"
-    if prompt_path.exists():
-        prompt = prompt_path.read_text(encoding="utf-8").strip()
-    media = sorted(
-        [str(p) for p in inbox_dir.iterdir() if p.is_file() and p.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp", ".mp4", ".mov", ".mkv", ".avi", ".webm", ".m4v", ".mpg", ".mpeg", ".flv", ".wmv", ".gif")],
-        key=lambda x: Path(x).name.lower(),
-    )
-    return {"name": slug, "prompt": prompt, "media": media, "media_names": [Path(m).name for m in media]}
 
 @app.post("/pick-files")
 def pick_files():

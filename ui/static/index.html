@@ -35,7 +35,6 @@
     .dot-degraded { background: #eab308; }
     .health-row { display: flex; align-items: center; margin-bottom: 0.25rem; font-size: 0.875rem; }
     .log-box { background: #111827; border: 1px solid #374151; border-radius: 0.375rem; padding: 0.75rem; height: 18rem; overflow: auto; font-family: monospace; font-size: 0.75rem; color: #86efac; white-space: pre-wrap; user-select: text; }
-    .kit-field { background: #111827; border: 1px solid #374151; border-radius: 0.375rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #f3f4f6; margin-bottom: 0.5rem; cursor: pointer; user-select: text; -webkit-user-select: text; overflow-wrap: anywhere; word-break: break-word; }
 .log-wrapper { position: relative; }
 .log-wrapper.expanded { position: fixed; top: 4rem; left: 2rem; right: 2rem; bottom: 2rem; z-index: 9999; border-radius: 0.5rem; box-shadow: 0 0 2rem rgba(0,0,0,0.5); background: #1f2937; display: flex; flex-direction: column; }
 .log-wrapper.expanded .log-box { height: auto; flex: 1; min-height: 0; border-radius: 0; border: none; background: transparent; }
@@ -151,10 +150,6 @@
       <h2 class="text-2xl font-semibold mb-4">New Run</h2>
       <div class="card space-y-4">
         <div>
-          <label class="block text-sm text-gray-400 mb-1">Run name</label>
-          <input type="text" id="run-name" placeholder="my_video">
-        </div>
-        <div>
           <div class="flex justify-between items-center mb-1">
             <label class="block text-sm text-gray-400">Topic / prompt</label>
             <div class="flex gap-2">
@@ -162,7 +157,7 @@
               <button class="btn-secondary btn-sm" onclick="clearPrompt()">Clear</button>
             </div>
           </div>
-          <textarea id="run-prompt" class="h-24" placeholder="Type/paste your video topic or full creative brief, or attach a .txt file..."></textarea>
+          <textarea id="run-prompt" class="h-24" placeholder="Type/paste your video topic or full creative brief..."></textarea>
           <input type="file" id="run-prompt-file" accept=".txt,text/plain" class="hidden" onchange="onPromptFilePicked()">
         </div>
         <div>
@@ -187,10 +182,9 @@
             <input type="number" step="0.1" min="0.5" max="2.0" value="1.0" id="run-tts-speed">
           </div>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-save-defaults"> Save as default</label>
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-overlay" checked> Burn overlays</label>
-          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-writenote"> Write Obsidian note</label>
         </div>
         <div>
           <label class="block text-sm text-gray-400 mb-1">Background music (optional)</label>
@@ -277,7 +271,6 @@
     let eventSource = null;
     let consoleAutoScroll = true;
     let result = null;
-    let srtText = '';
 
     // Health
     function loadHealth() {
@@ -460,10 +453,11 @@
 
     // Run
     async function startRun() {
-      const name = document.getElementById('run-name').value.trim();
       const prompt = document.getElementById('run-prompt').value.trim();
+      const ts = new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, '');
+      const name = 'run_' + ts;
       document.getElementById('run-status').textContent = 'startRun called: name=' + name + ', files=' + selectedFiles.length;
-      if (!name) { alert('Enter a run name'); return; }
+      if (!prompt) { alert('Enter a topic or prompt'); return; }
       if (selectedFiles.length === 0) { alert('Select at least one media file'); return; }
       const btn = document.querySelector('#newrun button.btn-primary');
       btn.disabled = true; btn.textContent = 'Starting...';
@@ -475,7 +469,6 @@
             voice: document.getElementById('run-voice').value || null,
             speed: parseFloat(document.getElementById('run-tts-speed').value),
             overlay: document.getElementById('run-overlay').checked,
-            write_run_note: document.getElementById('run-writenote').checked,
             music: (selectedMusic && typeof selectedMusic === 'string') ? selectedMusic : null
           })
         });
@@ -551,124 +544,21 @@
       const data = await res.json();
       renderResult(data, jobId);
     }
-    // Shared result renderer: used by a fresh run (jobId set, note button on)
-    // and by History -> View (jobId null, no live job to write a note for).
+    // Shared result renderer: used by a fresh run (jobId set) and by History -> View.
     async function renderResult(data, jobId) {
       const el = document.getElementById('result-content');
       result = data;
       if (data.status !== 'done') { el.textContent = 'Status: ' + data.status + (data.error ? ' — ' + data.error : ''); return; }
       let html = '';
       if (data.mp4) {
-        const player = data.contact_sheet
-          ? `<div class="video-fit"><video controls id="result-video" preload="metadata" src="/files/${data.mp4}"></video></div>`
-          : `<video controls class="w-full rounded" src="/files/${data.mp4}"></video>`;
-        html += `<div class="mb-4"><h3 class="font-semibold mb-2">Video</h3>${player}<p class="text-sm text-gray-400 mt-1">${data.mp4} (${data.size_mb} MB)</p></div>`;
+        html += `<div class="mb-4"><h3 class="font-semibold mb-2">Video</h3>
+          <video controls class="w-full rounded" src="/files/${data.mp4}"></video>
+          <p class="text-sm text-gray-400 mt-1">${data.mp4} (${data.size_mb} MB)</p></div>`;
       }
-      if (data.contact_sheet) {
-        html += `<div class="mb-4"><h3 class="font-semibold mb-2">Contact Sheet</h3><img id="contact-sheet-img" src="/files/${data.contact_sheet}" class="w-full rounded" alt="Contact sheet"></div>`;
-      }
-      if (data.srt) {
-        try {
-          const srtRes = await fetch('/files/' + data.srt);
-          const srtText = await srtRes.text();
-          html += `<div class="mb-4"><h3 class="font-semibold mb-2">Subtitles (SRT)</h3><pre class="text-xs text-gray-300 bg-gray-900 rounded p-3 h-48 overflow-auto">${escapeHtml(srtText)}</pre></div>`;
-        } catch(e) {}
-      }
-      if (data.kit) {
-        html += `<div class="mb-4"><h3 class="font-semibold mb-2">Publishing Kit</h3>
-          <div class="text-xs text-gray-500 mb-2">Click inside any field, then Ctrl+C / Cmd+C to copy.</div>`;
-        const fb = data.kit.platforms?.facebook_reels;
-        const yt = data.kit.platforms?.youtube_shorts;
-        if (fb) {
-          html += `<div class="bg-gray-900 rounded p-3 mb-2">
-            <div class="font-medium text-blue-300 mb-1">Facebook Reels</div>
-            <div class="kit-field" data-copy="${escapeHtml(fb.title)}">${escapeHtml(fb.title)}</div>
-            <div class="kit-field" data-copy="${escapeHtml(fb.description)}">${escapeHtml(fb.description)}</div>
-            <div class="kit-field" data-copy="${escapeHtml((fb.hashtags||[]).join(' '))}">${escapeHtml((fb.hashtags||[]).join(' '))}</div>
-            <button class="btn-secondary btn-sm" onclick="copyKitFields(this)">Copy all (Facebook)</button>
-          </div>`;
-        }
-        if (yt) {
-          html += `<div class="bg-gray-900 rounded p-3 mb-2">
-            <div class="font-medium text-red-300 mb-1">YouTube Shorts</div>
-            <div class="kit-field" data-copy="${escapeHtml(yt.title)}">${escapeHtml(yt.title)}</div>
-            <div class="kit-field" data-copy="${escapeHtml(yt.description)}">${escapeHtml(yt.description)}</div>
-            <div class="kit-field" data-copy="${escapeHtml((yt.hashtags||[]).join(' '))}">${escapeHtml((yt.hashtags||[]).join(' '))}</div>
-            <button class="btn-secondary btn-sm" onclick="copyKitFields(this)">Copy all (YouTube)</button>
-          </div>`;
-        }
-        html += `</div>`;
-      }
-      html += `<div class="mt-3 flex gap-2">
-        <button class="btn-secondary btn-sm" onclick="openFolder()">Open Folder</button>
-        ${jobId ? `<button class="btn-secondary btn-sm" id="write-note-btn" onclick="writeRunNote('${jobId}')">Write Run Note</button>` : ''}
-      </div>`;
+      html += `<div class="mt-3"><button class="btn-secondary btn-sm" onclick="openFolder()">Open Folder</button></div>`;
       el.innerHTML = html;
-      syncVideoToContactSheet();
     }
-    async function writeRunNote(jobId) {
-      const btn = document.getElementById('write-note-btn');
-      if (btn) { btn.disabled = true; btn.textContent = 'Writing...'; }
-      try {
-        const r = await fetch('/run/' + jobId + '/write-note', { method: 'POST' });
-        const d = await r.json();
-        if (!d.ok) throw new Error(d.error || 'write-run-note failed');
-        alert('Run note written: ' + (d.note || 'see vault/1. Projects/'));
-        loadHistory();
-      } catch (e) {
-        alert('Could not write run note: ' + e.message);
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'Write Run Note'; }
-      }
-    }
-    // Match the video element's height to the contact sheet image's
-    // rendered height, sizing the video to fit that height using its own
-    // aspect ratio. Display scaling only — the MP4 file is never
-    // re-encoded, so quality is unaffected; object-fit: contain means the
-    // full frame always stays visible (no cropping).
-    function applyVideoFit(video, sheet) {
-      const sheetHeight = Math.round(sheet.getBoundingClientRect().height);
-      if (sheetHeight <= 0) return; // sheet not laid out yet; load/resize retries
-      video.style.height = sheetHeight + 'px';
-      if (video.videoWidth && video.videoHeight) {
-        const maxBox = video.parentElement ? video.parentElement.clientWidth : 0;
-        const fitWidth = Math.round(sheetHeight * video.videoWidth / video.videoHeight);
-        video.style.width = Math.min(maxBox, fitWidth) + 'px';
-      }
-    }
-    function syncVideoToContactSheet() {
-      const video = document.getElementById('result-video');
-      const sheet = document.getElementById('contact-sheet-img');
-      if (!video || !sheet) return;
-      if (sheet.complete && sheet.naturalWidth) applyVideoFit(video, sheet);
-      else sheet.addEventListener('load', () => applyVideoFit(video, sheet), { once: true });
-      video.addEventListener('loadedmetadata', () => applyVideoFit(video, sheet), { once: true });
-    }
-    window.addEventListener('resize', () => {
-      const video = document.getElementById('result-video');
-      const sheet = document.getElementById('contact-sheet-img');
-      if (video && sheet) applyVideoFit(video, sheet);
-    });
     function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function copyKitFields(btn) {
-      const parent = btn && btn.parentElement ? btn.parentElement : null;
-      const fields = parent ? Array.from(parent.querySelectorAll('.kit-field')) : [];
-      const text = fields.map(f => (f.textContent || '').trim()).filter(Boolean).join('\n\n');
-      const msg = text;
-      const write = (t) => {
-        if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
-        const ta = document.createElement('textarea');
-        ta.value = t; ta.style.position='fixed'; ta.style.top='-1000px';
-        document.body.appendChild(ta); ta.select();
-        try { document.execCommand('copy'); } catch(e) {}
-        document.body.removeChild(ta);
-        return Promise.resolve();
-      };
-      write(msg || '').then(() => {
-        const s = document.getElementById('run-status');
-        if (s) { s.textContent = 'Copied to clipboard'; setTimeout(() => s.textContent = '', 1500); }
-      }).catch(() => { alert('Copied:\\n\\n' + msg); });
-    }
     function openFolder() {
       const mp4 = result && result.mp4 ? String(result.mp4).replace(/\\/g, '/') : '';
       const dir = mp4 ? mp4.split('/').slice(0, -1).join('/') : 'output';
