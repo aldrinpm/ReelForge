@@ -183,10 +183,6 @@
               <span id="run-voice-status" class="text-xs text-gray-500"></span>
             </div>
           </div>
-          <div>
-            <label class="block text-sm text-gray-400 mb-1">LLM model</label>
-            <select id="run-model"><option value="">Default (config)</option></select>
-          </div>
         </div>
         <div class="flex items-center gap-4">
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-overlay" checked> Burn overlays</label>
@@ -238,40 +234,6 @@
     <div id="settings" class="section">
       <h2 class="text-2xl font-semibold mb-4">Settings</h2>
       <div class="card space-y-4">
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">LLM Provider</label>
-          <select id="s-llm-provider">
-            <option value="lmstudio">LM Studio (local)</option>
-            <option value="ollama">Ollama (local)</option>
-            <option value="openai">OpenAI (cloud)</option>
-            <option value="openrouter">OpenRouter (cloud)</option>
-            <option value="groq">Groq (cloud)</option>
-            <option value="together">Together (cloud)</option>
-            <option value="custom" selected>Custom</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">LLM Model</label>
-          <input type="text" id="s-llm-model" value="beam">
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">LLM Base URL</label>
-          <input type="text" id="s-llm-url" value="https://ollama.com/api" placeholder="https://ollama.com/api">
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">LLM API Key</label>
-          <input type="password" id="s-llm-key" placeholder="(or set env var)">
-        </div>
-        <div class="grid2">
-          <div>
-            <label class="block text-sm text-gray-400 mb-1">Temperature</label>
-            <input type="number" step="0.1" id="s-temperature" value="0.4">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-400 mb-1">Max Tokens</label>
-            <input type="number" id="s-max-tokens" value="131072">
-          </div>
-        </div>
         <div>
           <label class="block text-sm text-gray-400 mb-1">TTS Voice</label>
           <select id="s-tts-voice"></select>
@@ -354,7 +316,7 @@
     }
     function loadConfigPanel() {
       fetch('/config').then(r=>r.json()).then(d => {
-        document.getElementById('config-panel').innerHTML = `<div class="text-sm">LLM: ${d.llm?.provider || '?'} / ${(d.llm?.model || '?').split('/').pop()}</div><div class="text-sm">Voice: ${d.tts?.voice || '?'}</div>`;
+        document.getElementById('config-panel').innerHTML = `<div class="text-sm">Voice: ${d.tts?.voice || '?'}</div>`;
       }).catch(e => {});
     }
     function loadRuns() {
@@ -484,14 +446,6 @@
     function previewSettingsVoice() {
       previewVoice(document.getElementById('s-tts-voice').value, 's-voice-status');
     }
-    async function loadModels() {
-      try { const r = await fetch('/models'); const d = await r.json();
-        const sel = document.getElementById('run-model');
-        (d.models || []).forEach(m => {
-          const o = document.createElement('option'); o.value = m; o.textContent = m.split('/').pop(); sel.appendChild(o);
-        });
-      } catch(e) {}
-    }
 
     // Background music selection (real path needed by the pipeline)
     let selectedMusic = null;
@@ -546,8 +500,6 @@
           body: JSON.stringify({
             name, prompt, media: selectedFiles,
             voice: document.getElementById('run-voice').value || null,
-            llm: null,
-            llm_model: document.getElementById('run-model').value || null,
             overlay: document.getElementById('run-overlay').checked,
             write_run_note: document.getElementById('run-writenote').checked,
             music: (selectedMusic && typeof selectedMusic === 'string') ? selectedMusic : null
@@ -756,12 +708,6 @@
     async function loadSettings() {
       try {
         const r = await fetch('/config'); const d = await r.json();
-        document.getElementById('s-llm-provider').value = d.llm?.provider || 'lmstudio';
-        document.getElementById('s-llm-model').value = d.llm?.model || '';
-        document.getElementById('s-llm-url').value = d.llm?.base_url || '';
-        document.getElementById('s-llm-key').value = d.llm?.api_key || '';
-        document.getElementById('s-temperature').value = d.llm?.temperature ?? 0.4;
-        document.getElementById('s-max-tokens').value = d.llm?.max_tokens ?? 4500;
         document.getElementById('s-tts-speed').value = d.tts?.speed ?? 1.0;
         const voiceSel = document.getElementById('s-tts-voice');
         voiceSel.innerHTML = '';
@@ -772,14 +718,6 @@
     }
     async function saveSettings() {
       const cfg = {
-        llm: {
-          provider: document.getElementById('s-llm-provider').value,
-          model: document.getElementById('s-llm-model').value,
-          base_url: document.getElementById('s-llm-url').value,
-          api_key: document.getElementById('s-llm-key').value,
-          temperature: parseFloat(document.getElementById('s-temperature').value),
-          max_tokens: parseInt(document.getElementById('s-max-tokens').value),
-        },
         tts: {
           voice: document.getElementById('s-tts-voice').value,
           speed: parseFloat(document.getElementById('s-tts-speed').value),
@@ -792,18 +730,12 @@
       alert('Saved');
     }
     async function resetSettings() {
-      if (!confirm('Reset the editable settings to built-in defaults? This overwrites the current llm/tts values in config.json.')) return;
+      if (!confirm('Reset the editable settings to built-in defaults? This overwrites the current tts values in config.json.')) return;
       try {
         const r = await fetch('/config/defaults');
         const d = await r.json();
         if (!d.config) throw new Error(d.error || 'defaults unavailable');
         const cfg = d.config;
-        document.getElementById('s-llm-provider').value = cfg.llm.provider;
-        document.getElementById('s-llm-model').value = cfg.llm.model;
-        document.getElementById('s-llm-url').value = cfg.llm.base_url;
-        document.getElementById('s-llm-key').value = cfg.llm.api_key;
-        document.getElementById('s-temperature').value = cfg.llm.temperature;
-        document.getElementById('s-max-tokens').value = cfg.llm.max_tokens;
         document.getElementById('s-tts-speed').value = cfg.tts.speed;
         const vs = document.getElementById('s-tts-voice');
         if (vs) {
@@ -897,7 +829,7 @@
     // Init
     document.addEventListener('DOMContentLoaded', function() {
       showTab('dashboard');
-      loadHealth(); loadConfigPanel(); loadRuns(); loadVoices(); loadModels(); loadSettings(); loadHistory();
+      loadHealth(); loadConfigPanel(); loadRuns(); loadVoices(); loadSettings(); loadHistory();
       // Load console history
       fetch('/console/history').then(r=>r.json()).then(d => {
         const el = document.getElementById('console-log');
