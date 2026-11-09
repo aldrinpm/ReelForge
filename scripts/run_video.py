@@ -814,6 +814,15 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
     )
     qa_check(mp4_path, timeline_seconds)
 
+    # Build storyboard dict for publishing kit (scenes provided by UI)
+    storyboard = {
+        "title": scenes[0].get("narration_segment", slug)[:60] if scenes else slug,
+        "topic": scenes[0].get("narration_segment", slug)[:60] if scenes else slug,
+        "fact_check_notes": [],
+        "source_suggestions": [],
+        "scenes": scenes,
+    }
+
     # Build publishing kit (Facebook Reels + YouTube Shorts) before deleting SRT
     kit_path = build_publishing_kit(
         storyboard, manifest, mp4_path, srt_path, stamp, slug
