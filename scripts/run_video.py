@@ -704,7 +704,7 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
 
 def pipeline(run_name, media_files, prompt, no_open, voice=None, speed=1.0,
              overlay=True, overlay_duration=3.0, overlay_position="top",
-             music=None):
+             music=None, scenes=None):
     slug = slugify(run_name)
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -739,20 +739,19 @@ def pipeline(run_name, media_files, prompt, no_open, voice=None, speed=1.0,
     log(f"  Media ({len(sources)}): "
         f"{[(p.name, t) for p, t in zip(sources, media_types)]}", indent=True)
 
-    # 1. Storyboard (generated locally from prompt, no LLM)
-    log("[2/6] Storyboard: generating locally from prompt")
-    storyboard = generate_storyboard_locally(prompt, len(sources))
-    scenes = validate_storyboard(storyboard, "local")
+    # 1. Storyboard (scenes provided by UI, no LLM)
+    log("[2/6] Storyboard: using user-defined scenes")
+    scenes = scenes or []
     n = len(sources)
-    if len(scenes) > n:
-        scenes = scenes[:n]
-        for idx, sc in enumerate(scenes, start=1):
-            sc['scene_number'] = idx
     if len(scenes) != n:
         raise PipelineError(
-            f"Storyboard has {len(scenes)} scenes but {n} media files provided."
+            f"Scenes ({len(scenes)}) must match media files ({n})."
         )
-    storyboard_title = str(storyboard.get("title", "")).strip() or slug
+    # Renumber scenes to match media order
+    for idx, sc in enumerate(scenes, start=1):
+        sc['scene_number'] = idx
+    storyboard_title = str(scenes[0].get("narration_segment", "")[:60]) if scenes else slug
+    scenes = validate_storyboard({"scenes": scenes}, "local")
 
     # 2. Stage images directly (no inbox, no archive)
     log("[3/6] Staging images (normalize + manifest)")
@@ -760,6 +759,7 @@ def pipeline(run_name, media_files, prompt, no_open, voice=None, speed=1.0,
         IMAGES_DIR.mkdir()
     stage_images_and_manifest(scenes, sources, media_types, slug,
                               None, storyboard_title)
+
 
     # 3. Narration + auto-fit
     log("[4/6] Narration (Kokoro, CPU) + auto-fit scene durations")
@@ -837,8 +837,8 @@ def main():
         help="Media files (images/clips) for the video",
     )
     parser.add_argument(
-        "prompt", nargs="?", default=None,
-        help="Video topic / prompt (positional or via --prompt)",
+        "--scenes", default=None,
+        help="Path to scenes JSON file",
     )
     parser.add_argument(
         "--prompt", default=None,
@@ -878,10 +878,15 @@ def main():
     log = Log(LOGS_DIR / "boot.log")
 
     try:
+        scenes = None
+        if args.scenes:
+            import json as _json
+            with open(args.scenes, 'r', encoding='utf-8') as _f:
+                scenes = _json.load(_f)
         return pipeline(run_name, args.media, prompt, args.no_open,
                         args.voice, args.tts_speed or 1.0,
                         args.overlay, args.overlay_duration,
-                        args.overlay_position, args.music)
+                        args.overlay_position, args.music, scenes)
     except PipelineError as error:
         log("PIPELINE FAILED — " + str(error))
         return 1

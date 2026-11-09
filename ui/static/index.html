@@ -168,6 +168,16 @@
           </div>
           <div id="file-list" class="text-sm text-gray-300 space-y-1"></div>
         </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-sm text-gray-400">Scenes (1 per media file)</label>
+            <button class="btn-secondary btn-sm" onclick="addScene()">+ Add Scene</button>
+          </div>
+          <div id="scenes-list" class="space-y-2 mb-2">
+            <!-- scene rows injected here -->
+          </div>
+          <p class="text-xs text-gray-500">Each scene maps 1:1 to a media file in order. Narration, overlay text, and duration are per-scene.</p>
+        </div>
         <div class="grid2">
           <div>
             <label class="block text-sm text-gray-400 mb-1">Voice</label>
@@ -332,8 +342,74 @@
     function renderFileList() {
       const el = document.getElementById('file-list');
       if (selectedFiles.length === 0) { el.innerHTML = '<div class="text-gray-500 text-sm">No files selected.</div>'; return; }
-      el.innerHTML = selectedFiles.map((f, i) => `<div class="text-sm"><span class="text-gray-500">${i+1}.</span> ${f.split(/[\\\\/]/).pop()}</div>`).join('');
+      el.innerHTML = selectedFiles.map((f, i) => `<div class="text-sm"><span class="text-gray-500">${i+1}.</span> ${f.split(/[\/]/).pop()}</div>`).join('');
+      syncScenesToMedia();
     }
+
+    function syncScenesToMedia() {
+      const list = document.getElementById('scenes-list');
+      const current = list.querySelectorAll('.scene-row').length;
+      const target = selectedFiles.length;
+      if (current < target) {
+        for (let i = current; i < target; i++) {
+          addScene(i + 1, '', '', 8);
+        }
+      } else if (current > target) {
+        const rows = list.querySelectorAll('.scene-row');
+        for (let i = target; i < current; i++) {
+          rows[i].remove();
+        }
+      }
+      updateSceneNumbers();
+    }
+
+    function addScene(num, narration, overlay, duration) {
+      const list = document.getElementById('scenes-list');
+      if (num === undefined) {
+        num = list.querySelectorAll('.scene-row').length + 1;
+        narration = '';
+        overlay = '';
+        duration = 8;
+      }
+      const row = document.createElement('div');
+      row.className = 'scene-row border border-gray-700 rounded p-3 mb-2 bg-gray-800';
+      row.innerHTML = `
+        <div class="flex gap-2 items-start">
+          <span class="text-xs text-gray-500 w-10">${num}</span>
+          <textarea class="scene-narration flex-1 h-20 text-sm" placeholder="Narration for this scene..."></textarea>
+          <input type="text" class="scene-overlay w-40 text-sm" placeholder="Overlay text">
+          <input type="number" class="scene-duration w-16 text-sm" value="${duration}" step="0.5" min="1">
+          <button class="btn-danger btn-sm" onclick="removeScene(this)">Remove</button>
+        </div>
+      `;
+      list.appendChild(row);
+    }
+
+    function removeScene(btn) {
+      btn.closest('.scene-row').remove();
+      updateSceneNumbers();
+    }
+
+    function updateSceneNumbers() {
+      const list = document.getElementById('scenes-list');
+      list.querySelectorAll('.scene-row').forEach((row, i) => {
+        row.querySelector('span.text-xs').textContent = (i + 1);
+      });
+    }
+
+    function getScenes() {
+      const scenes = [];
+      document.querySelectorAll('.scene-row').forEach((row, i) => {
+        scenes.push({
+          scene_number: i + 1,
+          narration_segment: row.querySelector('.scene-narration').value.trim(),
+          on_screen_text: row.querySelector('.scene-overlay').value.trim() || 'Scene ' + (i + 1),
+          duration_seconds: parseFloat(row.querySelector('.scene-duration').value) || 8,
+        });
+      });
+      return scenes;
+    }
+
 
     // Load the topic/prompt from a .txt file instead of typing/pasting.
     function browsePromptFile() {
@@ -459,6 +535,14 @@
       document.getElementById('run-status').textContent = 'startRun called: name=' + name + ', files=' + selectedFiles.length;
       if (!prompt) { alert('Enter a topic or prompt'); return; }
       if (selectedFiles.length === 0) { alert('Select at least one media file'); return; }
+      const scenes = getScenes();
+      if (scenes.length !== selectedFiles.length) {
+        alert('Scenes (' + scenes.length + ') must match media files (' + selectedFiles.length + '). You have ' + selectedFiles.length + ' media file(s) — please add or remove scenes to match.');
+        return;
+      }
+      for (const s of scenes) {
+        if (!s.narration_segment) { alert('Scene ' + s.scene_number + ' is missing narration.'); return; }
+      }
       const btn = document.querySelector('#newrun button.btn-primary');
       btn.disabled = true; btn.textContent = 'Starting...';
       try {
@@ -466,6 +550,7 @@
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name, prompt, media: selectedFiles,
+            scenes: scenes,
             voice: document.getElementById('run-voice').value || null,
             speed: parseFloat(document.getElementById('run-tts-speed').value),
             overlay: document.getElementById('run-overlay').checked,

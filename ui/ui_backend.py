@@ -310,6 +310,7 @@ class RunRequest(BaseModel):
     overlay: bool = True
     overlay_duration: float = 3.0
     overlay_position: str = "top"
+    scenes: list = []   # list of {scene_number, narration_segment, on_screen_text, duration_seconds}
     music: Optional[str] = None  # background music track (absolute path)
 
 
@@ -333,6 +334,13 @@ def _run_worker(job_id, req):
         # Build command - pass media files directly, no inbox copy
         cmd = [BASE_PY, str(SCRIPTS / "run_video.py"), slug,
                "--media"] + [str(m) for m in (req.media or [])]
+        # Write scenes to a temp JSON file for the pipeline
+        scenes_path = OUTPUT_DIR / f"{slug}_scenes.json"
+        scenes_path.write_text(
+            json.dumps(req.scenes or [], indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        cmd += ["--scenes", str(scenes_path)]
         if req.voice:
             cmd += ["--voice", req.voice]
         if req.speed and req.speed != 1.0:
