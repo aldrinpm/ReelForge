@@ -1,0 +1,73 @@
+{
+  "title": "5-Minute Morning Reset",
+  "storyboard": "20261108_232841_5-Minute_Morning_Reset_storyboard.json",
+  "contact_sheet": "contact_sheet_5-Minute_Morning_Reset.jpg",
+  "approved_on": "2026-11-08",
+  "mode": "user_media_auto",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "image": "scene_01.png",
+      "metadata": "scene_01_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Mornings feel chaotic? Stop scrolling and try this quick reset.",
+      "on_screen_text": "STOP DOING THIS IN THE MORNING! 🛑",
+      "prompt": "vertical 9:16 composition, young adult in bed in soft morning light, hand reaching toward a glowing smartphone on a nightstand, messy blanket, alarm clock, warm sunrise through window, realistic lifestyle photo, clean composition, no text",
+      "negative_prompt": "",
+      "motion_direction": "slow zoom in on the smartphone, then slight pan left",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene1.png"
+    },
+    {
+      "scene_number": 2,
+      "image": "scene_02.png",
+      "metadata": "scene_02_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Put your phone face down. Take one minute offline, and drink a glass of water before opening any app.",
+      "on_screen_text": "STEP 1: THE 60-SECOND OFFLINE RULE 📵",
+      "prompt": "vertical 9:16 composition, wooden table in morning sunlight, smartphone placed face down beside a clear glass of water, small plant, soft shadows, minimalist lifestyle photo, realistic, no text",
+      "negative_prompt": "",
+      "motion_direction": "pan right from the phone to the glass of water",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene2.png"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Open your planner. Write only three priorities for today. Start with the task that matters most; let the rest wait.",
+      "on_screen_text": "STEP 2: WRITE JUST THREE PRIORITIES 📝",
+      "prompt": "vertical 9:16 composition, open paper planner on a desk, handwritten three bullet priorities, pen resting on page, coffee mug nearby, soft window light, top-down lifestyle photo, realistic, no text",
+      "negative_prompt": "",
+      "motion_direction": "slow zoom in on the planner page",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene3.png"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9,
+      "narration": "Take a breath, enjoy your morning, and start with purpose. Save this video and try it tomorrow!",
+      "on_screen_text": "TRY THIS TOMORROW! ☀️ SAVE THIS VIDEO FOR LATER! 👇",
+      "prompt": "vertical 9:16 composition, person smiling calmly in a bright morning kitchen, phone face down on counter, glass of water and planner nearby, natural sunlight, warm colors, realistic lifestyle photo, no text",
+      "negative_prompt": "",
+      "motion_direction": "gentle fade-in transition from the previous scene",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:scene4.png"
+    }
+  ]
+}

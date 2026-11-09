@@ -108,21 +108,45 @@ def start_server():
 
 def wait_for_server(window):
     """Poll the backend from Python; navigate the window when ready."""
+    import socket
+
+    # Give uvicorn a moment to bind the port
+    time.sleep(1.0)
+
+    ready = False
     for i in range(60):
         try:
-            urllib.request.urlopen(URL + "/health", timeout=2)
+            with socket.create_connection(("127.0.0.1", PORT), timeout=1):
+                ready = True
+                break
+        except Exception:
+            pass
+        time.sleep(0.5)
+        try:
+            window.evaluate_js(f"document.getElementById('msg').textContent = 'Starting backend server... ({i+1})'")
+        except Exception:
+            pass
+
+    if not ready:
+        try:
+            window.evaluate_js("document.getElementById('msg').textContent = 'Backend failed to start.'")
+            window.evaluate_js("document.getElementById('err').textContent = 'Check %TEMP%\\\\ReelForge\\\\backend.log'")
+        except Exception:
+            pass
+        return
+
+    # Give the server a moment to accept HTTP connections
+    time.sleep(0.5)
+
+    for attempt in range(10):
+        try:
             window.load_url(URL)
             return
         except Exception:
             time.sleep(0.5)
-            try:
-                window.evaluate_js(f"document.getElementById('msg').textContent = 'Starting backend server... ({i+1})'")
-            except Exception:
-                pass
-    # Timeout
+
     try:
-        window.evaluate_js("document.getElementById('msg').textContent = 'Backend failed to start.'")
-        window.evaluate_js("document.getElementById('err').textContent = 'Check %TEMP%\\\\ReelForge\\\\backend.log'")
+        window.evaluate_js("document.getElementById('err').textContent = 'Backend reachable but failed to load UI.'")
     except Exception:
         pass
 

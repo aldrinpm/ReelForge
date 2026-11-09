@@ -2,8 +2,15 @@
 rem Package the desktop UI into a folder (onedir = faster startup, no extraction flicker).
 rem Requires: pyinstaller (pip install pyinstaller) in the base Python.
 cd /d E:\AI-Video-Production
+
+rem ---- 1.  Install required Python packages (fastapi, uvicorn, pydantic, pywebview) ----
+echo Installing fastapi, uvicorn, pydantic, pywebview …
+E:\ai\AirLLM\py3.11.9\python.exe -m pip install --upgrade fastapi uvicorn pydantic pywebview
+
+rem ---- 2.  Run PyInstaller (--clean avoids stale build cache) -------------------------
 "E:\ai\AirLLM\py3.11.9\python.exe" -m PyInstaller ^
   -y ^
+  --clean ^
   --onedir ^
   --name "ReelForge" ^
   --add-data="ui:ui" ^
@@ -13,6 +20,10 @@ cd /d E:\AI-Video-Production
   --hidden-import "config" ^
   --hidden-import "llm_client" ^
   --hidden-import "engineio.async_drivers.threading" ^
+  --hidden-import "fastapi" ^
+  --hidden-import "uvicorn" ^
+  --hidden-import "pydantic" ^
+  --hidden-import "starlette" ^
   --noconsole ^
   ui.py
 if errorlevel 1 (

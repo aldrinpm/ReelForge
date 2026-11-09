@@ -1,4 +1,4 @@
-"""FastAPI backend for the ReelForge desktop UI.
+﻿"""FastAPI backend for the ReelForge desktop UI.
 
 Exposes the pipeline (run_video.py) and service health via a localhost-only
 HTTP API consumed by the pywebview frontend. Heavy work runs in background
@@ -82,40 +82,6 @@ if STATIC_DIR.exists():
 
 # --- Service health ---
 
-def _probe_llm():
-    """Probe the LLM endpoint configured in config.json (provider/model aware)."""
-    try:
-        import sys as _sys
-        _sys.path.insert(0, str(SCRIPTS))
-        import config as cfg_mod
-        import llm_client as lc
-        cfg = cfg_mod.load_config()
-        llm = cfg_mod.resolve_llm_config(cfg, {})
-        base_url = lc._normalize_base_url(llm.get("base_url", ""))
-        model = (llm.get("model") or "").strip()
-        provider = llm.get("provider", "custom")
-        if not base_url:
-            console_log(f"LLM ({provider}): down (no base_url)", "WARN")
-            return {"status": "down", "error": "base_url is empty", "provider": provider, "model": model, "models": []}
-        url = base_url.rstrip("/") + "/models"
-        req = urllib.request.Request(url, headers=lc._headers(llm.get("api_key", "")), method="GET")
-        with urllib.request.urlopen(req, timeout=5) as r:
-            data = json.loads(r.read().decode("utf-8"))
-        ids = [m.get("id", "") for m in data.get("data", []) if m.get("id")]
-        has_model = (not model) or (model in ids)
-        status = "ok" if (ids and has_model) else ("degraded" if ids else "down")
-        console_log(f"LLM ({provider}): {status} ({len(ids)} models, model={'yes' if has_model else 'NO'})",
-                    "INFO" if status == "ok" else "WARN")
-        return {"status": status, "provider": provider, "model": model, "models": ids[:8], "has_model": has_model}
-    except Exception as e:
-        # config may not be importable in some contexts; fall back to LM Studio default
-        try:
-            provider = "lmstudio"
-        except Exception:
-            provider = "custom"
-        console_log(f"LLM: down ({e})", "WARN")
-        return {"status": "down", "error": str(e), "provider": provider, "model": "", "models": []}
-
 def _probe_ffmpeg():
     try:
         r = subprocess.run(["ffmpeg", "-version"], capture_output=True, text=True, timeout=5,
@@ -142,7 +108,6 @@ def _probe_venv():
 def health():
     global _health_prev
     h = {
-        "llm": _probe_llm(),
         "ffmpeg": _probe_ffmpeg(),
         "espeak": _probe_espeak(),
         "venv_tts": _probe_venv(),
@@ -197,34 +162,9 @@ def put_config(body: ConfigUpdate):
 
 @app.post("/config/validate")
 def validate_config(body: ConfigUpdate):
-    """Validate config: check LLM endpoint reachability and voice availability."""
+    """Validate config: check voice availability."""
     errors = []
     cfg = body.config
-    llm = cfg.get("llm", {})
-    # Check LLM endpoint
-    base_url = (llm.get("base_url") or "").rstrip("/")
-    if not base_url:
-        errors.append("LLM base_url is empty")
-    else:
-        # Normalize using shared LLM client (handles custom paths like /api -> /v1).
-        import sys as _sys
-        _sys.path.insert(0, str(SCRIPTS))
-        import llm_client as _lc
-        base_url = _lc._normalize_base_url(base_url)
-        try:
-            import urllib.request
-            req = urllib.request.Request(base_url + "/models", method="GET")
-            key = llm.get("api_key", "")
-            if key:
-                req.add_header("Authorization", f"Bearer {key}")
-            with urllib.request.urlopen(req, timeout=5) as r:
-                data = json.loads(r.read().decode("utf-8"))
-                models = [m.get("id", "") for m in data.get("data", [])]
-                model = llm.get("model", "")
-                if model and model not in models and models:
-                    errors.append(f"Model '{model}' not found at endpoint (available: {len(models)})")
-        except Exception as e:
-            errors.append(f"LLM endpoint unreachable: {e}")
     # Check voice
     voice = cfg.get("tts", {}).get("voice", "")
     if voice:
@@ -247,10 +187,8 @@ def config_defaults():
         sys.path.insert(0, str(SCRIPTS))
         import config as cfg_mod
         d = cfg_mod.DEFAULT_CONFIG
-        llm_keys = ("provider", "base_url", "model", "api_key", "temperature", "max_tokens")
         tts_keys = ("voice", "speed")
         return {"config": {
-            "llm": {k: d["llm"][k] for k in llm_keys if k in d["llm"]},
             "tts": {k: d["tts"][k] for k in tts_keys if k in d["tts"]},
         }}
     except Exception as e:
@@ -259,16 +197,8 @@ def config_defaults():
 
 @app.get("/models")
 def models():
-    import sys as _sys
-    _sys.path.insert(0, str(SCRIPTS))
-    import config as cfg_mod, llm_client
-    cfg = cfg_mod.load_config()
-    llm_cfg = cfg_mod.resolve_llm_config(cfg, {})
-    try:
-        ids = llm_client.list_models(llm_cfg["base_url"], llm_cfg["api_key"], 30)
-        return {"models": ids, "current": llm_cfg["model"]}
-    except Exception as e:
-        return {"models": [], "error": str(e), "current": llm_cfg["model"]}
+    # LLM removed; return empty list
+    return {"models": [], "current": None}
 
 
 @app.get("/voices")
@@ -378,8 +308,6 @@ class RunRequest(BaseModel):
     prompt: str = ""
     media: list = []   # list of absolute file paths (optional; else reads inbox/<name>/)
     voice: Optional[str] = None
-    llm: Optional[str] = None
-    llm_model: Optional[str] = None
     overlay: bool = True
     overlay_duration: float = 3.0
     overlay_position: str = "top"
@@ -444,10 +372,6 @@ def _run_worker(job_id, req):
         cmd = [BASE_PY, str(SCRIPTS / "run_video.py"), slug]
         if req.voice:
             cmd += ["--voice", req.voice]
-        if req.llm:
-            cmd += ["--llm", req.llm]
-        if req.llm_model:
-            cmd += ["--llm-model", req.llm_model]
         if req.music:
             # Defensive: coerce non-string/NaN values to a string path
             try:

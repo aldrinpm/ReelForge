@@ -1,4 +1,4 @@
-"""One-click end-to-end video pipeline (Task 8 orchestrator).
+﻿"""One-click end-to-end video pipeline (Task 8 orchestrator).
 
 Usage:
     python run_video.py <run-name> [--storyboard PATH] [--no-open]
@@ -8,13 +8,12 @@ Input contract (created by you):
     inbox/<run-name>/<6 images>        png/jpg/jpeg/webp, in scene order
 
 What it does (fully automatic, no review stops):
-    1. Preflight: validates the inbox folder; checks LM Studio is up
-       (skipped when --storyboard is given).
-    2. Storyboard: generate_video_idea.py via LM Studio/Qwythos, or the
-       provided --storyboard path (useful for narration re-runs).
+    1. Preflight: validates the inbox folder.
+    2. Storyboard: generates scene breakdown locally from the prompt
+       (no LLM required), or uses the provided --storyboard path.
     3. Workspace staging: archives current images/, audio/, subtitles/
        files (moved, never deleted), then normalizes the 6 supplied
-       images to 512x768 (fit + pad — the whole asset is visible, never
+       images to 512x768 (fit + pad â€” the whole asset is visible, never
        stretched or cropped) and builds the approved_set.json manifest
        + contact sheet.
     4. Narration: Kokoro af_heart via venv-tts; measured durations are
@@ -52,7 +51,6 @@ if hasattr(sys.stderr, "reconfigure"):
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import config as cfg_mod
-import llm_client as llmc
 
 ROOT = Path(r"E:\AI-Video-Production")
 INBOX = ROOT / "inbox"
@@ -66,9 +64,6 @@ LOGS_DIR = ROOT / "logs"
 BASE_PY = r"E:\ai\AirLLM\py3.11.9\python.exe"
 VENV_PY = ROOT / "venv-tts" / "Scripts" / "python.exe"
 MANIFEST = IMAGES_DIR / "approved_set.json"
-
-LM_STUDIO_URL = "http://127.0.0.1:1234/v1/models"
-LM_STUDIO_MODEL_HINT = "qwythos"
 
 IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp")
 CLIP_EXTS = (".mp4", ".mov", ".mkv", ".avi", ".webm", ".m4v",
@@ -121,8 +116,6 @@ STOPWORDS = {
     "this", "work", "works", "video", "explain", "explained", "simple",
     "simply", "about", "into",
 }
-
-STORYBOARD_URL_TIMEOUT = 320  # seconds; Qwythos can take a while
 
 
 class PipelineError(Exception):
@@ -189,51 +182,48 @@ def run_step(cmd, label, cwd=None, timeout=None):
     return result
 
 
-def check_lm_studio():
-    """LM Studio must serve Qwythos on port 1234 for storyboard gen."""
-    try:
-        with urllib.request.urlopen(LM_STUDIO_URL, timeout=4) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-    except Exception as error:  # noqa: BLE001 - any failure means "down"
-        raise PipelineError(
-            "LM Studio is not reachable at http://127.0.0.1:1234 "
-            f"({error}).\n"
-            "    FIX: start LM Studio, load "
-            "'empero-ai/qwythos-9b-v2-gguf/qwythos-9b-v2-mtp-q4_k_m.gguf',\n"
-            "    and start the local server (Developer > Start Server)."
-        ) from None
+def generate_storyboard_locally(topic, num_scenes):
+    """Build a simple storyboard from the prompt without any LLM.
 
-    ids = [m.get("id", "") for m in payload.get("data", [])]
-    if not any(LM_STUDIO_MODEL_HINT in i.lower() for i in ids):
-        raise PipelineError(
-            "LM Studio is running but no matching model is loaded.\n"
-            f"    Loaded: {ids or '<none>'}\n"
-            "    FIX: load "
-            "'empero-ai/qwythos-9b-v2-gguf/qwythos-9b-v2-mtp-q4_k_m.gguf'."
-        )
-    return ids
+    Splits the topic into sentences and distributes them across scenes.
+    Each scene maps 1:1 to a media file provided in the inbox.
+    """
+    total_duration = max(20, num_scenes * 8)
+    total_duration = min(total_duration, 120)
 
-def check_llm_endpoint(llm_cfg):
-    """Generic reachability check for any OpenAI-compatible LLM endpoint."""
-    base_url = llmc._normalize_base_url(llm_cfg.get("base_url", ""))
-    model = (llm_cfg.get("model") or "").strip()
-    url = base_url.rstrip("/") + "/models"
-    try:
-        req = urllib.request.Request(
-            url, headers=llmc._headers(llm_cfg.get("api_key", "")), method="GET"
-        )
-        with urllib.request.urlopen(req, timeout=8) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-    except Exception as error:  # noqa: BLE001
-        raise PipelineError(
-            f"LLM endpoint is not reachable at {base_url} ({error}).\n"
-            "    FIX: check Settings / network connectivity."
-        ) from None
-    ids = [m.get("id", "") for m in data.get("data", []) if m.get("id")]
-    if model and ids and model not in ids:
-        log(f"  WARNING: configured model '{model}' not in endpoint list", indent=True)
-    return ids
+    # Split topic into sentences for per-scene narration
+    sentences = re.split(r"(?<=[.!?])\s+", topic.strip())
+    sentences = [s for s in sentences if s]
+    if not sentences:
+        sentences = [topic]
 
+    base_duration = total_duration // num_scenes
+    remainder = total_duration % num_scenes
+
+    scenes = []
+    for i in range(num_scenes):
+        scene_num = i + 1
+        duration = base_duration + (1 if i < remainder else 0)
+        narration = sentences[i] if i < len(sentences) else f"Continuing about {topic}."
+        scenes.append({
+            "scene_number": scene_num,
+            "duration_seconds": duration,
+            "narration_segment": narration,
+            "on_screen_text": f"Scene {scene_num}: {topic[:40]}",
+            "image_prompt": f"{topic}, educational illustration, scene {scene_num}, clear simple visuals",
+            "motion_direction": "Slow zoom in",
+        })
+
+    return {
+        "title": topic[:80],
+        "topic": topic,
+        "target_duration_seconds": total_duration,
+        "scenes": scenes,
+        "fact_check_notes": [],
+        "source_suggestions": [],
+        "narration": " ".join(sentences),
+        "generated_locally": True,
+    }
 
 def validate_storyboard(storyboard, source):
     scenes = storyboard.get("scenes", [])
@@ -670,7 +660,7 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
         "aspect_ratio": "9:16",
         "platforms": {
             "facebook_reels": {
-                "title": f"{title} — {total}-Second Explainer",
+                "title": f"{title} â€” {total}-Second Explainer",
                 "description": (
                     f"{lead} Runtime: {total}s. Visuals: custom scene images."
                     + (f" Facts kept responsible: {caveats}" if caveats else "")
@@ -684,7 +674,7 @@ def build_publishing_kit(storyboard, manifest, mp4_path, srt_path, stamp, slug):
                 ),
             },
             "youtube_shorts": {
-                "title": f"{title} — in {total} Seconds",
+                "title": f"{title} â€” in {total} Seconds",
                 "description": (
                     f"{lead} In under a minute: {title.lower()}."
                     + (f" Caveats: {caveats}" if caveats else "")
@@ -718,16 +708,6 @@ def pipeline(run_name, storyboard_arg, no_open, write_run_note=False, args=None)
 
     args = args or argparse.Namespace()
     cfg = cfg_mod.load_config()
-    llm_overrides = {
-        "provider": getattr(args, "llm", None),
-        "base_url": getattr(args, "llm_url", None),
-        "model": getattr(args, "llm_model", None),
-        "api_key": getattr(args, "llm_key", None),
-        "temperature": getattr(args, "temperature", None),
-        "max_tokens": getattr(args, "max_tokens", None),
-        "timeout": getattr(args, "timeout", None),
-    }
-    llm_cfg = cfg_mod.resolve_llm_config(cfg, llm_overrides)
     tts_overrides = {
         "voice": getattr(args, "voice", None),
         "speed": getattr(args, "tts_speed", None),
@@ -748,7 +728,7 @@ def pipeline(run_name, storyboard_arg, no_open, write_run_note=False, args=None)
     # 0. Preflight
     log("[1/7] Preflight")
     topic, sources, media_types = read_inbox(run_dir, slug)
-    log(f"  Topic: {topic[:120]}{'…' if len(topic) > 120 else ''}", indent=True)
+    log(f"  Topic: {topic[:120]}{'â€¦' if len(topic) > 120 else ''}", indent=True)
     log(f"  Media ({len(sources)}): "
         f"{[(p.name, t) for p, t in zip(sources, media_types)]}", indent=True)
 
@@ -768,41 +748,19 @@ def pipeline(run_name, storyboard_arg, no_open, write_run_note=False, args=None)
         log("[2/7] Storyboard: using provided "
             f"{storyboard_path.name} (LM Studio not needed)")
     else:
-        if llm_cfg.get("provider") == "lmstudio":
-            log("[2/7] Storyboard: checking LM Studio")
-            ids = check_lm_studio()
-            log(f"  LM Studio OK: {ids}", indent=True)
-        else:
-            log(f"[2/7] Storyboard: checking {llm_cfg.get('provider', 'custom')} LLM")
-            ids = check_llm_endpoint(llm_cfg)
-            log(f"  LLM OK: {ids[:3] or llm_cfg.get('base_url', '')}", indent=True)
+        log("[2/7] Storyboard: generating locally from prompt")
+        storyboard = generate_storyboard_locally(topic, len(sources))
         storyboard_name = f"{stamp}_{slug}_storyboard.json"
         storyboard_path = OUTPUT_DIR / storyboard_name
-        started = time.time()
-        run_step(
-            [BASE_PY, str(SCRIPTS / "generate_video_idea.py"),
-             topic, "--scenes", str(len(sources)),
-             "--out", str(storyboard_path),
-             "--llm", llm_cfg["provider"],
-             "--llm-url", llm_cfg["base_url"],
-             "--llm-model", llm_cfg["model"],
-             "--llm-key", llm_cfg["api_key"],
-             "--temperature", str(llm_cfg["temperature"]),
-             "--max-tokens", str(llm_cfg["max_tokens"]),
-             "--timeout", str(llm_cfg["timeout"])],
-            "storyboard generation", cwd=ROOT,
-            timeout=STORYBOARD_URL_TIMEOUT,
-        )
-        if not storyboard_path.exists():
-            raise PipelineError(
-                "Storyboard script reported success but no file was written."
-            )
-        storyboard = json.loads(
-            storyboard_path.read_text(encoding="utf-8-sig")
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        storyboard_path.write_text(
+            json.dumps(storyboard, indent=2, ensure_ascii=False),
+            encoding="utf-8",
         )
         storyboard_rel = storyboard_name
-        log(f"  Storyboard ready in {time.time() - started:.0f}s",
-            indent=True)
+        total_dur = sum(float(s["duration_seconds"]) for s in storyboard["scenes"])
+        log(f"  Storyboard ready: {len(storyboard['scenes'])} scenes, "
+            f"{total_dur}s total", indent=True)
 
     scenes = validate_storyboard(storyboard, storyboard_path.name)
     n = len(sources)
@@ -924,13 +882,6 @@ def main():
                         help="Write an Obsidian (PARA) run note to vault/1. Projects/")
     parser.add_argument("--voice", default=None, help="TTS voice (e.g. af_heart)")
     parser.add_argument("--tts-speed", type=float, default=None, dest="tts_speed")
-    parser.add_argument("--llm", default=None, help="LLM provider name")
-    parser.add_argument("--llm-url", default=None, help="LLM base URL")
-    parser.add_argument("--llm-model", default=None, help="LLM model id")
-    parser.add_argument("--llm-key", default=None, help="LLM API key")
-    parser.add_argument("--temperature", type=float, default=None)
-    parser.add_argument("--max-tokens", type=int, default=None, dest="max_tokens")
-    parser.add_argument("--timeout", type=int, default=None)
     parser.add_argument("--overlay", dest="overlay", action="store_true", default=True,
                         help="Burn on-screen headline text per scene (default on)")
     parser.add_argument("--no-overlay", dest="overlay", action="store_false",
@@ -957,13 +908,14 @@ def main():
         return pipeline(args.run_name, args.storyboard, args.no_open,
                         args.write_run_note, args)
     except PipelineError as error:
-        log("PIPELINE FAILED — " + str(error))
+        log("PIPELINE FAILED â€” " + str(error))
         return 1
     except Exception:  # noqa: BLE001 - log everything, fail loudly
-        log("PIPELINE FAILED — unexpected error:\n"
+        log("PIPELINE FAILED â€” unexpected error:\n"
             + traceback.format_exc())
         return 1
 
 
 if __name__ == "__main__":
     sys.exit(main())
+
