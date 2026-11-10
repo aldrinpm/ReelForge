@@ -102,6 +102,20 @@ def choose_motion(scene, number):
     return MOTION_PRESETS[cycle[number % 4]]
 
 
+def scene_has_media(scene):
+    """True if the scene carries attached (non-placeholder) media.
+
+    A scene whose image_source is ``black_placeholder`` (or missing/empty)
+    has no attached media. Everything else (user_inbox, upload, etc.) is
+    treated as media so real attached media is never accidentally replaced
+    with a black backdrop.
+    """
+    src = (scene.get("image_source") or "").strip()
+    if src == "black_placeholder" or src.startswith("black_placeholder"):
+        return False
+    return True
+
+
 SUBTITLE_STYLE = (
     "force_style='FontName=Arial,FontSize=15,Bold=0,"
     "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
@@ -265,8 +279,8 @@ def overlay_drawtext(scene, duration, settings):
     lines = text.split("\n")
     filters = []
     for i, line in enumerate(lines):
-        # Escape single quotes and backslashes for FFmpeg drawtext text= option
-        safe_line = line.replace("\\", "\\\\").replace("'", "\\'")
+        # Escape backslashes, single quotes, and colons for FFmpeg drawtext text= option
+        safe_line = line.replace("\\", "\\\\").replace("'", "\\'").replace(":", "\\:")
         # Offset each line by fontsize + line_spacing so they stack vertically
         line_y = f"({y_expr}) + {i} * ({fontsize} + 10)"
         filters.append(
@@ -376,6 +390,16 @@ def parse_args():
         help="Headline font size (default 52)",
     )
     parser.add_argument(
+        "--burn-narration", dest="burn_narration", action="store_true", default=False,
+        help="Burn narration captions into the video (default off). Narration is "
+             "muxed as audio and subtitles handle text burn-in; this flag is "
+             "accepted for interface consistency with the UI."
+    )
+    parser.add_argument(
+        "--no-burn-narration", dest="burn_narration", action="store_false",
+        help="Disable burning narration captions"
+    )
+    parser.add_argument(
         "--music", default=None,
         help="Optional background music track; looped under the narration, "
              "auto-leveled below the voice with fade-in/out on the timeline",
@@ -445,10 +469,22 @@ def main():
     }
 
     # Pass 1: normalize each scene to a 1080x1920 intermediate.
+    #
+    # Media persistence rule: attached media stays visible across subsequent
+    # black (no-media) scenes instead of being cut to black. A black/placeholder
+    # scene reuses the most recent media scene's image (held for its own
+    # duration), while keeping its own narration timing and on-screen text.
+    # Genuine black only appears at the very start when the first scene has no
+    # media yet; media always overrides black at a real media boundary.
     intermediates = []
+    last_media_src = None  # resolved path of the most recent media scene's image
     for scene in scenes:
         number = scene["scene_number"]
         src = ROOT / "images" / scene["image"]
+        if not scene_has_media(scene) and last_media_src is not None:
+            # Black backdrop scene: carry forward the last media image so the
+            # media persists instead of being overridden by black.
+            src = last_media_src
         out = TEMP_DIR / f"scene_{number:02d}_norm.mp4"
         target_len = durations[number] + FADE
         stype = scene.get("source_type", "image")
@@ -462,7 +498,10 @@ def main():
                 clip_dur = durations[number]
             normalize_clip(scene, src, out, target_len, clip_dur, overlay_settings)
         intermediates.append(out)
-        print(f"  Normalized scene {number} ({stype}) -> {out.name}")
+        label = "media" if scene_has_media(scene) else ("black (carried media)" if last_media_src is not None else "black")
+        print(f"  Normalized scene {number} ({stype}, {label}) -> {out.name}")
+        if scene_has_media(scene):
+            last_media_src = ROOT / "images" / scene["image"]
 
     # Pass 2: xfade chain + audio + subtitles + encode.
     cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "warning"]
@@ -496,11 +535,13 @@ def main():
         video_chain = chained
 
     closing = f"fade=t=in:st=0:d={FADE},fade=t=out:st={timeline - FADE:.2f}:d={FADE}"
-    if burn:
+    if burn and args.burn_narration:
         closing += (
             f",subtitles=filename=subtitles/{subtitle_file.name}:"
             f"{SUBTITLE_STYLE}"
         )
+    elif burn and not args.burn_narration:
+        print("Burn narration off: subtitles will not be burned into the video.")
     filters.append(f"{video_chain}{closing}[vout]")
 
     # Narration: delay each segment to scene_start + NARRATION_DELAY.

@@ -195,8 +195,99 @@ def config_defaults():
 
 @app.get("/models")
 def models():
-    # LLM removed; return empty list
-    return {"models": [], "current": None}
+    """List available models from the configured LLM API."""
+    try:
+        cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8")) if CONFIG_PATH.exists() else {}
+        llm = cfg.get("llm", {})
+        base_url = (llm.get("base_url") or "http://127.0.0.1:1234/v1").rstrip("/")
+        api_key = llm.get("api_key", "")
+        url = base_url + "/models"
+        headers = {"Content-Type": "application/json"}
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
+        req = urllib.request.Request(url, headers=headers, method="GET")
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        ids = [m.get("id", "") for m in data.get("data", []) if m.get("id")]
+        return {"models": ids, "current": llm.get("model")}
+    except Exception as e:
+        return {"models": [], "current": None, "error": str(e)}
+
+
+@app.get("/models/info")
+def models_info(model: str = ""):
+    """Return model metadata: compatibility modes, context length, reasoning effort options."""
+    return _model_info_impl(model)
+
+
+def _model_info_impl(model: str = ""):
+    if not model:
+        return {"compatibility_modes": [], "context_length": None, "reasoning_effort_options": []}
+
+    # Try to fetch model info from the LLM API
+    try:
+        cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8")) if CONFIG_PATH.exists() else {}
+        llm = cfg.get("llm", {})
+        base_url = (llm.get("base_url") or "http://127.0.0.1:1234/v1").rstrip("/")
+        api_key = llm.get("api_key", "")
+        url = base_url + "/models"
+        headers = {"Content-Type": "application/json"}
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
+        req = urllib.request.Request(url, headers=headers, method="GET")
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        for m in data.get("data", []):
+            if m.get("id") == model:
+                return {
+                    "compatibility_modes": [
+                        {"value": "chat_completions", "label": "Chat Completions [detected]"}
+                    ],
+                    "context_length": m.get("context_length") or _default_ctx(model),
+                    "reasoning_effort_options": _reasoning_effort_for(model),
+                    "compatibility_desc": "Use /chat/completions for standard OpenAI-compatible servers.",
+                }
+    except Exception:
+        pass
+
+    # Fallback to heuristics
+    return {
+        "compatibility_modes": [
+            {"value": "auto", "label": "Auto-detect [current]"},
+            {"value": "chat_completions", "label": "Chat Completions [detected]"},
+            {"value": "responses", "label": "Responses / Codex"},
+            {"value": "anthropic", "label": "Anthropic Messages"},
+        ],
+        "context_length": _default_ctx(model),
+        "reasoning_effort_options": _reasoning_effort_for(model),
+        "compatibility_desc": "Use Hermes URL heuristics; best for standard OpenAI-compatible endpoints.",
+    }
+
+
+def _default_ctx(model: str):
+    ml = model.lower()
+    ctx_map = {
+        'gpt-4': 8192, 'gpt-4-32k': 32768, 'gpt-4-turbo': 128000, 'gpt-4o': 128000,
+        'gpt-3.5-turbo': 4096, 'gpt-3.5-turbo-16k': 16384,
+        'claude-3': 200000, 'claude-2': 100000, 'claude-instant': 100000,
+        'llama-3.1-8b': 131072, 'llama-3.1-70b': 131072, 'llama-3.1-405b': 131072,
+        'qwythos': 131072, 'qwen': 131072, 'nemotron': 131072,
+    }
+    for key, val in ctx_map.items():
+        if key in ml:
+            return val
+    return None
+
+
+def _reasoning_effort_for(model: str):
+    ml = model.lower()
+    if 'gpt-5' in ml or 'o1' in ml or 'o3' in ml:
+        return [
+            {"value": "low", "label": "Low"},
+            {"value": "medium", "label": "Medium"},
+            {"value": "high", "label": "High"},
+        ]
+    return []
 
 
 @app.get("/voices")
@@ -310,6 +401,7 @@ class RunRequest(BaseModel):
     overlay: bool = True
     overlay_duration: float = 3.0
     overlay_position: str = "top"
+    burn_narration: bool = False  # burn narration captions into the video
     scenes: list = []   # list of {scene_number, narration_segment, on_screen_text, duration_seconds}
     music: Optional[str] = None  # background music track (absolute path)
     title: Optional[str] = None  # social media title
@@ -361,6 +453,10 @@ def _run_worker(job_id, req):
         else:
             cmd += ["--overlay-duration", str(req.overlay_duration),
                     "--overlay-position", req.overlay_position]
+        if not req.burn_narration:
+            cmd += ["--no-burn-narration"]
+        else:
+            cmd += ["--burn-narration"]
         if req.title:
             cmd += ["--title", req.title]
         if req.description:
@@ -555,6 +651,62 @@ def pick_music():
     return {"file": str(files) if files else ""}
 
 
+@app.post("/pick-media-file")
+def pick_media_file():
+    """Backend single-file dialog for attaching media to a scene."""
+    import tkinter as tk
+    from tkinter import filedialog
+    root = tk.Tk()
+    root.withdraw()
+    root.attributes("-topmost", True)
+    file = filedialog.askopenfilename(
+        title="Select media file for scene",
+        filetypes=[
+            ("Media files", "*.png *.jpg *.jpeg *.webp *.mp4 *.mov *.mkv *.avi *.webm *.m4v *.mpg *.mpeg *.flv *.wmv *.gif"),
+            ("All files", "*.*"),
+        ],
+    )
+    root.destroy()
+    return {"file": str(file) if file else ""}
+
+
+@app.post("/pick-text-file")
+def pick_text_file():
+    """Backend fallback single-file dialog for text files (.txt only)."""
+    import tkinter as tk
+    from tkinter import filedialog
+    root = tk.Tk()
+    root.withdraw()
+    root.attributes("-topmost", True)
+    file = filedialog.askopenfilename(
+        title="Select text file",
+        filetypes=[
+            ("Text files (*.txt)", "*.txt"),
+        ],
+    )
+    root.destroy()
+    return {"file": str(file) if file else ""}
+
+
+class TextFileReadRequest(BaseModel):
+    path: str
+
+
+@app.post("/read-text-file")
+def read_text_file(req: TextFileReadRequest):
+    """Read a text file and return its content."""
+    try:
+        file_path = req.path
+        import os
+        if not os.path.isfile(file_path):
+            return {"ok": False, "error": "File not found: " + file_path}
+        with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read()
+        return {"ok": True, "content": content, "path": file_path}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
 # --- Loop doctor ---
 
 @app.post("/doctor")
@@ -605,6 +757,81 @@ def download_file(file_path: str):
     except ValueError:
         raise HTTPException(403, "Forbidden")
     return FileResponse(str(full), filename=full.name, headers={"Content-Disposition": f'attachment; filename="{full.name}"'})
+
+
+class GenerateAIRequest(BaseModel):
+    api_key: str
+    base_url: str
+    model: str
+    compatibility_mode: str = "auto"
+    context_length: str = ""
+    reasoning_effort: str = ""
+    max_tokens: str = "12288"
+    auto_continue: str = "true"
+    max_continuations: str = "5"
+    max_total_generation_attempts: str = "6"
+    max_total_output_tokens: str = "49152"
+    detect_truncation: str = "true"
+    validate_completion: str = "true"
+    prompt: str
+
+
+@app.post("/ai/generate")
+def generate_ai(req: GenerateAIRequest):
+    """Generate content via an LLM API and return plain text response."""
+    import json as _json
+
+    base_url = req.base_url.rstrip("/")
+    model = req.model
+    api_key = req.api_key
+
+    # Build request payload based on compatibility mode
+    max_tokens = int(req.max_tokens) if req.max_tokens else 12288
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": "You are a helpful assistant that creates video storyboards and video ideas. Respond in plain text without markdown code fences unless requested."},
+            {"role": "user", "content": req.prompt}
+        ],
+        "temperature": 0.7,
+        "max_tokens": max_tokens,
+    }
+    # Add provider-specific generation parameters
+    if req.auto_continue:
+        payload["auto_continue"] = req.auto_continue.lower() == "true"
+    if req.max_continuations:
+        payload["max_continuations"] = int(req.max_continuations)
+    if req.max_total_generation_attempts:
+        payload["max_total_generation_attempts"] = int(req.max_total_generation_attempts)
+    if req.max_total_output_tokens:
+        payload["max_total_output_tokens"] = int(req.max_total_output_tokens)
+    if req.detect_truncation:
+        payload["detect_truncation"] = req.detect_truncation.lower() == "true"
+    if req.validate_completion:
+        payload["validate_completion"] = req.validate_completion.lower() == "true"
+
+    url = base_url + "/chat/completions"
+
+    headers = {
+        "Content-Type": "application/json",
+    }
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+
+    try:
+        data = _json.dumps(payload).encode("utf-8")
+        req_obj = urllib.request.Request(url, data=data, headers=headers, method="POST")
+        with urllib.request.urlopen(req_obj, timeout=60) as resp:
+            resp_data = resp.read().decode("utf-8")
+            result = _json.loads(resp_data)
+            # Extract message content from OpenAI-compatible response
+            if "choices" in result and len(result["choices"]) > 0:
+                content = result["choices"][0].get("message", {}).get("content", "")
+            else:
+                content = str(result)
+            return {"text": content}
+    except Exception as e:
+        return {"text": f"Error: {str(e)}"}
 
 
 @app.get("/")

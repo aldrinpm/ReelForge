@@ -1,0 +1,14 @@
+{
+  "scene_number": 11,
+  "duration_seconds": 8.0,
+  "narration": "Sleep deprivation affects nearly every system in your body. Reaction times slow, concentration deteriorates, and emotional regulation becomes harder. Chronic insufficient sleep is also associated with increased risks of cardiovascular disease, diabetes, obesity, and weakened immune function.",
+  "on_screen_text": "WHAT HAPPENS WITHOUT SLEEP?",
+  "prompt": "",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "11.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

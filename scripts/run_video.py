@@ -317,6 +317,16 @@ def ffmpeg_normalize(source, target):
     )
 
 
+def ffmpeg_black_placeholder(target):
+    """Create a black placeholder PNG for scenes without media."""
+    run_step(
+        ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+         "-f", "lavfi", "-i", "color=black:size=512x768",
+         "-frames:v", "1", str(target)],
+        f"create black placeholder {target.name}",
+    )
+
+
 def build_contact_sheet(slug, count, media_types=None):
     """Adaptive grid (up to 3 columns); clips use a midpoint frame.
 
@@ -402,21 +412,34 @@ def stage_images_and_manifest(scenes, sources, media_types, slug,
                               storyboard_rel, storyboard_title):
     """Stage user media (images/clips/gifs), write sidecars, build manifest."""
     entries = []
-    for scene, source, mtype in zip(scenes, sources, media_types):
+    for scene in scenes:
         number = int(scene["scene_number"])
         duration = float(scene["duration_seconds"])
         narration = str(scene["narration_segment"]).strip()
         on_screen = str(scene.get("on_screen_text", "")).strip()
         prompt = str(scene.get("image_prompt", "")).strip()
 
-        if mtype == "image":
+        # Find source for this scene from media_path or by index
+        source = None
+        mtype = None
+        scene_media_path = scene.get("media_path", "")
+        if scene_media_path:
+            sp = Path(scene_media_path)
+            if sp.exists():
+                source = sp
+                mtype = media_type(sp)
+        elif number - 1 < len(sources):
+            source = sources[number - 1]
+            mtype = media_types[number - 1] if number - 1 < len(media_types) else None
+
+        if mtype == "image" and source:
             image_name = f"scene_{number:02d}.png"
             target = IMAGES_DIR / image_name
             ffmpeg_normalize(source, target)
             clip_duration = 0.0
             width, height = 512, 768
             sidecar_extra = {"normalized_filter": NORMALIZE_FILTER}
-        else:
+        elif mtype in ("clip", "gif") and source:
             ext = source.suffix.lower()
             image_name = f"scene_{number:02d}{ext}"
             target = IMAGES_DIR / image_name
@@ -424,6 +447,14 @@ def stage_images_and_manifest(scenes, sources, media_types, slug,
             clip_duration = probe_duration(source)
             width, height = 0, 0
             sidecar_extra = {"clip_duration_seconds": round(clip_duration, 3)}
+        else:
+            # No media available - create black placeholder image
+            image_name = f"scene_{number:02d}.png"
+            target = IMAGES_DIR / image_name
+            ffmpeg_black_placeholder(target)
+            clip_duration = 0.0
+            width, height = 512, 768
+            sidecar_extra = {"normalized_filter": "color=black:size=512x768"}
 
         sidecar = {
             "scene_number": number,
@@ -432,9 +463,9 @@ def stage_images_and_manifest(scenes, sources, media_types, slug,
             "on_screen_text": on_screen,
             "prompt": prompt,
             "negative_prompt": "",
-            "source": "user_inbox",
-            "source_file": source.name,
-            "source_type": mtype,
+            "source": "user_inbox" if source else "black_placeholder",
+            "source_file": source.name if source else "black_placeholder",
+            "source_type": mtype or "image",
             "width": width,
             "height": height,
             **sidecar_extra,
@@ -456,12 +487,12 @@ def stage_images_and_manifest(scenes, sources, media_types, slug,
             "prompt": prompt,
             "negative_prompt": "",
             "motion_direction": str(scene.get("motion_direction", "")).strip(),
-            "source_type": mtype,
+            "source_type": mtype or "image",
             "clip_duration": round(clip_duration, 3),
-            "image_source": "user_inbox:" + source.name,
+            "image_source": f"user_inbox:{source.name}" if source else "black_placeholder",
         })
 
-    contact_sheet = build_contact_sheet(slug, len(scenes), media_types)
+    contact_sheet = build_contact_sheet(slug, len(scenes), [e["source_type"] for e in entries])
     if contact_sheet is None:
         log("  WARNING: contact sheet could not be built (cosmetic only).")
 
@@ -615,6 +646,7 @@ def qa_check(mp4_path, timeline_seconds):
 
 def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
              overlay=True, overlay_duration=3.0, overlay_position="top",
+             burn_narration=False,
              music=None, scenes=None, title=None, description=None,
              hashtags=None):
     slug = slugify(run_name)
@@ -630,9 +662,6 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
 
     # 0. Preflight
     log("[1/6] Preflight")
-    if not media_files:
-        raise PipelineError("At least one media file is required.")
-
     sources = []
     media_types = []
     for m in media_files:
@@ -651,11 +680,6 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
     # 1. Storyboard (scenes provided by UI, no LLM)
     log("[2/6] Storyboard: using user-defined scenes")
     scenes = scenes or []
-    n = len(sources)
-    if len(scenes) != n:
-        raise PipelineError(
-            f"Scenes ({len(scenes)}) must match media files ({n})."
-        )
     # Renumber scenes to match media order
     for idx, sc in enumerate(scenes, start=1):
         sc['scene_number'] = idx
@@ -697,6 +721,7 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
         "--overlay-duration", str(overlay_duration),
         "--overlay-position", overlay_position,
         "--overlay-fontsize", "52",
+        ("--no-burn-narration" if not burn_narration else "--burn-narration"),
     ]
     if music:
         music_file = Path(music)
@@ -765,7 +790,7 @@ def main():
         description="One-click video pipeline: media + prompt -> finished MP4."
     )
     parser.add_argument(
-        "--media", nargs="+", default=[],
+        "--media", nargs="*", default=[],
         help="Media files (images/clips) for the video",
     )
     parser.add_argument(
@@ -790,6 +815,10 @@ def main():
                         help="Headline position (default top)")
     parser.add_argument("--overlay-fontsize", type=int, default=52,
                         help="Headline font size (default 52)")
+    parser.add_argument("--burn-narration", dest="burn_narration", action="store_true", default=False,
+                        help="Burn narration captions into the video (default off)")
+    parser.add_argument("--no-burn-narration", dest="burn_narration", action="store_false",
+                        help="Disable burning narration captions")
     parser.add_argument(
         "--music", default=None,
         help="Background music track (mp3/wav/m4a/...); mixed under "
@@ -825,7 +854,8 @@ def main():
         return pipeline(run_name, args.media, args.no_open,
                         args.voice, args.tts_speed or 1.0,
                         args.overlay, args.overlay_duration,
-                        args.overlay_position, args.music, scenes,
+                        args.overlay_position, args.burn_narration,
+                        args.music, scenes,
                         args.title, args.description, args.hashtags)
     except PipelineError as error:
         log("PIPELINE FAILED — " + str(error))

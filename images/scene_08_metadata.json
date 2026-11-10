@@ -1,0 +1,14 @@
+{
+  "scene_number": 8,
+  "duration_seconds": 8.0,
+  "narration": "REM stands for Rapid Eye Movement. During this stage, brain activity becomes surprisingly similar to wakefulness. Most vivid dreams occur during REM sleep, while your brain temporarily suppresses most voluntary muscle movement, preventing you from physically acting out your dreams.",
+  "on_screen_text": "REM: WHERE DREAMS COME ALIVE",
+  "prompt": "",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "8.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

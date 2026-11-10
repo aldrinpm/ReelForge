@@ -1,0 +1,14 @@
+{
+  "scene_number": 10,
+  "duration_seconds": 8.0,
+  "narration": "While sleeping, your brain processes information gathered throughout the day. Important memories are strengthened and reorganized, helping transfer information into more stable long-term storage. That's why getting enough sleep is essential for learning, concentration, and problem-solving.",
+  "on_screen_text": "SLEEP BUILDS STRONGER MEMORIES",
+  "prompt": "",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "10.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

@@ -1,0 +1,14 @@
+{
+  "scene_number": 9,
+  "duration_seconds": 8.0,
+  "narration": "One fascinating discovery is the glymphatic system. This network helps clear metabolic waste from the brain. Research suggests that waste clearance increases during sleep, potentially helping remove substances associated with neurological diseases. Scientists are still investigating exactly how this process works in humans.",
+  "on_screen_text": "YOUR BRAIN CLEANS ITSELF",
+  "prompt": "",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "9.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

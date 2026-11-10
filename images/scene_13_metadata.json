@@ -1,0 +1,14 @@
+{
+  "scene_number": 13,
+  "duration_seconds": 8.0,
+  "narration": "Sleep isn't wasted time. It's an essential biological investment in your brain, body, and future health. Every night, while the world grows quiet, your body performs millions of invisible tasks that help you face another day. The next time you go to bed, remember: your brain is just getting started.",
+  "on_screen_text": "SLEEP IS YOUR SUPERPOWER",
+  "prompt": "",
+  "negative_prompt": "",
+  "source": "user_inbox",
+  "source_file": "13.jpg",
+  "source_type": "image",
+  "width": 512,
+  "height": 768,
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+}

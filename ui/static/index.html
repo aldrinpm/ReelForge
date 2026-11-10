@@ -115,6 +115,72 @@
     .btn-copy { background: #374151; color: #fff; border: none; padding: 0.125rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; }
     .btn-copy:hover { background: #4b5563; }
     .btn-copy.bg-green-600 { background: #059669; }
+    /* AI dialog modal */
+    .ai-dialog-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6); z-index: 10000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ai-dialog {
+      background: #1f2937; border-radius: 0.75rem; padding: 1.5rem;
+      max-width: 720px; width: 90vw; max-height: 85vh; overflow: auto;
+    }
+    .ai-dialog-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem; border-bottom: 1px solid #374151; padding-bottom: 0.5rem;
+    }
+    .ai-dialog-header h3 { margin: 0; font-size: 1.125rem; font-weight: 600; color: #fff; }
+    .ai-dialog-close { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.25rem; }
+    .ai-dialog-close:hover { color: #fff; }
+    .ai-field-group { margin-bottom: 0.75rem; }
+    .ai-field-label { display: block; font-size: 0.875rem; color: #9ca3af; margin-bottom: 0.375rem; }
+    .ai-textarea, .ai-input {
+      width: 100%; background: #374151; border: 1px solid #4b5563;
+      border-radius: 0.375rem; padding: 0.5rem 0.75rem; color: #f3f4f6;
+      font-size: 0.875rem; box-sizing: border-box;
+    }
+    .ai-textarea { min-height: 6rem; resize: vertical; }
+    .ai-select { width: 100%; background: #374151; border: 1px solid #4b5563;
+      border-radius: 0.375rem; padding: 0.5rem 0.75rem; color: #f3f4f6;
+      font-size: 0.875rem; }
+    .ai-select:disabled { background: #374151; color: #6b7280; cursor: not-allowed; }
+    .ai-dialog-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
+    .btn-ai-send { background: #2563eb; color: #fff; border: none;
+      border-radius: 0.375rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; }
+    .btn-ai-send:hover { background: #1d4ed8; }
+    .btn-ai-send:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-ai-stop { background: #dc2626; color: #fff; border: none;
+      border-radius: 0.375rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; }
+    .btn-ai-stop:hover { background: #b91c1c; }
+    .btn-ai-stop:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-ai-save { background: #059669; color: #fff; border: none;
+      border-radius: 0.375rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; margin-left: 0.5rem; }
+    .btn-ai-save:hover { background: #047857; }
+    .btn-ai-save:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-attach-media { background: #4b5563; color: #fff; border: none;
+      border-radius: 0.375rem; padding: 0.25rem 0.6rem; font-size: 0.75rem; font-weight: 500; cursor: pointer; margin-left: 0.5rem; }
+    .btn-attach-media:hover { background: #374151; }
+    .btn-attach-media:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-attach-media.has-media { background: #059669; }
+    .btn-attach-media.has-media:hover { background: #047857; }
+    .ai-response-box { background: #111827; border: 1px solid #374151;
+      border-radius: 0.375rem; padding: 0.75rem; height: 12rem; overflow: auto;
+      font-family: monospace; font-size: 0.75rem; color: #86efac; white-space: pre-wrap;
+      user-select: text; cursor: text; }
+    .ai-response-box.expanded { height: 30rem; }
+    .ai-key-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+    .ai-key-row .ai-field-label { margin: 0; min-width: 0; }
+    .ai-response-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; }
+    .btn-ai-expand { background: #374151; border: none; border-radius: 0.25rem; padding: 0.25rem 0.6rem; font-size: 0.75rem; cursor: pointer; color: #f3f4f6; }
+    .btn-ai-expand:hover { background: #4b5563; }
+    .ai-slider-row { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.25rem; }
+    .ai-slider-row label { font-size: 0.875rem; color: #9ca3af; min-width: 9rem; }
+    .ai-slider { flex: 1; background: #374151; height: 0.5rem; border-radius: 0.25rem;
+      outline: none; accent-color: #3b82f6; }
+    .ai-slider-value { min-width: 4.5rem; text-align: right; font-size: 0.875rem;
+      color: #f3f4f6; font-variant-numeric: tabular-nums; }
+    .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1rem; }
+    .ai-grid > div { display: flex; flex-direction: column; gap: 0.25rem; }
   </style>
 </head>
 <body>
@@ -152,7 +218,11 @@
 
     <!-- New Run -->
     <div id="newrun" class="section">
-      <h2 class="text-2xl font-semibold mb-4">New Run</h2>
+      <div class="flex justify-between items-end mb-4">
+        <h2 class="text-2xl font-semibold">New Run</h2>
+        <button class="btn-secondary btn-sm" onclick="browseTextFile()">Browse from text file</button>
+        <button class="btn-secondary btn-sm" onclick="openAiDialog()">Generate from AI</button>
+      </div>
       <div class="card space-y-4">
         <div>
           <label class="block text-sm text-gray-400 mb-1">Title</label>
@@ -170,16 +240,9 @@
           <button class="btn-copy btn-xs mt-1" onclick="copyText(this, document.getElementById('run-hashtags').value)">Copy</button>
         </div>
         <div>
-          <label class="block text-sm text-gray-400 mb-1">Media files</label>
-          <div class="flex gap-2 mb-2">
-            <button class="btn-secondary btn-sm" onclick="pickFiles()">Select Files</button>
-            <button class="btn-secondary btn-sm" onclick="clearFiles()">Clear</button>
-          </div>
-          <div id="file-list" class="text-sm text-gray-300 space-y-1"></div>
         </div>
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="block text-sm text-gray-400">Scenes (1 per media file)</label>
             <button class="btn-secondary btn-sm" onclick="addScene()">+ Add Scene</button>
           </div>
           <div id="scenes-list" class="space-y-2 mb-2">
@@ -190,7 +253,7 @@
         <div class="grid2">
           <div>
             <label class="block text-sm text-gray-400 mb-1">Voice</label>
-            <select id="run-voice"><option value="">Default (config)</option></select>
+            <select id="run-voice"><option value="af_heart">af_heart (default)</option></select>
             <div class="flex items-center gap-2 mt-1">
               <button class="btn-secondary btn-sm" onclick="previewRunVoice()">Preview</button>
               <span id="run-voice-status" class="text-xs text-gray-500"></span>
@@ -204,6 +267,7 @@
         <div class="flex items-center gap-4">
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-save-defaults"> Save as default</label>
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-overlay" checked> Burn overlays</label>
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-burn-narration"> Burn narration</label>
         </div>
         <div>
           <label class="block text-sm text-gray-400 mb-1">Background music (optional)</label>
@@ -333,11 +397,13 @@
             return;
           }
           if (files && files.error) { alert('File picker error: ' + files.error); return; }
+          // User cancelled pywebview dialog - do not fall back to backend
+          return;
         } catch(e) { 
           document.getElementById('run-status').textContent = 'pywebview pick_files failed: ' + e.message; 
         }
       }
-      // Fallback to backend tkinter
+      // Fallback to backend tkinter (only when pywebview not available)
       try {
         document.getElementById('run-status').textContent = 'Using backend file picker';
         const res = await fetch('/pick-files', { method: 'POST' });
@@ -347,7 +413,125 @@
         document.getElementById('run-status').textContent = 'Could not open file picker: ' + e.message; 
       }
     }
-    function clearFiles() { selectedFiles = []; renderFileList(); }
+    // Browse from text file - parse title, description, hashtags, and scenes
+    async function browseTextFile() {
+      let filePath = null;
+      // Use backend tkinter dialog (pywebview pick_files has media filter, not .txt)
+      try {
+        const res = await fetch('/pick-text-file', { method: 'POST' });
+        const data = await res.json();
+        if (data.file) filePath = data.file;
+        else return; // user cancelled
+      } catch(e) {
+        alert('Could not open file picker: ' + e.message);
+        return;
+      }
+      // Read the file content
+      try {
+        const res = await fetch('/read-text-file', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: filePath })
+        });
+        const data = await res.json();
+        if (!data.ok || !data.content) {
+          alert('Could not read file: ' + (data.error || 'unknown error'));
+          return;
+        }
+        parseTextFile(data.content, filePath);
+      } catch(e) {
+        alert('Error reading file: ' + e.message);
+      }
+    }
+
+    function parseTextFile(content, filePath) {
+      const lines = content.split(/\r?\n/);
+      let title = '';
+      let description = '';
+      let hashtags = '';
+      const scenes = [];
+      let currentScene = null;
+      let currentField = null; // 'overlay' or 'narration'
+
+      console.log('parseTextFile: starting parse, content length:', content.length);
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+
+        const titleMatch = trimmed.match(/^Title:\s*(.*)$/i);
+        if (titleMatch) { title = titleMatch[1].trim(); continue; }
+
+        const descMatch = trimmed.match(/^Description:\s*(.*)$/i);
+        if (descMatch) { description = descMatch[1].trim(); continue; }
+
+        const hashMatch = trimmed.match(/^Hashtags:\s*(.*)$/i);
+        if (hashMatch) { hashtags = hashMatch[1].trim(); continue; }
+
+        // Scene header: "Scene N:" or "Scene N - ..." or just "Scene N"
+        const sceneMatch = trimmed.match(/^Scene\s+(\d+)\s*:?/i);
+        if (sceneMatch) {
+          const sceneNum = parseInt(sceneMatch[1]);
+          currentScene = { num: sceneNum, overlay: '', narration: '' };
+          currentField = null;
+          const afterColon = trimmed.substring(sceneMatch[0].length).trim();
+          if (afterColon) currentScene.overlay = afterColon;
+          scenes.push(currentScene);
+          continue;
+        }
+
+        // Overlay line: "Overlay: ..." or "Overlay N: ..."
+        const overlayMatch = trimmed.match(/^Overlay\s*(?:\d+)?:\s*(.*)$/i);
+        if (overlayMatch && currentScene) {
+          currentScene.overlay = overlayMatch[1].trim();
+          currentField = 'overlay';
+          continue;
+        }
+
+        // Narration line: "Narration: ..." or "Narration N: ..."
+        const narrMatch = trimmed.match(/^Narration\s*(?:\d+)?:\s*(.*)$/i);
+        if (narrMatch && currentScene) {
+          currentScene.narration = narrMatch[1].trim();
+          currentField = 'narration';
+          continue;
+        }
+
+        // Continuation of previous field (multi-line)
+        if (currentScene && currentField === 'overlay') {
+          currentScene.overlay += ' ' + trimmed;
+        } else if (currentScene && currentField === 'narration') {
+          currentScene.narration += ' ' + trimmed;
+        }
+      }
+
+      console.log('parseTextFile: parsed scenes:', JSON.stringify(scenes));
+
+      // Populate form header fields
+      document.getElementById('run-title').value = title;
+      document.getElementById('run-description').value = description;
+      document.getElementById('run-hashtags').value = hashtags;
+
+      // Clear existing scenes and rebuild from file
+      const scenesList = document.getElementById('scenes-list');
+      scenesList.innerHTML = '';
+
+      if (scenes.length > 0) {
+        scenes.forEach((s, i) => {
+          console.log('parseTextFile: adding scene', s.num, 'overlay:', s.overlay, 'narration:', s.narration);
+          addScene(s.num || (i + 1), s.narration, s.overlay, 8);
+        });
+      } else {
+        // No scenes found; create one empty scene if media files exist
+        if (selectedFiles.length > 0) {
+          syncScenesToMedia();
+        } else {
+          addScene(1, '', '', 8);
+        }
+      }
+
+      // Show status
+      document.getElementById('run-status').textContent = 'Parsed ' + scenes.length + ' scene(s) from ' + filePath.split(/[\\\/]/).pop();
+    }
     function renderFileList() {
       const el = document.getElementById('file-list');
       if (selectedFiles.length === 0) { el.innerHTML = '<div class="text-gray-500 text-sm">No files selected.</div>'; return; }
@@ -388,11 +572,27 @@
           <input type="text" class="scene-overlay w-40 text-sm" placeholder="Overlay text" maxlength="35" onpaste="return checkOverlayPaste(this)" oninput="checkOverlayLimit(this)">
           <span class="text-xs text-red-400 hidden overlay-warn">Max 35 chars</span>
           <textarea class="scene-narration flex-1 h-20 text-sm" placeholder="Narration for this scene..."></textarea>
-          <input type="number" class="scene-duration w-16 text-sm" value="${duration}" step="0.5" min="1">
+          <button class="btn-attach-media btn-sm" onclick="attachMediaToScene(this)" title="Attach media file to this scene">Attach Media</button>
+          <input type="number" class="scene-duration text-xs text-center" value="${duration}" step="0.5" min="1" style="width: 2rem; max-width: 2rem; padding: 0 0.2rem;">
           <button class="btn-danger btn-sm" onclick="removeScene(this)">Remove</button>
         </div>
       `;
       list.appendChild(row);
+      // Populate overlay and narration fields from provided values
+      const overlayInput = row.querySelector('.scene-overlay');
+      const narrationTextarea = row.querySelector('.scene-narration');
+      if (overlayInput) {
+        overlayInput.value = overlay || '';
+        console.log('addScene: set overlay input value to:', overlayInput.value);
+      } else {
+        console.error('addScene: overlay input not found in row');
+      }
+      if (narrationTextarea) {
+        narrationTextarea.value = narration || '';
+        console.log('addScene: set narration textarea value to:', narrationTextarea.value);
+      } else {
+        console.error('addScene: narration textarea not found in row');
+      }
     }
 
     function checkOverlayPaste(input) {
@@ -419,6 +619,26 @@
       updateSceneNumbers();
     }
 
+    function attachMediaToScene(btn) {
+      const row = btn.closest('.scene-row');
+      try {
+        fetch('/pick-media-file', { method: 'POST' })
+          .then(r => r.json())
+          .then(data => {
+            if (data.file) {
+              btn.textContent = data.file.split(/[\\\/]/).pop();
+              btn.classList.add('has-media');
+              btn.title = data.file;
+              row.dataset.mediaPath = data.file;
+              console.log('attachMediaToScene: attached', data.file, 'to scene row');
+            }
+          })
+          .catch(e => alert('Error picking media: ' + e.message));
+      } catch(e) {
+        alert('Could not open media picker: ' + e.message);
+      }
+    }
+
     function updateSceneNumbers() {
       const list = document.getElementById('scenes-list');
       list.querySelectorAll('.scene-row').forEach((row, i) => {
@@ -439,6 +659,7 @@
           narration_segment: row.querySelector('.scene-narration').value.trim(),
           on_screen_text: overlay || 'Scene ' + (i + 1),
           duration_seconds: parseFloat(row.querySelector('.scene-duration').value) || 8,
+          media_path: row.dataset.mediaPath || '',
         });
       });
       return scenes;
@@ -517,11 +738,10 @@
     async function startRun() {
       const ts = new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, '');
       const name = 'run_' + ts;
-      document.getElementById('run-status').textContent = 'startRun called: name=' + name + ', files=' + selectedFiles.length;
-      if (selectedFiles.length === 0) { alert('Select at least one media file'); return; }
+      document.getElementById('run-status').textContent = 'startRun called: name=' + name;
       const scenes = getScenes();
-      if (scenes.length !== selectedFiles.length) {
-        alert('Scenes (' + scenes.length + ') must match media files (' + selectedFiles.length + '). You have ' + selectedFiles.length + ' media file(s) — please add or remove scenes to match.');
+      if (scenes.length === 0) {
+        alert('Please add at least one scene.');
         return;
       }
       for (const s of scenes) {
@@ -538,6 +758,7 @@
             voice: document.getElementById('run-voice').value || null,
             speed: parseFloat(document.getElementById('run-tts-speed').value),
             overlay: document.getElementById('run-overlay').checked,
+            burn_narration: document.getElementById('run-burn-narration').checked,
             music: (selectedMusic && typeof selectedMusic === 'string') ? selectedMusic : null,
             title: document.getElementById('run-title').value || null,
             description: document.getElementById('run-description').value || null,
@@ -756,6 +977,523 @@
       setInterval(loadHealth, 5000);
       setInterval(loadRuns, 10000);
     });
+
+    // AI Dialog
+    let aiAbortController = null;
+    function openAiDialog() {
+      document.getElementById('ai-dialog-overlay').style.display = 'flex';
+      document.getElementById('ai-response-box').textContent = '';
+      validateAiForm();
+      loadAiSettings();
+    }
+    function closeAiDialog() {
+      document.getElementById('ai-dialog-overlay').style.display = 'none';
+      if (aiAbortController) { aiAbortController.abort(); aiAbortController = null; }
+      resetAiSendButton();
+    }
+    function validateAiForm() {
+      const apiKey = document.getElementById('ai-api-key').value.trim();
+      const baseUrl = document.getElementById('ai-api-url').value.trim();
+      const modelSelect = document.getElementById('ai-model');
+      const modelSearch = document.getElementById('ai-model-search');
+      let model = modelSelect.value;
+      if (!model && modelSearch.value.trim()) {
+        model = modelSearch.value.trim();
+      }
+      const prompt = document.getElementById('ai-prompt').value.trim();
+      const btn = document.getElementById('ai-send-btn');
+      // API Key is optional; only API URL, Model, and Prompt are required.
+      const ready = baseUrl && model && prompt;
+      btn.disabled = !ready;
+      // If in Stop state, keep button enabled (user wants to cancel)
+      if (btn.textContent === 'Stop') {
+        btn.disabled = false;
+      }
+    }
+    async function queryModels() {
+      const output = document.getElementById('ai-response-box');
+      output.textContent = 'Querying models...';
+      try {
+        const r = await fetch('/models');
+        const d = await r.json();
+        const sel = document.getElementById('ai-model');
+        sel.innerHTML = '<option value="">Select or type a model...</option>';
+        const models = d.models || [];
+        models.forEach(m => {
+          const o = document.createElement('option');
+          o.value = m;
+          o.textContent = m;
+          sel.appendChild(o);
+        });
+        // Display full API response including errors in the response box
+        output.textContent = JSON.stringify(d, null, 2);
+        if (d.error) {
+          output.textContent = 'Error: ' + d.error + '\n\nFull response:\n' + JSON.stringify(d, null, 2);
+        } else if (models.length === 0 && !d.error) {
+          output.textContent = 'No models returned from the API.\n\nResponse:\n' + JSON.stringify(d, null, 2);
+        } else {
+          output.textContent = 'Loaded ' + models.length + ' model(s).\n\nResponse:\n' + JSON.stringify(d, null, 2);
+        }
+      } catch(e) {
+        output.textContent = 'Error querying models: ' + e.message;
+      }
+    }
+    function filterModelsBySearch() {
+      const val = document.getElementById('ai-model-search').value.toLowerCase();
+      const sel = document.getElementById('ai-model');
+      let exactMatch = null;
+      for (let i = 1; i < sel.options.length; i++) {
+        const opt = sel.options[i];
+        const show = opt.textContent.toLowerCase().includes(val);
+        opt.style.display = show ? '' : 'none';
+        if (show && opt.textContent.toLowerCase() === val) {
+          exactMatch = opt.value;
+        }
+      }
+      // Auto-select exact match as you type
+      if (exactMatch) {
+        sel.value = exactMatch;
+        onModelChange();
+      }
+    }
+    async function onModelChange() {
+      const model = document.getElementById('ai-model').value;
+      const compatSelect = document.getElementById('ai-compat-mode');
+      const compatDesc = document.getElementById('ai-compat-desc');
+      const ctxInput = document.getElementById('ai-context-length');
+      const reasoningSelect = document.getElementById('ai-reasoning-effort');
+
+      if (!model) {
+        compatSelect.disabled = true;
+        compatSelect.innerHTML = '<option value="">Select a model first</option>';
+        compatDesc.textContent = '';
+        ctxInput.value = '';
+        reasoningSelect.disabled = true;
+        reasoningSelect.innerHTML = '<option value="">Select a model first</option>';
+        return;
+      }
+
+      compatSelect.disabled = false;
+      reasoningSelect.disabled = false;
+
+      try {
+        const r = await fetch('/models/info?model=' + encodeURIComponent(model));
+        const d = await r.json();
+
+        compatSelect.innerHTML = '';
+        if (d.compatibility_modes && d.compatibility_modes.length) {
+          d.compatibility_modes.forEach(cm => {
+            const o = document.createElement('option');
+            o.value = cm.value || cm;
+            o.textContent = cm.label || cm;
+            compatSelect.appendChild(o);
+          });
+          compatDesc.textContent = d.compatibility_desc || 'Selected compatibility mode.';
+        } else {
+          const o = document.createElement('option');
+          o.value = 'auto';
+          o.textContent = 'Auto-detect [current]';
+          compatSelect.appendChild(o);
+          compatDesc.textContent = 'No compatibility modes returned; using auto-detect.';
+        }
+
+        if (d.context_length) {
+          ctxInput.value = d.context_length.toString();
+          document.getElementById('ai-context-length-val').textContent = d.context_length.toString();
+        } else {
+          ctxInput.value = '';
+          document.getElementById('ai-context-length-val').textContent = '';
+        }
+
+        reasoningSelect.innerHTML = '';
+        if (d.reasoning_effort_options && d.reasoning_effort_options.length) {
+          d.reasoning_effort_options.forEach(re => {
+            const o = document.createElement('option');
+            o.value = re.value || re;
+            o.textContent = re.label || re;
+            reasoningSelect.appendChild(o);
+          });
+        } else {
+          const o = document.createElement('option');
+          o.value = 'auto';
+          o.textContent = 'Auto';
+          reasoningSelect.appendChild(o);
+        }
+      } catch(e) {
+        const url = document.getElementById('ai-api-url').value || '';
+        if (url.includes('/responses') || model.toLowerCase().includes('codex')) {
+          compatSelect.value = 'responses';
+          compatDesc.textContent = 'Use /responses for Codex-compatible tool-calling backends.';
+        } else if (url.includes('/v1/messages') || model.toLowerCase().includes('claude')) {
+          compatSelect.value = 'anthropic';
+          compatDesc.textContent = 'Use /v1/messages for Anthropic-compatible endpoints.';
+        } else if (url.includes('/chat/completions')) {
+          compatSelect.value = 'chat_completions';
+          compatDesc.textContent = 'Use /chat/completions for standard OpenAI-compatible servers.';
+        } else {
+          compatSelect.value = 'auto';
+          compatDesc.textContent = 'Use Hermes URL heuristics; best for standard OpenAI-compatible endpoints.';
+        }
+        const ctxMap = {
+          'gpt-4': 8192, 'gpt-4-32k': 32768, 'gpt-4-turbo': 128000, 'gpt-4o': 128000,
+          'gpt-3.5-turbo': 4096, 'gpt-3.5-turbo-16k': 16384,
+          'claude-3': 200000, 'claude-2': 100000, 'claude-instant': 100000,
+          'llama-3.1-8b': 131072, 'llama-3.1-70b': 131072, 'llama-3.1-405b': 131072,
+          'qwythos': 131072, 'qwen': 131072, 'nemotron': 131072,
+        };
+        let detectedCtx = '';
+        for (const [key, val] of Object.entries(ctxMap)) {
+          if (model.toLowerCase().includes(key)) {
+            detectedCtx = val.toString();
+            break;
+          }
+        }
+        if (detectedCtx) {
+          ctxInput.value = detectedCtx;
+          document.getElementById('ai-context-length-val').textContent = detectedCtx;
+        }
+        reasoningSelect.innerHTML = '<option value="">Auto</option>';
+        if (model.toLowerCase().includes('gpt-5') || model.toLowerCase().includes('o1') || model.toLowerCase().includes('o3')) {
+          ['low', 'medium', 'high'].forEach(v => {
+            const o = document.createElement('option');
+            o.value = v; o.textContent = v.charAt(0).toUpperCase() + v.slice(1);
+            reasoningSelect.appendChild(o);
+          });
+        }
+      }
+    }
+    function resetAiSendButton() {
+      const btn = document.getElementById('ai-send-btn');
+      btn.textContent = 'Send';
+      btn.className = 'btn-ai-send';
+      btn.disabled = false;
+      aiAbortController = null;
+      validateAiForm();
+    }
+    function toggleAiExpand() {
+      const box = document.getElementById('ai-response-box');
+      const btn = document.getElementById('ai-expand-btn');
+      const isExpanded = box.classList.toggle('expanded');
+      btn.textContent = isExpanded ? 'Collapse' : 'Expand';
+    }
+    async function saveAiSettings() {
+      const apiKey = document.getElementById('ai-api-key').value;
+      const baseUrl = document.getElementById('ai-api-url').value;
+      const modelSelect = document.getElementById('ai-model');
+      const modelSearch = document.getElementById('ai-model-search');
+      let model = modelSelect.value;
+      if (!model && modelSearch.value.trim()) {
+        model = modelSearch.value.trim();
+      }
+      const compatibilityMode = document.getElementById('ai-compat-mode').value;
+      const contextLength = document.getElementById('ai-context-length').value;
+      const reasoningEffort = document.getElementById('ai-reasoning-effort').value;
+      const maxTokens = document.getElementById('ai-max-tokens').value;
+      const autoContinue = document.getElementById('ai-auto-continue').value;
+      const maxContinuations = document.getElementById('ai-max-continuations').value;
+      const maxTotalGenerationAttempts = document.getElementById('ai-max-total-generation-attempts').value;
+      const maxTotalOutputTokens = document.getElementById('ai-max-total-output-tokens').value;
+      const detectTruncation = document.getElementById('ai-detect-truncation').value;
+      const validateCompletion = document.getElementById('ai-validate-completion').value;
+
+      try {
+        // Fetch current config, merge AI settings, save back
+        const r = await fetch('/config');
+        const cfg = await r.json();
+        if (!cfg.ai_generation) cfg.ai_generation = {};
+        cfg.ai_generation = {
+          ...cfg.ai_generation,
+          api_key: apiKey,
+          base_url: baseUrl,
+          model: model,
+          compatibility_mode: compatibilityMode,
+          context_length: contextLength,
+          reasoning_effort: reasoningEffort,
+          max_tokens: maxTokens,
+          auto_continue: autoContinue,
+          max_continuations: maxContinuations,
+          max_total_generation_attempts: maxTotalGenerationAttempts,
+          max_total_output_tokens: maxTotalOutputTokens,
+          detect_truncation: detectTruncation,
+          validate_completion: validateCompletion
+        };
+        const res = await fetch('/config', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ config: cfg })
+        });
+        const result = await res.json();
+        const output = document.getElementById('ai-response-box');
+        if (result.ok) {
+          output.textContent = 'AI settings saved successfully.';
+        } else {
+          output.textContent = 'Error saving settings: ' + (result.error || 'unknown');
+        }
+      } catch(e) {
+        document.getElementById('ai-response-box').textContent = 'Error saving settings: ' + e.message;
+      }
+    }
+    async function loadAiSettings() {
+      try {
+        const r = await fetch('/config');
+        const cfg = await r.json();
+        const ai = cfg.ai_generation || {};
+        if (ai.api_key) document.getElementById('ai-api-key').value = ai.api_key;
+        if (ai.base_url) document.getElementById('ai-api-url').value = ai.base_url;
+        if (ai.model) {
+          const sel = document.getElementById('ai-model');
+          let found = false;
+          for (let i = 0; i < sel.options.length; i++) {
+            if (sel.options[i].value === ai.model) {
+              sel.value = ai.model;
+              found = true;
+              break;
+            }
+          }
+          if (!found && ai.model) {
+            const o = document.createElement('option');
+            o.value = ai.model;
+            o.textContent = ai.model;
+            sel.appendChild(o);
+            sel.value = ai.model;
+          }
+        }
+        if (ai.compatibility_mode) document.getElementById('ai-compat-mode').value = ai.compatibility_mode;
+        if (ai.context_length) {
+          document.getElementById('ai-context-length').value = ai.context_length;
+          document.getElementById('ai-context-length-val').textContent = ai.context_length;
+        }
+        if (ai.reasoning_effort) {
+          const reSel = document.getElementById('ai-reasoning-effort');
+          let found = false;
+          for (let i = 0; i < reSel.options.length; i++) {
+            if (reSel.options[i].value === ai.reasoning_effort) {
+              reSel.value = ai.reasoning_effort;
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            const o = document.createElement('option');
+            o.value = ai.reasoning_effort;
+            o.textContent = ai.reasoning_effort.charAt(0).toUpperCase() + ai.reasoning_effort.slice(1);
+            reSel.appendChild(o);
+            reSel.value = ai.reasoning_effort;
+          }
+        }
+        if (ai.max_tokens) {
+          document.getElementById('ai-max-tokens').value = ai.max_tokens;
+          document.getElementById('ai-max-tokens-val').textContent = ai.max_tokens;
+        }
+        if (ai.auto_continue !== undefined) document.getElementById('ai-auto-continue').value = ai.auto_continue;
+        if (ai.max_continuations) document.getElementById('ai-max-continuations').value = ai.max_continuations;
+        if (ai.max_total_generation_attempts) document.getElementById('ai-max-total-generation-attempts').value = ai.max_total_generation_attempts;
+        if (ai.max_total_output_tokens) document.getElementById('ai-max-total-output-tokens').value = ai.max_total_output_tokens;
+        if (ai.detect_truncation !== undefined) document.getElementById('ai-detect-truncation').value = ai.detect_truncation;
+        if (ai.validate_completion !== undefined) document.getElementById('ai-validate-completion').value = ai.validate_completion;
+      } catch(e) {
+        // Silently ignore if no saved settings yet
+      }
+    }
+    async function toggleAiGenerate() {
+      const btn = document.getElementById('ai-send-btn');
+      const output = document.getElementById('ai-response-box');
+
+      if (btn.textContent === 'Send') {
+        const apiKey = document.getElementById('ai-api-key').value;
+        const baseUrl = document.getElementById('ai-api-url').value;
+        const modelSelect = document.getElementById('ai-model');
+        const modelSearch = document.getElementById('ai-model-search');
+        let model = modelSelect.value;
+        if (!model && modelSearch.value.trim()) {
+          model = modelSearch.value.trim();
+          modelSelect.value = model;
+          onModelChange();
+        }
+        const compatibilityMode = document.getElementById('ai-compat-mode').value;
+        const contextLength = document.getElementById('ai-context-length').value;
+        const reasoningEffort = document.getElementById('ai-reasoning-effort').value;
+        const maxTokens = document.getElementById('ai-max-tokens').value;
+        const autoContinue = document.getElementById('ai-auto-continue').value;
+        const maxContinuations = document.getElementById('ai-max-continuations').value;
+        const maxTotalGenerationAttempts = document.getElementById('ai-max-total-generation-attempts').value;
+        const maxTotalOutputTokens = document.getElementById('ai-max-total-output-tokens').value;
+        const detectTruncation = document.getElementById('ai-detect-truncation').value;
+        const validateCompletion = document.getElementById('ai-validate-completion').value;
+        const prompt = document.getElementById('ai-prompt').value;
+
+        if (!baseUrl || !model || !prompt) {
+          output.textContent = 'Error: Please fill in API URL, Model, and Prompt.';
+          return;
+        }
+
+        aiAbortController = new AbortController();
+        btn.textContent = 'Stop';
+        btn.className = 'btn-ai-stop';
+        // Verbose: display all request parameters in the response/log window
+        const paramLog =
+          '=== LLM Request Parameters ===\n' +
+          'API Key:                    ' + (apiKey ? 'set (' + apiKey.length + ' chars)' : '(blank/optional)') + '\n' +
+          'API URL:                  ' + baseUrl + '\n' +
+          'Model:                    ' + model + '\n' +
+          'Compat Mode:              ' + compatibilityMode + '\n' +
+          'Context Length:           ' + contextLength + '\n' +
+          'Reasoning Effort:         ' + reasoningEffort + '\n' +
+          'max_tokens:               ' + maxTokens + '\n' +
+          'auto_continue:            ' + autoContinue + '\n' +
+          'max_continuations:        ' + maxContinuations + '\n' +
+          'max_total_generation_attempts: ' + maxTotalGenerationAttempts + '\n' +
+          'max_total_output_tokens:  ' + maxTotalOutputTokens + '\n' +
+          'detect_truncation:        ' + detectTruncation + '\n' +
+          'validate_completion:      ' + validateCompletion + '\n' +
+          'Prompt:                   ' + prompt + '\n' +
+          '--- Sending request ... ---\n';
+        output.textContent = paramLog;
+
+        try {
+          const response = await fetch('/ai/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              api_key: apiKey,
+              base_url: baseUrl,
+              model: model,
+              compatibility_mode: compatibilityMode,
+              context_length: contextLength,
+              reasoning_effort: reasoningEffort,
+              max_tokens: maxTokens,
+              auto_continue: autoContinue,
+              max_continuations: maxContinuations,
+              max_total_generation_attempts: maxTotalGenerationAttempts,
+              max_total_output_tokens: maxTotalOutputTokens,
+              detect_truncation: detectTruncation,
+              validate_completion: validateCompletion,
+              prompt: prompt
+            }),
+            signal: aiAbortController.signal
+          });
+          const result = await response.json();
+          if (result.text) {
+            output.textContent = paramLog + '\n=== Response ===\n' + (result.text.startsWith('Error:') ? result.text : result.text);
+          } else {
+            output.textContent = paramLog + '\n=== Response ===\nError: ' + (result.error || 'Unknown error');
+          }
+        } catch (e) {
+          if (e.name === 'AbortError') {
+            output.textContent = paramLog + '\n=== Response ===\nRequest cancelled by user.';
+          } else {
+            output.textContent = paramLog + '\n=== Response ===\nError: ' + e.message;
+          }
+        } finally {
+          resetAiSendButton();
+        }
+      } else {
+        if (aiAbortController) {
+          aiAbortController.abort();
+        }
+        resetAiSendButton();
+      }
+    }
   </script>
+
+  <!-- AI Dialog Modal -->
+  <div id="ai-dialog-overlay" class="ai-dialog-overlay" style="display:none;">
+    <div class="ai-dialog">
+      <div class="ai-dialog-header">
+        <h3>AI Storyboard Generator</h3>
+        <button class="ai-dialog-close" onclick="closeAiDialog()">&times;</button>
+      </div>
+      <div class="ai-dialog-body">
+        <div class="ai-field-group">
+          <div class="ai-key-row">
+            <label class="ai-field-label">API Key</label>
+            <button class="btn-ai-save" id="ai-save-btn" onclick="saveAiSettings()">Save Settings</button>
+          </div>
+          <input type="password" id="ai-api-key" class="ai-input" placeholder="API Key" oninput="validateAiForm()">
+        </div>
+        <div class="ai-field-group">
+          <label class="ai-field-label">API URL</label>
+          <input type="text" id="ai-api-url" class="ai-input" placeholder="http://127.0.0.1:1234/v1" oninput="validateAiForm()">
+        </div>
+        <div class="ai-grid">
+          <div class="ai-field-group">
+            <label class="ai-field-label">Model</label>
+            <div class="flex gap-2">
+              <input type="text" id="ai-model-search" class="ai-input" placeholder="Search models..." oninput="filterModelsBySearch(); validateAiForm()">
+              <select class="ai-select flex-1" id="ai-model" onchange="onModelChange(); validateAiForm()">
+                <option value="">Select or type a model...</option>
+              </select>
+              <button class="btn-secondary btn-sm" onclick="queryModels()">Query</button>
+            </div>
+          </div>
+          <div class="ai-field-group">
+            <label>max_tokens</label>
+            <div class="ai-slider-row">
+              <input type="range" id="ai-max-tokens" class="ai-slider" min="1024" max="12288" value="12288" oninput="document.getElementById('ai-max-tokens-val').textContent=this.value; validateAiForm()">
+              <span class="ai-slider-value" id="ai-max-tokens-val">12288</span>
+            </div>
+          </div>
+          <div class="ai-field-group">
+            <label class="ai-field-label">API Compatibility Mode</label>
+            <select class="ai-select" id="ai-compat-mode" disabled>
+              <option value="">Select a model first</option>
+            </select>
+            <div class="text-xs text-gray-500 mt-1" id="ai-compat-desc"></div>
+          </div>
+          <div class="ai-field-group">
+            <label class="ai-field-label">auto_continue</label>
+            <input type="text" id="ai-auto-continue" class="ai-input" value="true" oninput="validateAiForm()">
+          </div>
+          <div class="ai-field-group">
+            <label class="ai-field-label">Context Length</label>
+            <div class="ai-slider-row">
+              <input type="range" id="ai-context-length" class="ai-slider" min="16384" max="262144" value="131072" oninput="document.getElementById('ai-context-length-val').textContent=this.value; validateAiForm()">
+              <span class="ai-slider-value" id="ai-context-length-val">131072</span>
+            </div>
+          </div>
+          <div class="ai-field-group">
+            <label class="ai-field-label">max_continuations</label>
+            <input type="text" id="ai-max-continuations" class="ai-input" value="5" oninput="validateAiForm()">
+          </div>
+          <div class="ai-field-group">
+            <label class="ai-field-label">Reasoning Effort</label>
+            <select class="ai-select" id="ai-reasoning-effort" disabled>
+              <option value="">Select a model first</option>
+            </select>
+          </div>
+          <div class="ai-field-group">
+            <label class="ai-field-label">max_total_generation_attempts</label>
+            <input type="text" id="ai-max-total-generation-attempts" class="ai-input" value="6" oninput="validateAiForm()">
+          </div>
+          <div class="ai-field-group">
+            <label class="ai-field-label">max_total_output_tokens</label>
+            <input type="text" id="ai-max-total-output-tokens" class="ai-input" value="49152" oninput="validateAiForm()">
+          </div>
+          <div class="ai-field-group">
+            <label class="ai-field-label">detect_truncation</label>
+            <input type="text" id="ai-detect-truncation" class="ai-input" value="true" oninput="validateAiForm()">
+          </div>
+          <div class="ai-field-group">
+            <label class="ai-field-label">validate_completion</label>
+            <input type="text" id="ai-validate-completion" class="ai-input" value="true" oninput="validateAiForm()">
+          </div>
+        </div>
+        <div class="ai-field-group">
+          <label class="ai-field-label">Prompt</label>
+          <textarea id="ai-prompt" class="ai-textarea" placeholder="Describe your video idea..." oninput="validateAiForm()"></textarea>
+        </div>
+        <div class="ai-dialog-actions">
+          <button class="btn-ai-send" id="ai-send-btn" onclick="toggleAiGenerate()">Send</button>
+        </div>
+        <div class="ai-field-group mt-2">
+          <div class="ai-response-header">
+            <label class="ai-field-label" style="margin:0;">Response</label>
+            <button class="btn-ai-expand" id="ai-expand-btn" onclick="toggleAiExpand()">Expand</button>
+          </div>
+          <div class="ai-response-box" id="ai-response-box"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
