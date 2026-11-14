@@ -32,6 +32,12 @@ Do NOT load the entire `PROJECT_CONTEXT.md` or all stage contracts at once.
   broken stage contracts.
 - The pipeline is LLM-free: scenes come from the desktop UI or `--scenes`
   JSON. LM Studio is only needed for the standalone AI-dialog path.
+- **UI build rule:** Every LLM model or AI agent MUST run `build_ui.bat`
+  after any change or fix made to the desktop UI (anything under `ui/`,
+  `scripts/storyboard_format.py`, `config.json`, or any file bundled by
+  `build_ui.bat`). The frozen `dist/ReelForge/ReelForge.exe` does not pick
+  up source edits until `build_ui.bat` rebuilds it. Do not mark a UI change
+  as done until the build has run successfully.
 
 ## Long-term memory
 
