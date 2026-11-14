@@ -39,6 +39,12 @@ Do NOT load the entire `PROJECT_CONTEXT.md` or all stage contracts at once.
   up source edits until `build_ui.bat` rebuilds it. Do not mark a UI change
   as done until the build has run successfully.
 
+- **Git rule — no automatic commit or push:** Every LLM model or AI agent
+  MUST NOT commit or push any changes to GitHub unless the user explicitly
+  instructs to do so. All edits are local only; wait for the user's
+  go-ahead before running `git add`, `git commit`, or `git push`. The user
+  decides when a change is ready to be committed and pushed.
+
 ## Long-term memory
 
 - `vault/` (Obsidian PARA) — run notes, learnings, templates.
