@@ -1,35 +1,49 @@
-# ReelForge --- OpenCode Handoff
+# ReelForge --- Local AI Video Pipeline
 
-This folder contains Markdown context and task instructions for an
-OpenCode coding agent.
+ReelForge turns a topic into a publish-ready vertical MP4 (1080x1920)
+entirely on your own machine: scenes -> attached media -> local Kokoro
+narration -> subtitles -> FFmpeg assembly -> QA.
+
+## Start here (ICM layered context)
+
+Read in this order; load only what the task needs.
+
+1.  `CLAUDE.md` --- Layer 0, always.
+2.  `_core/CONTEXT.md` --- Layer 1, task router + stage map + gates.
+3.  `pipeline/NN-<stage>/CONTEXT.md` --- Layer 2, only the stage you touch.
+4.  `_config/` --- canonical voice / paths / QA thresholds.
+
+`PROJECT_CONTEXT.md` and `OPENCODE_TASK.md` are **historical snapshots**,
+superseded by the ICM layers above.
+
+## Quick start (desktop app)
+
+1.  Run `build_ui.bat` to build the app, then launch
+    `dist\ReelForge\ReelForge.exe`.
+2.  In **New Run**, add scenes (narration, overlay text, duration), attach
+    media per scene, then press **Start Run**.
+3.  The MP4 lands in `output\`. Full behavior and flags: `SETUP.md`.
+
+## Quick start (headless / CLI)
+
+```
+python scripts\run_video.py --name <slug> --scenes <scenes.json> --media <file> [<file> ...]
+```
+
+`scenes.json` is a list of scenes: `scene_number`, `narration_segment`,
+`on_screen_text`, `duration_seconds`, optional `media_path`. The desktop
+UI writes exactly this file and invokes the same script.
+
+## Audits
+
+-   `python scripts\loop_doctor.py` --- environment / prerequisite health.
+-   `python scripts\verify_docs.py` --- ICM doc/code drift check.
+-   `python scripts\verify_images.py`, `verify_subtitles.py` --- stage gates.
 
 ## Files
 
--   `PROJECT_CONTEXT.md` --- hardware, software, paths, model selection,
-    current assets, architecture, project status, and long-term plan.
--   `OPENCODE_TASK.md` --- constrained instructions for the next task:
-    first live orchestrator run through LM Studio (Task 8 one-click
-    pipeline is built and QA-tested).
+-   `CLAUDE.md`, `_core/`, `_config/`, `pipeline/` --- the live ICM context.
+-   `gate.yaml` --- machine-readable thresholds **enforced** by the QA stage.
 -   `config.json` --- runtime config for LLM provider/model/endpoint and TTS
-    voice/speed (gitignored; contains secrets). Edit or use the setup
-    wizard.
+    voice/speed (gitignored; contains secrets).
 
-## Quick start (one-click pipeline)
-
-Drop `prompt.txt` + 6 images into `inbox\<video-name>\`, then
-double-click `make_video.bat`. Full behavior and flags: `SETUP.md`
-section 10.
-
-## How to use
-
-1.  Copy these files into your project documentation folder, for example
-    `E:\\AI-Video-Production\\`.
-2.  Open the project folder in OpenCode.
-3.  Add `PROJECT_CONTEXT.md` and `OPENCODE_TASK.md` to the agent's
-    context.
-4.  Ask the agent to follow the **First action** in `PROJECT_CONTEXT.md`
-    and the **Current task** in `OPENCODE_TASK.md`.
-5.  Keep the Qwythos 9B V2 MTP model selected in OpenCode.
-
-These documents do not configure OpenCode or modify files on your E:
-drive. They are portable instructions for the agent to read.

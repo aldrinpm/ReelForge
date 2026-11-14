@@ -65,8 +65,8 @@ E:\AI-Video-Production\
 ├─ SETUP.md                ← this file
 ├─ scripts\                ← pipeline scripts (see section 7)
 ├─ models\huggingface\     ← Kokoro weights (HF_HOME cache)
-├─ output\                 ← storyboards, MP4s, publishing kits
-│   └─ archive\            ← superseded storyboards/renders
+├─ output\                 ← final MP4s (one per run)
+│   └─ archive\            ← superseded renders
 ├─ images\                 ← scene PNGs + metadata + manifest
 │   └─ archive\            ← rejected/superseded images
 ├─ audio\                  ← narration WAVs + metadata
@@ -191,17 +191,19 @@ All scripts live in `E:\AI-Video-Production\scripts\`. Run from
 anywhere; paths are absolute internally. Read `images\approved_set.json`
 first to understand the current production's stage mapping.
 
-⚠️ **Per-video wiring:** the scripts are wired to the first production
-(`How Black Holes Work`):
-`generate_scene_images.py` has a `STORYBOARD` constant pointing at
-`output\20261107_123353_How_black_holes_work.json`, and
-`generate_narration.py` / `generate_subtitles.py` /
-`assemble_video.py` read `images\approved_set.json`. For a new topic:
-generate the new storyboard with step 1, point the script's storyboard
-constant at it, and rebuild the approved-image manifest after image
-review. Full per-topic automation is the planned Task 8 orchestrator.
+⚠️ **Per-video wiring:** the scripts are **manifest-driven**, not
+per-video wired. `generate_narration.py` / `generate_subtitles.py` /
+`assemble_video.py` all read `images\approved_set.json`, which
+`scripts/run_video.py` rebuilds for every run. There is no storyboard
+constant to re-point: the scene list comes from the desktop UI or the
+`--scenes` JSON, and the media comes from `--media` (or per-scene
+`media_path`). See section 10.
 
-### Stage 1 — Storyboard (needs LM Studio running)
+### Stage 1 — Storyboard (standalone LLM path, needs LM Studio running)
+
+> Not part of the one-click pipeline. The pipeline takes its scenes from
+> the desktop UI or `--scenes` JSON; this command is for producing a
+> storyboard JSON by hand, and for the UI's "Generate from AI" dialog.
 
 ```powershell
 & 'E:\ai\AirLLM\py3.11.9\python.exe' 'E:\AI-Video-Production\scripts\generate_video_idea.py' "your topic here"
@@ -216,19 +218,13 @@ review. Full per-topic automation is the planned Task 8 orchestrator.
   `PROJECT_CONTEXT.md` §6.2).
 
 
-```powershell
-& 'E:\ai\AirLLM\py3.11.9\python.exe' 'E:\AI-Video-Production\scripts\generate_scene_images.py'
-# flags:
-#   --scenes 5 | 3-6 | 3,5,6    (default 3-6)
-#   --suffix v2                 (default v2 → scene_XX_v2.png)
-#   --seed 22350                (default 12345 + scene number)
-```
+> **Retired.** The local Stable Diffusion image-generation script no
+> longer exists. Scene visuals now come from the media you attach in the
+> desktop UI (or `--media`); `scripts/run_video.py` normalizes them to
+> 512x768 and writes the manifest. There is nothing to run here.
 
-  22 steps, CFG 6.5, DPM++ 2M.
-- Writes PNG + `<name>_metadata.json` per scene.
-- Prompt overrides for scenes 3–6 and a scene-5 negative override
-  enforce the science constraints (no white-dot singularity, nothing
-  escapes the horizon, obvious lensing).
+  (Historical: 22 steps, CFG 6.5, DPM++ 2M. The SD 1.5 prompt rules are
+  kept in `pipeline/02-images/references/sd_prompt_rules.md`.)
 - Never overwrite approved files until replacements are verified;
   rejected candidates go to `images\archive\`.
 
@@ -302,10 +298,13 @@ ffmpeg -i <mp4> -map 0:a:0 -af volumedetect -f null -
 ffmpeg -y -i <mp4> -vf "select='eq(n\,600)'" -fps_mode passthrough -frames:v 1 temp\qa_frame.png
 ```
 
-Targets: 56 s (45–60 allowed), 1080×1920, 30 FPS, H.264 **yuv420p**,
-AAC stereo, max volume ≈ −1.0 dB (no clipping), caption placement and
-composition in the grabs. Publishing kit template:
-`output\20261107_1552_How_black_holes_work.publishing.json`.
+Targets: duration within the `gate.yaml` limits (1–90 s; Reels max 90 s,
+Shorts max 60 s), 1080×1920, 30 FPS, H.264 **yuv420p**, AAC stereo,
+max volume ≤ −0.3 dB (no clipping), caption placement and composition in
+the grabs. The QA stage **enforces** the `gate.yaml` thresholds via
+`scripts/gates.py`; a run that exceeds the duration or scene-count limits
+fails unless `--allow-overlong` is passed (the UI's "Allow overlong"
+checkbox).
 
 ---
 
@@ -316,6 +315,11 @@ composition in the grabs. Publishing kit template:
 | Scene image generation    | **Not loaded on GPU** | **Required**     | Yes (~2 GB free needed) |
 | Narration / subtitles     | Not required         | Not required      | No (CPU) |
 | Assembly / QA             | Not required         | Not required      | No (CPU) |
+
+> Row 2 applies only to the **standalone** image-generation path. The
+> one-click pipeline does not generate images at all: scene visuals come
+> from the media you attach, and the pipeline therefore needs **no**
+> service running.
 
 **VRAM rule:** Qwythos and Stable Diffusion must not share the 8 GB
 GPU simultaneously. Before image generation, unload/eject the model
@@ -346,42 +350,64 @@ in LM Studio or quit it. Kokoro never uses the GPU by design.
 
 ## 10. One-click pipeline (Task 8 orchestrator)
 
-For new videos, skip the manual stage commands from section 7:
+The desktop UI is the entry point for new videos; the manual stage
+commands in section 7 are the fallback.
 
-1.  Create `inbox\<video-name>\`.
-2.  Add `prompt.txt` (the topic/story) **and 1--12 media files**
-    (images png/jpg/jpeg/webp, video clips mp4/mov/mkv/avi/webm/m4v/mpg/mpeg/flv/wmv,
-    or animated GIFs; filename order = scene order).
-3.  Double-click `make_video.bat` and type the folder name (or run
-    `python scripts\run_video.py <video-name>`).
-4.  ~3--5 min later: `output\<stamp>_<name>.mp4` + a `.publishing.json`
-    kit + `.srt` sidecar; Explorer opens at the finished MP4.
+1.  Build (once) with `build_ui.bat`, then launch
+    `dist\ReelForge\ReelForge.exe`.
+2.  In **New Run**: add one row per scene (overlay text, narration,
+    duration), attach media per scene with "Attach Media" (or pick files
+    in bulk), optionally pick background music, then press **Start Run**.
+3.  ~2--5 min later: `output\<stamp>_<name>.mp4` and Explorer opens at
+    the finished MP4.
+
+Headless equivalent (same script the UI calls):
+
+```powershell
+& 'E:\ai\AirLLM\py3.11.9\python.exe' 'E:\AI-Video-Production\scripts\run_video.py' `
+    --name <slug> --scenes <scenes.json> --media <file> [<file> ...] --no-open
+```
+
+`scenes.json` is a JSON list of scenes: `scene_number`,
+`narration_segment`, `on_screen_text`, `duration_seconds`, and an
+optional `media_path` for per-scene media.
 
 Behavior worth knowing:
 
--   LM Studio (Qwythos loaded, server on 1234) is the only service that
-    attached media (images, clips, GIFs) ARE the scenes.
+-   No service needs to be running. The LLM is only used if you press
+    "Generate from AI" in the UI; the pipeline itself is LLM-free.
+-   Attached media (images, clips, GIFs) ARE the scenes.
 -   Video clips and GIFs are normalized to 1080x1920/30fps and trimmed
     to the scene duration; shorter clips freeze on their last frame
-    (GIFs play once, then freeze). Images keep the Ken Burns motion.
+    (GIFs play once, then freeze). Images are held static and fit inside
+    the frame (no crop, no stretch).
+-   A scene with no media gets a black placeholder, but it carries the
+    most recent media scene's image forward, so attached media persists
+    across black-backdrop scenes instead of being overridden by black.
 -   Previous `images\`, `audio\`, `subtitles\` working files are moved
     into their `archive\` folders with a stamp prefix (never deleted).
--   Image inputs are normalized to 512x768 with scale+crop (never
-    stretched) and `images\approved_set.json` is rebuilt from the
-    storyboard; a contact sheet is saved for the record.
+-   Image inputs are normalized to 512x768 with fit+pad (never
+    stretched) and `images\approved_set.json` is rebuilt for the run; a
+    contact sheet is saved for the record.
 -   Scene durations auto-fit to the measured narration (narration +
     0.9 s, rounded up to 0.5 s) --- so the final timeline can be longer
-    than the storyboard's initial durations; totals outside 45--60 s
-    log a WARNING but still render.
+    than the scene durations you typed in.
 -   Subtitles: two cues per scene from automatic midpoint-punctuation
     splits (the hand-picked SPLITS overrides still win when their
     wording matches), and wording is hard-verified before assembly.
+-   "Burn overlays" (on-screen headline) and "Burn narration" (captions)
+    are UI checkboxes; both default to unchecked, and narration audio is
+    always muxed regardless.
 -   QA gates before publish: 1080x1920, h264 yuv420p, aac, duration
-    equals the timeline, max_volume <= -0.3 dB. Failures abort with the
-    stage and fix shown; full log in `logs\<stamp>_<name>.log`.
--   Useful flags: `--storyboard <json>` reuses an existing storyboard
-    (LM Studio not needed; ideal for narration/subtitle re-runs),
-    `--no-open` suppresses Explorer.
+    equals the timeline, max_volume <= -0.3 dB, **plus the `gate.yaml`
+    duration and scene-count limits** (enforced by `scripts/gates.py`).
+    Failures abort with the stage and fix shown; full log in
+    `logs\<stamp>_<name>.log`. Use "Allow overlong" (or
+    `--allow-overlong`) to knowingly exceed the platform-fit limits.
+-   Output is MP4-only: no publishing kit and no `.srt` sidecar.
+-   Useful flags: `--voice` / `--tts-speed`, `--overlay` /
+    `--no-overlay`, `--burn-narration` / `--no-burn-narration`,
+    `--music <file>`, `--allow-overlong`, `--no-open` (suppresses Explorer).
 
 ## 11. LLM and voice configuration
 
@@ -422,9 +448,9 @@ The pipeline can also be driven from a desktop window:
 
 Or package it: `build_ui.bat` (requires PyInstaller).
 
-Features: service health, new-run form with file picker, live SSE progress,
-result viewer (MP4 + SRT + publishing kit), settings (form + JSON),
-history with re-run, loop doctor. Same backend as headless mode.
+Features: service health, new-run form with file picker and per-scene
+media attach, live SSE progress, result viewer (MP4), settings (form +
+JSON), history with re-run, loop doctor. Same backend as headless mode.
 
 Stack: pywebview (Edge WebView2) + FastAPI + Tailwind/HTMX/Alpine.js.
 Bundle: ~30-45 MB (FFmpeg and model weights NOT bundled).

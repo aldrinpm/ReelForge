@@ -1,10 +1,11 @@
-# Promotion gates — loop-engineering (ReelForge)
+﻿# Promotion gates — loop-engineering (ReelForge)
 # A stage/component may move L1->L2->L3 only when ALL applicable gates pass.
 
 version: 1
 verifier: qa_gates
 
-# Shared thresholds (canonical: _config/qa_thresholds.md)
+# Shared thresholds (canonical: _config/qa_thresholds.md).
+# ENFORCED by scripts/gates.py at the QA stage - these are not advisory.
 thresholds:
   resolution: "1080x1920"
   aspect_ratio: "9:16"
@@ -39,12 +40,12 @@ levels:
 
 # Component -> current level (mirror of STATE.md)
 components:
-  storyboard_generation: L2
+  scene_authoring: L2
   image_staging: L2
   narration: L3
   subtitles: L3
   assembly: L3
-  qa_publishing: L2
+  qa_gates: L3
   obsidian_run_note: L3
   desktop_ui: L1
 

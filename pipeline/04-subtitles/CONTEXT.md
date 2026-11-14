@@ -5,7 +5,7 @@
 |--------|--------------|---------------|-----|
 | Manifest | images/approved_set.json | scenes[].narration, duration_seconds | Text + scene starts |
 | Audio sidecars | audio/scene_XX_metadata.json | duration_seconds | Measured narration length |
-| Config | _config/subtitle_style.md | font, size, outline, margin | Burn-in style |
+| Style | scripts/assemble_video.py | SUBTITLE_STYLE constant | Burn-in font/size/outline/margin |
 
 ## Process
 1. Run scripts/generate_subtitles.py (--out subtitles/<slug>.srt).
@@ -29,4 +29,5 @@ None (auto-gated by verify_subtitles.py).
 - Burn-in preflight (assemble_video.py) confirms subtitles filter works.
 
 ## References
-- _config/subtitle_style.md (Arial 15, outline 2, MarginV 36)
+- scripts/assemble_video.py — `SUBTITLE_STYLE` (Arial 15, outline 2, MarginV 36)
+- _config/qa_thresholds.md — duration / platform-fit thresholds

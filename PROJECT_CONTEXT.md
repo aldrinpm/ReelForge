@@ -1,5 +1,18 @@
 # ReelForge --- Project Context
 
+> ⚠️ **HISTORICAL SNAPSHOT — superseded by the ICM layers.**
+> This file records the project as of **2026-11-07** (pre-desktop-UI,
+> pre-MP4-only). Several things described below no longer exist:
+> the `inbox/` + `prompt.txt` workflow, `scripts/generate_scene_images.py`,
+> the publishing kit (`.publishing.json`), the SRT sidecar, and the LLM
+> inside the pipeline.
+>
+> **The live context is:** `CLAUDE.md` (Layer 0) → `_core/CONTEXT.md`
+> (Layer 1) → `pipeline/NN-<stage>/CONTEXT.md` (Layer 2) → `_config/`.
+> When this file and the ICM layers disagree, **the ICM layers and the
+> code win**. Read `CLAUDE.md` and `_core/CONTEXT.md` first; come back
+> here only for history.
+
 **Last updated:** 2026-11-07 (after narration and TTS milestones)\
 **Purpose:** Handoff context for an OpenCode AI coding agent using the
 local Qwythos 9B V2 MTP GGUF model.

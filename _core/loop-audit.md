@@ -6,6 +6,11 @@ requires 5 consecutive PASS runs.
 
 ## Automated gates (must pass before declaring a stage done)
 
+### Docs (every change)
+- scripts/verify_docs.py exits 0 (stdlib only): no stale file references in
+  the ICM layers, no retired feature/script mentioned, every stage
+  CONTEXT.md keeps its required sections, gate.yaml components are known.
+
 ### Stage 02 — Images
 - scripts/verify_images.py exits 0 (stdlib only; no Pillow).
 - All images 512x768.
@@ -24,9 +29,13 @@ requires 5 consecutive PASS runs.
 
 ### Stage 06 — QA
 - ffprobe: 1080x1920, 30fps, h264, yuv420p, aac 48kHz stereo.
-- Duration 30-90s (Reels) / <=60s (Shorts).
+- Duration matches the manifest timeline (+/-0.25s).
 - volumedetect: max_volume <= -0.3 dB.
-- Publishing kit JSON written; SRT copied next to MP4.
+- gate.yaml thresholds ENFORCED by scripts/gates.py: duration within
+  1-90s (Reels max 90s; Shorts 60s) and scene count within 1-12.
+  Duration/scene-count violations may be acknowledged with
+  `--allow-overlong`; clipping may not.
+- Output is MP4-only (no publishing kit, no SRT sidecar).
 
 ## Human checkpoints (never skip)
 1. Image contact sheet review.

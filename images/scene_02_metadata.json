@@ -5,10 +5,10 @@
   "on_screen_text": "YOUR BRAIN HAS AN INTERNAL CLOCK",
   "prompt": "",
   "negative_prompt": "",
-  "source": "user_inbox",
-  "source_file": "2.jpg",
+  "source": "black_placeholder",
+  "source_file": "black_placeholder",
   "source_type": "image",
   "width": 512,
   "height": 768,
-  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+  "normalized_filter": "color=black:size=512x768"
 }

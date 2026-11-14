@@ -45,16 +45,33 @@ pipeline. Full source: https://github.com/RinDig/Interpretable-Context-Methodolo
 15. **Questionnaire design.** Flat, all-at-once, system-level only. Configure the factory,
     not the product. Voice questions extract concrete examples, not descriptions.
 
+## Keeping docs honest
+
+16. **Docs ship with code.** Any change to a stage's inputs, outputs, script, or
+    flags updates that stage's `CONTEXT.md` **in the same change**. The ICM
+    layers describe the code as it is; they are not a wish list.
+17. **The code is the truth; the docs follow.** When a doc and the code
+    disagree, the code wins and the doc is corrected immediately. Docs are
+    never updated to describe behaviour the code does not have.
+18. **Retired features stay retired.** Removing a feature means removing it
+    from every doc, script, template and config that mentions it. A removed
+    feature must not reappear in the docs later.
+19. **Machine-checkable contracts.** Anything that can be checked
+    mechanically gets a script, not a habit: `scripts/verify_docs.py`
+    (doc/code drift), `scripts/verify_images.py` (stage 02),
+    `scripts/verify_subtitles.py` (stage 04), `scripts/gates.py` (stage 06
+    thresholds, enforced from `gate.yaml`).
+
 ## This pipeline's stages
 
 | # | Stage | Script | Artifact dir |
 |---|-------|--------|--------------|
-| 01 | Storyboard | scripts/generate_video_idea.py | output/ |
-| 02 | Images | scripts/generate_scene_images.py | images/ |
+| 01 | Storyboard | (desktop UI) or `--scenes` JSON | — |
+| 02 | Images | scripts/run_video.py (auto) | images/ |
 | 03 | Narration | scripts/generate_narration.py | audio/ |
 | 04 | Subtitles | scripts/generate_subtitles.py + verify_subtitles.py | subtitles/ |
 | 05 | Assembly | scripts/assemble_video.py | output/ + temp/ |
-| 06 | QA | (ffprobe / volumedetect / frame grabs) | output/ + logs/ |
+| 06 | QA | scripts/gates.py + (ffprobe / volumedetect) | output/ + logs/ |
 
 Stage scripts remain in scripts/ (documentation-only layer; no relocation).
 Human checkpoints: image contact sheet, narration voice, final MP4.

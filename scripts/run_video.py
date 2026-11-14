@@ -1,33 +1,35 @@
 """One-click end-to-end video pipeline (Task 8 orchestrator).
 
 Usage:
-    python run_video.py <run-name> [--storyboard PATH] [--no-open]
+    python run_video.py --name <slug> --scenes <scenes.json>
+                         --media <file> [<file> ...] [--no-open]
 
-Input contract (created by you):
-    inbox/<run-name>/prompt.txt        one-paragraph topic description
-    inbox/<run-name>/<6 images>        png/jpg/jpeg/webp, in scene order
+Input contract:
+    --scenes <path>   JSON list of scenes: scene_number, narration_segment,
+                      on_screen_text, duration_seconds, optional media_path.
+                      The desktop UI writes this file and invokes the script.
+    --media <paths>   Media files (png/jpg/jpeg/webp, mp4/mov/mkv/avi/webm/
+                      m4v/mpg/mpeg/flv/wmv, gif) used for scenes that do not
+                      carry their own media_path. Filename order = scene order.
 
 What it does (fully automatic, no review stops):
-    1. Preflight: validates the inbox folder.
-    2. Storyboard: generates scene breakdown locally from the prompt
-       (no LLM required), or uses the provided --storyboard path.
-    3. Workspace staging: archives current images/, audio/, subtitles/
-       files (moved, never deleted), then normalizes the 6 supplied
-       images to 512x768 (fit + pad â€” the whole asset is visible, never
-       stretched or cropped) and builds the approved_set.json manifest
-       + contact sheet.
+    1. Preflight: validates the supplied media files.
+    2. Storyboard: uses the user-defined scenes (no LLM in the pipeline).
+    3. Staging: normalizes the supplied media to 512x768 (fit + pad - the
+       whole asset is visible, never stretched or cropped), builds the
+       approved_set.json manifest + contact sheet. Scenes without media get
+       a black placeholder and carry forward the last media image.
     4. Narration: Kokoro af_heart via venv-tts; measured durations are
        then auto-fitted into the manifest (scene = narration + 0.9 s,
        rounded up to 0.5 s).
     5. Subtitles: generated and hard-verified (wording gate).
-    6. Assembly: Ken Burns + crossfades + burned captions -> MP4.
-    7. QA: ffprobe/volumedetect gates, publishing kit JSON, SRT copied
-       next to the MP4. Ready to upload.
+    6. Assembly: crossfades + burned captions -> MP4.
+    7. QA: ffprobe/volumedetect + gate.yaml thresholds. Output is the MP4
+       only - no SRT sidecar and no publishing kit.
 
 In this mode images come from user media (mixed media): your
-attached images ARE the scene images. All previous project rules hold
-(archive-first, no deletions;
-at all). Logs land in logs/<stamp>_<run-name>.log.
+attached images ARE the scene images. Logs land in
+logs/<stamp>_<run-name>.log.
 """
 import argparse
 import json
@@ -39,7 +41,6 @@ import subprocess
 import sys
 import time
 import traceback
-import urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -51,9 +52,9 @@ if hasattr(sys.stderr, "reconfigure"):
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import config as cfg_mod
+import gates
 
 ROOT = Path(r"E:\AI-Video-Production")
-INBOX = ROOT / "inbox"
 SCRIPTS = ROOT / "scripts"
 IMAGES_DIR = ROOT / "images"
 AUDIO_DIR = ROOT / "audio"
@@ -182,49 +183,6 @@ def run_step(cmd, label, cwd=None, timeout=None):
     return result
 
 
-def generate_storyboard_locally(topic, num_scenes):
-    """Build a simple storyboard from the prompt without any LLM.
-
-    Splits the topic into sentences and distributes them across scenes.
-    Each scene maps 1:1 to a media file provided in the inbox.
-    """
-    total_duration = max(20, num_scenes * 8)
-    total_duration = min(total_duration, 120)
-
-    # Split topic into sentences for per-scene narration
-    sentences = re.split(r"(?<=[.!?])\s+", topic.strip())
-    sentences = [s for s in sentences if s]
-    if not sentences:
-        sentences = [topic]
-
-    base_duration = total_duration // num_scenes
-    remainder = total_duration % num_scenes
-
-    scenes = []
-    for i in range(num_scenes):
-        scene_num = i + 1
-        duration = base_duration + (1 if i < remainder else 0)
-        narration = sentences[i] if i < len(sentences) else f"Continuing about {topic}."
-        scenes.append({
-            "scene_number": scene_num,
-            "duration_seconds": duration,
-            "narration_segment": narration,
-            "on_screen_text": f"Scene {scene_num}: {topic[:40]}",
-            "image_prompt": f"{topic}, educational illustration, scene {scene_num}, clear simple visuals",
-            "motion_direction": "Slow zoom in",
-        })
-
-    return {
-        "title": topic[:80],
-        "topic": topic,
-        "target_duration_seconds": total_duration,
-        "scenes": scenes,
-        "fact_check_notes": [],
-        "source_suggestions": [],
-        "narration": " ".join(sentences),
-        "generated_locally": True,
-    }
-
 def validate_storyboard(storyboard, source):
     scenes = storyboard.get("scenes", [])
     if len(scenes) < 1:
@@ -251,46 +209,6 @@ def validate_storyboard(storyboard, source):
         log(f"  WARNING: storyboard timeline is {total}s "
             f"(target {lo}-{hi}s); continuing.")
     return sorted(scenes, key=lambda s: int(s["scene_number"]))
-
-
-def read_inbox(run_dir, slug):
-    prompt_path = run_dir / "prompt.txt"
-    if not prompt_path.exists():
-        raise PipelineError(
-            f"Missing prompt.txt in {run_dir}\n"
-            "    FIX: create inbox/" + slug + "/prompt.txt containing the "
-            "video topic/story you want."
-        )
-    topic = re.sub(r"\s+", " ", prompt_path.read_text(encoding="utf-8")).strip()
-    if not topic:
-        raise PipelineError(f"prompt.txt in {run_dir} is empty.")
-    if len(topic) > 20000:
-        raise PipelineError("prompt.txt is too long (>20000 chars).")
-
-    sources = sorted(
-        (
-            item for item in run_dir.iterdir()
-            if item.is_file() and item.suffix.lower() in MEDIA_EXTS
-        ),
-        key=lambda p: p.name.lower(),
-    )
-    if len(sources) < 1:
-        raise PipelineError(
-            f"{run_dir}: expected at least 1 media file, found 0.\n"
-            "    FIX: add images (png/jpg/jpeg/webp) and/or video clips "
-            "(mp4/mov/mkv/avi/webm/m4v/mpg/mpeg/flv/wmv) and/or GIFs."
-        )
-    if len(sources) > 12:
-        raise PipelineError(
-            f"{run_dir}: too many media files ({len(sources)}); max 12."
-        )
-
-    types = [media_type(p) for p in sources]
-    if any(t is None for t in types):
-        raise PipelineError(f"{run_dir}: unsupported file type in "
-                            f"{[p.name for p in sources]}.")
-
-    return topic, sources, types
 
 
 def archive_workspace(stamp):
@@ -595,7 +513,13 @@ def generate_narration_and_fit(scenes, tts_cfg=None):
         )
 
 
-def qa_check(mp4_path, timeline_seconds):
+def qa_check(mp4_path, timeline_seconds, scene_count=None, allow_overlong=False):
+    """Stage 06 QA. Enforces the gate.yaml thresholds, not just the prose.
+
+    Duration and scene-count violations are platform-fit rules: they fail
+    the run unless `allow_overlong` acknowledges the intent (a deliberate
+    long-form video). Clipping and broken geometry always fail.
+    """
     probe = run_step(
         ["ffprobe", "-v", "error",
          "-show_entries",
@@ -611,6 +535,7 @@ def qa_check(mp4_path, timeline_seconds):
     if video is None or audio is None:
         raise PipelineError("QA: MP4 is missing a video or audio stream.")
 
+    thresholds = gates.load_thresholds()
     problems = []
     if (video.get("width"), video.get("height")) != (1080, 1920):
         problems.append(f"resolution {video.get('width')}x{video.get('height')}")
@@ -633,22 +558,35 @@ def qa_check(mp4_path, timeline_seconds):
     )
     match = re.search(r"max_volume:\s*(-?[\d.]+)\s*dB", volume.stderr or "")
     max_volume = float(match.group(1)) if match else -99.0
-    if max_volume > -0.3:
-        problems.append(f"max_volume {max_volume} dB (clipping risk)")
+
+    # Gate thresholds (duration / scene count / clipping).
+    fatal, overridable = gates.check_content_gates(
+        duration, scene_count if scene_count is not None else 0, max_volume,
+        thresholds)
+    problems.extend(fatal)
+    if overridable:
+        if allow_overlong:
+            log("  WARNING: gate.yaml limits exceeded (acknowledged via "
+                "--allow-overlong): " + "; ".join(overridable), indent=True)
+        else:
+            problems.extend(
+                p + " (use --allow-overlong to override)"
+                for p in overridable)
 
     if problems:
         raise PipelineError("QA FAILED: " + "; ".join(problems))
 
     log(f"QA passed: {duration:.2f}s, {video.get('width')}x{video.get('height')}, "
         f"{video.get('codec_name')}/{video.get('pix_fmt')}, "
-        f"{audio.get('codec_name')}, max_volume {max_volume} dB", indent=True)
+        f"{audio.get('codec_name')}, max_volume {max_volume} dB, "
+        f"{scene_count} scenes, gates from {gates.thresholds_source()}",
+        indent=True)
 
 
 def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
              overlay=True, overlay_duration=3.0, overlay_position="top",
-             burn_narration=False,
-             music=None, scenes=None, title=None, description=None,
-             hashtags=None):
+             burn_narration=False, allow_overlong=False,
+             music=None, scenes=None):
     slug = slugify(run_name)
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -749,30 +687,16 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
     timeline_seconds = sum(
         float(scene["duration_seconds"]) for scene in manifest["scenes"]
     )
-    qa_check(mp4_path, timeline_seconds)
+    qa_check(
+        mp4_path,
+        timeline_seconds,
+        scene_count=len(manifest["scenes"]),
+        allow_overlong=allow_overlong,
+    )
 
-    # Build storyboard dict for publishing kit (scenes provided by UI)
-    storyboard = {
-        "title": scenes[0].get("narration_segment", slug)[:60] if scenes else slug,
-        "topic": scenes[0].get("narration_segment", slug)[:60] if scenes else slug,
-        "fact_check_notes": [],
-        "source_suggestions": [],
-        "scenes": scenes,
-    }
-    # Override with user-provided title/description/hashtags if given
-    if title:
-        storyboard["title"] = title
-    if description:
-        storyboard["description"] = description
-    if hashtags:
-        storyboard["hashtags"] = hashtags
-
-
-    # Clean up temporary SRT (only MP4 should exist in output)
-    try:
-        srt_path.unlink()
-    except OSError:
-        pass
+    # Output is MP4-only (no SRT sidecar, no publishing kit). The social
+    # title/description/hashtags live in the desktop UI (copy-to-clipboard
+    # for manual upload) and are not part of the pipeline contract.
 
     log("")
     log("=" * 60)
@@ -819,22 +743,14 @@ def main():
                         help="Burn narration captions into the video (default off)")
     parser.add_argument("--no-burn-narration", dest="burn_narration", action="store_false",
                         help="Disable burning narration captions")
+    parser.add_argument("--allow-overlong", dest="allow_overlong", action="store_true",
+                        default=False,
+                        help="Acknowledge a run that exceeds the gate.yaml "
+                             "duration/scene-count limits (platform-fit rules)")
     parser.add_argument(
         "--music", default=None,
         help="Background music track (mp3/wav/m4a/...); mixed under "
              "the narration with fades"
-    )
-    parser.add_argument(
-        "--title", default=None,
-        help="Social media title"
-    )
-    parser.add_argument(
-        "--description", default=None,
-        help="Social media description"
-    )
-    parser.add_argument(
-        "--hashtags", default=None,
-        help="Social media hashtags"
     )
     args = parser.parse_args()
 
@@ -855,8 +771,7 @@ def main():
                         args.voice, args.tts_speed or 1.0,
                         args.overlay, args.overlay_duration,
                         args.overlay_position, args.burn_narration,
-                        args.music, scenes,
-                        args.title, args.description, args.hashtags)
+                        args.allow_overlong, args.music, scenes)
     except PipelineError as error:
         log("PIPELINE FAILED — " + str(error))
         return 1

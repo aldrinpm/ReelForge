@@ -18,10 +18,14 @@ PYTHON = Path(r"E:\ai\AirLLM\py3.11.9\python.exe")
 VENV_PY = ROOT / "venv-tts" / "Scripts" / "python.exe"
 
 
-def check(label, ok, detail=""):
-    mark = "OK " if ok else "FAIL"
+def check(label, ok, detail="", optional=False):
+    """Print a check result. `optional` checks report but never fail the run."""
+    if optional:
+        mark = "OK  " if ok else "WARN"
+    else:
+        mark = "OK " if ok else "FAIL"
     print(f"  [{mark}] {label}" + (f"  -- {detail}" if detail else ""))
-    return ok
+    return ok or optional
 
 
 def main():
@@ -106,9 +110,12 @@ def main():
         detail = f"{provider}: {', '.join(ids[:3]) or 'no models'}"
         if model:
             detail += f" (model={'yes' if has_model else 'NO'})"
-        results.append(check(f"LLM endpoint ({provider})", ok, detail))
+        results.append(check(f"LLM endpoint ({provider})", ok, detail, optional=True))
     except Exception as e:
-        results.append(check("LLM endpoint (config)", False, f"not reachable ({e})"))
+        results.append(check("LLM endpoint (config)", False,
+                             f"not reachable ({e}) - only needed for the "
+                             "standalone AI dialog, not for pipeline runs",
+                             optional=True))
 
     # Graphify
     graph = ROOT / "graphify-out" / "graph.json"
@@ -125,6 +132,21 @@ def main():
     # ICM layers
     icm_ok = (ROOT / "_core" / "CONTEXT.md").exists() and (ROOT / "CLAUDE.md").exists()
     results.append(check("ICM layers present", icm_ok))
+
+    # ICM doc/code drift (catches stale paths, retired features, broken
+    # stage contracts). Stdlib only; must exit 0 for the project to be
+    # considered in sync.
+    try:
+        r = subprocess.run(
+            [str(PYTHON), str(ROOT / "scripts" / "verify_docs.py")],
+            capture_output=True, text=True, timeout=60,
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        )
+        lines = [ln for ln in (r.stdout or "").strip().splitlines() if ln.strip()]
+        detail = lines[-1] if lines else ""
+        results.append(check("ICM docs in sync with code", r.returncode == 0, detail))
+    except Exception as e:
+        results.append(check("ICM docs in sync with code", False, str(e)))
 
     print()
     passed = sum(1 for r in results if r)

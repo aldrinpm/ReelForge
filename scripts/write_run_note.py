@@ -59,9 +59,6 @@ def main():
         if sp.exists():
             storyboard = json.loads(sp.read_text(encoding="utf-8-sig"))
 
-    kit_path = mp4.with_suffix(".publishing.json")
-    kit = json.loads(kit_path.read_text(encoding="utf-8")) if kit_path.exists() else {}
-
     scenes = manifest.get("scenes", [])
     media_list = "\n".join(f"- {s.get('image', '?')} ({s.get('source_type', 'image')})" for s in scenes) or "- (none)"
     scenes_table = "| # | Duration | Narration |\n|---|---|---|\n" + "\n".join(
@@ -79,7 +76,6 @@ def main():
             .replace("{{n}}", str(len(scenes)))
             .replace("{{duration}}", str(manifest.get("total_scene_duration_seconds", sum(s.get("duration_seconds", 0) for s in scenes))))
             .replace("{{mp4_path}}", str(mp4.relative_to(ROOT).as_posix()))
-            .replace("{{kit_path}}", str(kit_path.relative_to(ROOT).as_posix()) if kit_path.exists() else "")
             .replace("{{topic}}", str(storyboard.get("topic", slug)))
             .replace("{{media_list}}", media_list)
             .replace("{{scenes_table}}", scenes_table)

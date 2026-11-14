@@ -25,6 +25,13 @@ Do NOT load the entire `PROJECT_CONTEXT.md` or all stage contracts at once.
 - Human approval checkpoints: image set, narration voice, final MP4.
 - Never delete superseded artifacts — archive them (images\archive\, audio\archive\, output\archive\).
 - FFmpeg 9 CLI: `-/filter_complex <file>` (not `-filter_complex_script`), `-fps_mode` (not `-vsync`).
+- Docs ship with code: any change to a stage's inputs, outputs, script or
+  flags updates that stage's `CONTEXT.md` in the same change. The code is
+  the truth; the docs follow it. Run `python scripts\verify_docs.py` after
+  touching code or docs — it fails on stale paths, retired features and
+  broken stage contracts.
+- The pipeline is LLM-free: scenes come from the desktop UI or `--scenes`
+  JSON. LM Studio is only needed for the standalone AI-dialog path.
 
 ## Long-term memory
 
@@ -42,3 +49,10 @@ Do NOT load the entire `PROJECT_CONTEXT.md` or all stage contracts at once.
 Read `_core/CONTEXT.md`, then the stage CONTEXT.md for the task at hand. If the task is
 unclear, ask the user. Do not start implementation without design approval when the task
 is a new feature (per OPENCODE_TASK.md workflow).
+
+Before declaring a change done, run the audits that apply:
+
+- `python scripts\verify_docs.py` — ICM doc/code drift (required after any
+  code or doc change).
+- `python scripts\loop_doctor.py` — environment health (includes the drift check).
+- The stage audit from the stage CONTEXT.md you touched.

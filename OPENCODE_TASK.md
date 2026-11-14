@@ -1,5 +1,14 @@
 # OpenCode Agent Task --- ReelForge
 
+> ⚠️ **HISTORICAL SNAPSHOT — superseded by the ICM layers.**
+> This task list reflects 2026-11-08. The live task router is
+> `_core/CONTEXT.md`; the live entry point is `CLAUDE.md`. Where this file
+> and the code disagree, the code wins.
+>
+> Items below reference features that no longer exist: the `inbox/` +
+> `prompt.txt` workflow, `make_video.bat`, the publishing kit, and the
+> SRT sidecar. Output is now **MP4-only**.
+
 ## Objective
 
 Continue the existing local AI video-production project using
@@ -43,7 +52,7 @@ Status updates (2026-11-08): item 1 closed (webdev21 live run passed); items 2 a
 -   Final video: `output\20261107_1552_How_black_holes_work.mp4`
 -   Publishing kit:
     `output\20261107_1552_How_black_holes_work.publishing.json`
--   Orchestrator: `scripts\run_video.py` + `make_video.bat`
+-   Orchestrator: `scripts\run_video.py` (driven by the desktop UI)
 -   ICM layers: `_core/`, `_config/`, `pipeline/*/CONTEXT.md`, `CLAUDE.md`
 -   Vault: `vault/` (Obsidian PARA). Graph: `graphify-out/`
 

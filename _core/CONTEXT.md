@@ -7,17 +7,25 @@ stage you are working on. Do NOT load everything.
 
 | # | Stage | Script | Inputs | Outputs | Checkpoint |
 |---|-------|--------|--------|---------|------------|
-| 01 | Storyboard | scripts/generate_video_idea.py | inbox/<name>/prompt.txt | output/<stamp>_<slug>_storyboard.json | Fact-check narration (human) |
-| 02 | Images | scripts/generate_scene_images.py (manual) OR run_video.py (auto) | storyboard JSON | images/scene_XX.png + metadata + approved_set.json | Contact sheet review (human) |
+| 01 | Storyboard | (desktop UI) or `--scenes` JSON | user-defined scenes | in-memory scene list | — |
+| 02 | Images | scripts/run_video.py (auto) | user media + scenes | images/scene_XX.png + metadata + approved_set.json | Contact sheet review (human) |
 | 03 | Narration | scripts/generate_narration.py | approved_set.json | audio/scene_XX.wav + metadata | Voice audition (human) |
 | 04 | Subtitles | scripts/generate_subtitles.py + verify_subtitles.py | approved_set.json + audio sidecars | subtitles/<slug>.srt | Wording gate (auto) |
 | 05 | Assembly | scripts/assemble_video.py | approved_set.json + audio + srt | output/<stamp>_<slug>.mp4 | — |
-| 06 | QA | ffprobe / volumedetect | MP4 | verdict + publishing kit | Final MP4 review (human) |
+| 06 | QA | scripts/gates.py + ffprobe / volumedetect | MP4 | verdict (MP4-only output) | Final MP4 review (human) |
+
+Stage 01 note: storyboard generation is **not** part of the pipeline. The
+desktop UI supplies the scenes (narration, on-screen text, duration, media).
+`scripts/generate_video_idea.py` and `scripts/llm_client.py` remain available
+for standalone LLM use and are reachable from the UI's "Generate from AI"
+dialog; they are not part of the one-click run.
 
 ## One-click path
 
-`make_video.bat` → `scripts/run_video.py <name>` runs stages 01-06 automatically
-with archive-first staging. See SETUP.md section 10.
+The desktop UI is the entry point: `build_ui.bat` → `dist/ReelForge/ReelForge.exe`
+→ `ui/ui_backend.py` → `scripts/run_video.py --name <slug> --scenes <file> --media <files>`.
+The headless equivalent is the same `scripts/run_video.py` invocation.
+See SETUP.md section 10.
 
 ## Where things live
 
@@ -36,15 +44,20 @@ with archive-first staging. See SETUP.md section 10.
 
 ## Audits (run before declaring a stage done)
 
+- Docs: scripts/verify_docs.py (stdlib only) — ICM doc/code drift, including
+  retired features reappearing in the docs.
 - Stage 02: scripts/verify_images.py (stdlib only, no Pillow)
 - Stage 04: scripts/verify_subtitles.py (wording gate)
-- Stage 06: ffprobe geometry/codec/duration + volumedetect (max_volume <= -0.3 dB)
+- Stage 06: scripts/gates.py enforces the gate.yaml thresholds
+  (duration, scene count, max_volume) on top of ffprobe geometry/codec checks.
 
 ## Canonical sources (do not duplicate)
 
 - Voice/model/path config: `_config/` (single source)
-- Scene durations & narration: storyboard JSON + approved_set.json
+- Scene durations & narration: the scene list (desktop UI / `--scenes` JSON) + approved_set.json
 - Subtitle wording: must reproduce narration exactly (verify_subtitles.py)
+- QA thresholds: `gate.yaml` (machine-readable, **enforced** by `scripts/gates.py`).
+  `_config/qa_thresholds.md` is the prose mirror of the same numbers.
 
 ## Layered loading rule
 

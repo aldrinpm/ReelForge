@@ -268,6 +268,7 @@
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-save-defaults"> Save as default</label>
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-overlay" checked> Burn overlays</label>
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-burn-narration"> Burn narration</label>
+          <label class="flex items-center gap-2 text-sm" title="Let the run finish even if it exceeds the gate.yaml duration / scene-count limits"><input type="checkbox" id="run-allow-overlong"> Allow overlong</label>
         </div>
         <div>
           <label class="block text-sm text-gray-400 mb-1">Background music (optional)</label>
@@ -759,10 +760,8 @@
             speed: parseFloat(document.getElementById('run-tts-speed').value),
             overlay: document.getElementById('run-overlay').checked,
             burn_narration: document.getElementById('run-burn-narration').checked,
-            music: (selectedMusic && typeof selectedMusic === 'string') ? selectedMusic : null,
-            title: document.getElementById('run-title').value || null,
-            description: document.getElementById('run-description').value || null,
-            hashtags: document.getElementById('run-hashtags').value || null
+            allow_overlong: document.getElementById('run-allow-overlong').checked,
+            music: (selectedMusic && typeof selectedMusic === 'string') ? selectedMusic : null
           })
         });
         document.getElementById('run-status').textContent = 'Fetch response status: ' + res.status;

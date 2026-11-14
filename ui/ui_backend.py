@@ -402,11 +402,9 @@ class RunRequest(BaseModel):
     overlay_duration: float = 3.0
     overlay_position: str = "top"
     burn_narration: bool = False  # burn narration captions into the video
+    allow_overlong: bool = False  # permit exceeding gate.yaml duration/scene limits
     scenes: list = []   # list of {scene_number, narration_segment, on_screen_text, duration_seconds}
     music: Optional[str] = None  # background music track (absolute path)
-    title: Optional[str] = None  # social media title
-    description: Optional[str] = None  # social media description
-    hashtags: Optional[str] = None  # social media hashtags
 
 
 def re_slug(name):
@@ -457,12 +455,8 @@ def _run_worker(job_id, req):
             cmd += ["--no-burn-narration"]
         else:
             cmd += ["--burn-narration"]
-        if req.title:
-            cmd += ["--title", req.title]
-        if req.description:
-            cmd += ["--description", req.description]
-        if req.hashtags:
-            cmd += ["--hashtags", req.hashtags]
+        if req.allow_overlong:
+            cmd += ["--allow-overlong"]
         cmd += ["--no-open"]
 
         _put({"type": "log", "line": f"Command: {' '.join(cmd)}"})
