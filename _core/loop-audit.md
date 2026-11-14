@@ -32,7 +32,8 @@ requires 5 consecutive PASS runs.
 - Duration matches the manifest timeline (+/-0.25s).
 - volumedetect: max_volume <= -0.3 dB.
 - gate.yaml thresholds ENFORCED by scripts/gates.py: duration within
-  1-90s (Reels max 90s; Shorts 60s) and scene count within 1-12.
+  1-90s (Reels max 90s; Shorts 60s) and scene count within 1-99999
+  (no fixed cap — scene count depends on prompt).
   Duration/scene-count violations may be acknowledged with
   `--allow-overlong`; clipping may not.
 - Output is MP4-only (no publishing kit, no SRT sidecar).

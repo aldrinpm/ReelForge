@@ -1,8 +1,8 @@
 {
   "scene_number": 1,
   "duration_seconds": 8.0,
-  "narration": "In a landmark decision, Congress has passed the first major artificial intelligence regulation bill. The vote marks a turning point for how AI is developed and deployed worldwide.",
-  "on_screen_text": "HISTORIC AI VOTE PASSED",
+  "narration": "Could a political crisis involving the country's Vice President affect the money in ordinary Filipinos' pockets? At first glance, impeachment may seem like a political issue with little connection to everyday economic life. But political uncertainty can influence how investors behave, how businesses make decisions, and how governments manage their priorities. These decisions can eventually affect employment, prices, public spending, and household finances. However, economic damage is not automatic. The consequences depend on how the political situation develops, how long uncertainty continues, and whether the country's institutions remain stable and functional.",
+  "on_screen_text": "CAN IMPEACHMENT HURT THE ECONOMY?",
   "prompt": "",
   "negative_prompt": "",
   "source": "user_inbox",

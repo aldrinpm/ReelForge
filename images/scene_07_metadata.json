@@ -1,8 +1,8 @@
 {
   "scene_number": 7,
   "duration_seconds": 8.0,
-  "narration": "This is the most physically restorative stage. Your body increases tissue repair, supports immune function, and releases growth hormone. Meanwhile, your brain produces slow electrical waves. Waking someone during this stage can be particularly difficult.",
-  "on_screen_text": "STAGE 3: DEEP SLEEP",
+  "narration": "The effects of political uncertainty can eventually reach businesses and workers. When business owners become less confident about future demand, government policies, or financing conditions, they may decide to postpone expansion, delay equipment purchases, or become more cautious about hiring. Large companies considering major investments may take additional time to evaluate the situation. Smaller businesses can face a different set of challenges, particularly when they depend on local consumer spending, affordable credit, and predictable operating costs. If investment and business activity weaken over an extended period, the effects could spread to suppliers, employees, and communities that depend on those businesses. These outcomes are possible economic consequences, not guaranteed results of an impeachment proceeding. Actual employment and business performance must be assessed using measurable economic data. For workers and business owners, these developments can become more than economic statistics. They can influence the financial security of entire households.",
+  "on_screen_text": "BUSINESSES AND JOBS",
   "prompt": "",
   "negative_prompt": "",
   "source": "user_inbox",

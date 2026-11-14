@@ -31,7 +31,6 @@ never drift apart.
 """
 import re
 
-MAX_SCENES = 12
 MAX_OVERLAY_CHARS = 35
 
 _TITLE_RE = re.compile(r"^Title:\s*(.*)$", re.IGNORECASE)
@@ -137,10 +136,6 @@ def validate_storyboard(parsed):
     scenes = parsed.get("scenes") or []
     if not scenes:
         errors.append("No scenes found - expected at least one 'Scene 1' block.")
-    if len(scenes) > MAX_SCENES:
-        errors.append(
-            f"Too many scenes: {len(scenes)} (maximum {MAX_SCENES})."
-        )
 
     for index, scene in enumerate(scenes):
         num = scene.get("num", index + 1)

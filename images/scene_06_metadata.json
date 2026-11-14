@@ -1,8 +1,8 @@
 {
   "scene_number": 6,
   "duration_seconds": 8.0,
-  "narration": "During stage two, your heart rate and body temperature decrease. Your brain produces distinctive electrical patterns called sleep spindles and K-complexes. These patterns help protect sleep and are associated with processing and consolidating memories.",
-  "on_screen_text": "STAGE 2: THE BRAIN SLOWS DOWN",
+  "narration": "Governments borrow money to finance public services, infrastructure, and other spending needs. One way they do this is by issuing government bonds, which investors purchase in exchange for interest payments. The interest rate demanded by investors partly reflects how risky they believe lending to that government will be. If investors perceive a sustained increase in a country's political or economic risk, they may demand higher returns before lending their money. This is known as a higher risk premium. If borrowing costs rise significantly, the government may eventually face greater interest expenses, leaving less room in the budget for other priorities. But political developments are only one possible influence. Inflation, central-bank policy, national debt, global interest rates, and broader credit conditions also play important roles. An impeachment trial alone is not evidence that the country's borrowing costs will increase or that its credit rating will be downgraded. These financial conditions matter beyond government accounts because businesses also depend on confidence, investment, and access to financing.",
+  "on_screen_text": "GOVERNMENT BORROWING COSTS",
   "prompt": "",
   "negative_prompt": "",
   "source": "user_inbox",

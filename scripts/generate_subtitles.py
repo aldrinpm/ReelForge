@@ -64,37 +64,27 @@ def format_timestamp(seconds):
 
 
 def auto_split(narration):
-    """Split narration into two cues at the most natural boundary.
+    """Split narration into cues of at most ~4 lines each (~140 chars).
 
-    Prefers punctuation (em dash, colon, semicolon, comma) near the
-    midpoint, falling back to the nearest word gap. cue_a + " " + cue_b
-    always reproduces the input text.
+    At FontSize=10 on 1080p vertical, roughly 140 chars fits about 4
+    lines when centered. Splits on word boundaries so every chunk
+    reproduces a substring of the original narration when joined with spaces.
     """
-    half = len(narration) / 2
+    max_chars = 140  # roughly 4 lines at FontSize 10 on 1080p vertical
+    if len(narration) <= max_chars:
+        return [narration]
 
-    for sep in SEPARATORS:
-        starts = [
-            position
-            for position in range(len(narration) - len(sep) + 1)
-            if narration.startswith(sep, position)
-        ]
-        if not starts:
-            continue
-
-        # Candidate split indices are always a real space character:
-        # cue_a ends before it, cue_b starts after it.
-        candidates = [position + len(sep) - 1 for position in starts]
-        best = min(candidates, key=lambda p: abs(p - half))
-        if 4 <= best <= len(narration) - 5:
-            return narration[:best].rstrip(), narration[best:].lstrip()
-
-    spaces = [i for i, char in enumerate(narration) if char == " "]
-    if spaces:
-        best = min(spaces, key=lambda p: abs(p - half))
-        return narration[:best].rstrip(), narration[best:].lstrip()
-
-    # Degenerate: no space at all, emit a single cue.
-    return narration, ""
+    chunks = []
+    remaining = narration
+    while len(remaining) > max_chars:
+        # Find the last space within the first max_chars characters
+        cut = remaining.rfind(" ", 0, max_chars)
+        if cut <= 0:
+            cut = max_chars  # no space found; hard cut
+        chunks.append(remaining[:cut])
+        remaining = remaining[cut + 1 :]  # skip the space
+    chunks.append(remaining)
+    return chunks
 
 
 def parse_args():
@@ -135,31 +125,36 @@ def main():
     cue_list = []
     for scene in scenes:
         number = scene["scene_number"]
-        narration = scene["narration"]
+        narration = str(scene["narration"]).strip().replace("\n", " ").replace("\r", " ")
+        narration = " ".join(narration.split())
         duration = json.loads(
             (audio_dir / f"scene_{number:02d}_metadata.json").read_text(
                 encoding="utf-8"
             )
         )["duration_seconds"]
 
-        override = SPLITS.get(number)
-        if override and f"{override[0]} {override[1]}" == narration:
-            cue_a, cue_b = override
-        else:
-            cue_a, cue_b = auto_split(narration)
+        # Split narration into small cues (~4 lines each)
+        cues = auto_split(narration)
 
-        if cue_b and f"{cue_a} {cue_b}" != narration:
+        # Verify all chunks join back to the original narration
+        joined = " ".join(cues)
+        if joined != narration:
             raise ValueError(
                 f"Scene {number}: cue texts do not reproduce the narration text."
             )
 
         base = scene_starts[number] + NARRATION_DELAY
-        if cue_b:
-            split_t = duration * len(cue_a) / (len(cue_a) + len(cue_b))
-            cue_list.append((base, base + split_t, cue_a, number))
-            cue_list.append((base + split_t, base + duration, cue_b, number))
+        n_cues = len(cues)
+        if n_cues == 1:
+            cue_list.append((base, base + duration, cues[0], number))
         else:
-            cue_list.append((base, base + duration, cue_a, number))
+            # Distribute scene duration proportionally by cue text length
+            total_len = sum(len(c) for c in cues)
+            t = base
+            for cue in cues:
+                cue_dur = duration * len(cue) / total_len
+                cue_list.append((t, t + cue_dur, cue, number))
+                t += cue_dur
 
     output.parent.mkdir(parents=True, exist_ok=True)
     lines = []

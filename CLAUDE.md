@@ -32,18 +32,9 @@ Do NOT load the entire `PROJECT_CONTEXT.md` or all stage contracts at once.
   broken stage contracts.
 - The pipeline is LLM-free: scenes come from the desktop UI or `--scenes`
   JSON. LM Studio is only needed for the standalone AI-dialog path.
-- **UI build rule:** Every LLM model or AI agent MUST run `build_ui.bat`
-  after any change or fix made to the desktop UI (anything under `ui/`,
-  `scripts/storyboard_format.py`, `config.json`, or any file bundled by
-  `build_ui.bat`). The frozen `dist/ReelForge/ReelForge.exe` does not pick
-  up source edits until `build_ui.bat` rebuilds it. Do not mark a UI change
-  as done until the build has run successfully.
+- **Build rule — run build_ui.bat automatically after every change:** Every LLM model or AI agent MUST run `build_ui.bat` automatically after any code change, fix, feature, or enhancement is applied to the desktop UI (anything under `ui/`, `scripts/storyboard_format.py`, `config.json`, or any file bundled by `build_ui.bat`). The frozen `dist/ReelForge/ReelForge.exe` does not pick up source edits until `build_ui.bat` rebuilds it. Do not mark a change as done until the build has run successfully. This build step runs without waiting for user approval.
 
-- **Git rule — no automatic commit or push:** Every LLM model or AI agent
-  MUST NOT commit or push any changes to GitHub unless the user explicitly
-  instructs to do so. All edits are local only; wait for the user's
-  go-ahead before running `git add`, `git commit`, or `git push`. The user
-  decides when a change is ready to be committed and pushed.
+- **Git rule — commit and push wait for user instruction:** Every LLM model or AI agent MUST NOT commit or push any changes to GitHub unless the user explicitly instructs to do so. All edits are local only; wait for the user's go-ahead before running `git add`, `git commit`, or `git push`. The user decides when a change is ready to be committed and pushed.
 
 ## Long-term memory
 

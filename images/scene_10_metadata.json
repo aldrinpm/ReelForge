@@ -1,8 +1,8 @@
 {
   "scene_number": 10,
   "duration_seconds": 8.0,
-  "narration": "While sleeping, your brain processes information gathered throughout the day. Important memories are strengthened and reorganized, helping transfer information into more stable long-term storage. That's why getting enough sleep is essential for learning, concentration, and problem-solving.",
-  "on_screen_text": "SLEEP BUILDS STRONGER MEMORIES",
+  "narration": "So, can an impeachment trial shake the Philippine economy? It can influence economic confidence and decision-making, but the actual consequences depend on several factors. These include the duration of political uncertainty, the response of public institutions, the continuity of government programs, investor expectations, and conditions in the wider domestic and global economy. Short-term movements in financial markets should also be distinguished from longer-term effects on investment, government finances, employment, and household expenses. The important question is not simply whether a political crisis exists, but whether the country can manage it without weakening institutional stability or disrupting essential economic activities. Ultimately, an impeachment process does not automatically determine the Philippines' economic future. How the country upholds accountability, protects its institutions, and maintains confidence in its economy matters just as much.",
+  "on_screen_text": "WHAT HAPPENS TO THE ECONOMY?",
   "prompt": "",
   "negative_prompt": "",
   "source": "user_inbox",

@@ -124,6 +124,7 @@
     .ai-dialog {
       background: #1f2937; border-radius: 0.75rem; padding: 1.5rem;
       max-width: 1280px; width: 90vw; max-height: 85vh; overflow: auto;
+      position: relative;
     }
     .ai-dialog-header {
       display: flex; justify-content: space-between; align-items: center;
@@ -185,6 +186,21 @@
     .ai-dialog-body { display: flex; gap: 1rem; min-height: 34rem; }
     .ai-dialog-left { flex: 1; min-width: 0; overflow-y: auto; }
     .ai-dialog-right { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+    /* AI generation busy/spinning overlay */
+    .ai-busy-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(31, 41, 55, 0.85); border-radius: 0.75rem;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 10; pointer-events: none;
+    }
+    .ai-busy-spinner {
+      width: 3rem; height: 3rem; border: 3px solid #374151;
+      border-top-color: #3b82f6; border-radius: 50%;
+      animation: ai-spin 0.8s linear infinite; margin-bottom: 0.75rem;
+    }
+    @keyframes ai-spin { to { transform: rotate(360deg); } }
+    .ai-busy-text { color: #9ca3af; font-size: 0.875rem; }
   </style>
 </head>
 <body>
@@ -271,8 +287,8 @@
         <div class="flex items-center gap-4">
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-save-defaults"> Save as default</label>
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-overlay" checked> Burn overlays</label>
-          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-burn-narration"> Burn narration</label>
-          <label class="flex items-center gap-2 text-sm" title="Let the run finish even if it exceeds the gate.yaml duration / scene-count limits"><input type="checkbox" id="run-allow-overlong"> Allow overlong</label>
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-burn-narration" checked> Burn narration</label>
+          <label class="flex items-center gap-2 text-sm" title="Let the run finish even if it exceeds the gate.yaml duration / scene-count limits"><input type="checkbox" id="run-allow-overlong" checked> Allow overlong</label>
         </div>
         <div id="file-list" class="text-sm text-gray-400 mb-2">No files selected.</div>
         <div>
@@ -1302,6 +1318,10 @@
         // Silently ignore if no saved settings yet
       }
     }
+    function setAiBusy(busy) {
+      const overlay = document.getElementById('ai-busy-overlay');
+      if (overlay) overlay.style.display = busy ? 'flex' : 'none';
+    }
     async function toggleAiGenerate() {
       const btn = document.getElementById('ai-send-btn');
       const output = document.getElementById('ai-response-box');
@@ -1339,6 +1359,7 @@
         setProceedEnabled(false);
         btn.textContent = 'Stop';
         btn.className = 'btn-ai-stop';
+        setAiBusy(true);
         // Verbose: display all request parameters in the response/log window
         const paramLog =
           '=== LLM Request Parameters ===\n' +
@@ -1382,7 +1403,7 @@
             signal: aiAbortController.signal
           });
           const result = await response.json();
-          if (result.text) {
+          if (result.text !== undefined) {
             output.textContent = paramLog + '\n=== Response ===\n' + result.text;
           } else {
             output.textContent = paramLog + '\n=== Response ===\nError: ' + (result.error || 'Unknown error');
@@ -1415,12 +1436,14 @@
           }
         } finally {
           resetAiSendButton();
+          setAiBusy(false);
         }
       } else {
         if (aiAbortController) {
           aiAbortController.abort();
         }
         resetAiSendButton();
+        setAiBusy(false);
       }
     }
   </script>
@@ -1431,6 +1454,10 @@
       <div class="ai-dialog-header">
         <h3>AI Storyboard Generator</h3>
         <button class="ai-dialog-close" onclick="closeAiDialog()">&times;</button>
+      </div>
+      <div id="ai-busy-overlay" class="ai-busy-overlay" style="display:none;">
+        <div class="ai-busy-spinner"></div>
+        <div class="ai-busy-text">Generating storyboard…</div>
       </div>
       <div class="ai-dialog-body">
         <div class="ai-dialog-left">

@@ -1,8 +1,8 @@
 {
   "scene_number": 9,
   "duration_seconds": 8.0,
-  "narration": "One fascinating discovery is the glymphatic system. This network helps clear metabolic waste from the brain. Research suggests that waste clearance increases during sleep, potentially helping remove substances associated with neurological diseases. Scientists are still investigating exactly how this process works in humans.",
-  "on_screen_text": "YOUR BRAIN CLEANS ITSELF",
+  "narration": "There is another side to the relationship between politics and the economy. While a major political controversy can create short-term uncertainty, a fair and credible accountability process can demonstrate that public officials are subject to constitutional rules. Strong institutions, transparent procedures, and predictable laws help create an environment where businesses and investors can make decisions with greater confidence. Accountability can support public trust when it is conducted through legitimate institutions and based on evidence rather than political pressure. This does not mean that every impeachment proceeding automatically strengthens the economy. The process itself can still create political tension and uncertainty. The potential long-term benefit comes from reinforcing the rule of law and demonstrating that institutions can resolve serious disputes through established constitutional procedures. This raises the central question once again: how will the country manage the political uncertainty while protecting economic stability?",
+  "on_screen_text": "CAN ACCOUNTABILITY HELP?",
   "prompt": "",
   "negative_prompt": "",
   "source": "user_inbox",

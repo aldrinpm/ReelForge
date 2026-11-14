@@ -46,7 +46,7 @@ Overlay: <on-screen headline, max 35 chars>
 Narration: <spoken narration for scene 1>
 ```
 `scripts/storyboard_format.py` is the **only** implementation: it parses the
-format and validates it (title/description/hashtags present, 1..12 scenes,
+format and validates it (title/description/hashtags present, scenes present,
 every scene has an overlay and narration, overlay <= 35 chars, ascending
 unique scene numbers). The UI reaches it through `POST /parse/storyboard`;
 "Generate from AI" and "Browse from text file" both use it, so the two

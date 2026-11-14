@@ -116,11 +116,7 @@ def scene_has_media(scene):
     return True
 
 
-SUBTITLE_STYLE = (
-    "force_style='FontName=Arial,FontSize=15,Bold=0,"
-    "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
-    "Outline=2,Shadow=0,Alignment=2,MarginV=36'"
-)
+SUBTITLE_STYLE = "force_style=Alignment=2\\,FontSize=10"
 
 
 def prefilter_subtitles(subtitle_file):
@@ -257,7 +253,7 @@ def overlay_drawtext(scene, duration, settings):
     if dur <= 0:
         dur = duration
     start = 0.3
-    end = min(duration, start + dur)
+    end = duration  # overlay stays for the full scene, until the next scene
 
     pos = settings.get("position", "top")
     if pos == "top":
@@ -506,14 +502,14 @@ def main():
     # Pass 2: xfade chain + audio + subtitles + encode.
     cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "warning"]
     for inter in intermediates:
-        cmd += ["-i", str(inter)]
+        cmd += ["-i", str(inter).replace("\\", "/")]
     for scene in scenes:
-        cmd += ["-i", str(AUDIO_DIR / f"scene_{scene['scene_number']:02d}.wav")]
+        cmd += ["-i", str(AUDIO_DIR / f"scene_{scene['scene_number']:02d}.wav").replace("\\", "/")]
     if music_path is not None:
         # Loop the track for as long as the timeline requires; the final
         # -t below caps the output. Index becomes 2*N (after N scene
         # videos + N narration wavs).
-        cmd += ["-stream_loop", "-1", "-i", str(music_path)]
+        cmd += ["-stream_loop", "-1", "-i", str(music_path).replace("\\", "/")]
 
     filters = []
 
@@ -536,10 +532,10 @@ def main():
 
     closing = f"fade=t=in:st=0:d={FADE},fade=t=out:st={timeline - FADE:.2f}:d={FADE}"
     if burn and args.burn_narration:
-        closing += (
-            f",subtitles=filename=subtitles/{subtitle_file.name}:"
-            f"{SUBTITLE_STYLE}"
-        )
+        subtitles_filter = f"subtitles=filename=subtitles/{subtitle_file.name}"
+        if SUBTITLE_STYLE:
+            subtitles_filter += f":{SUBTITLE_STYLE}"
+        closing += f",{subtitles_filter}"
     elif burn and not args.burn_narration:
         print("Burn narration off: subtitles will not be burned into the video.")
     filters.append(f"{video_chain}{closing}[vout]")
@@ -577,11 +573,10 @@ def main():
         music_inputs.append("[music]")
 
     mix_tail = "aresample=48000,pan=stereo|c0=c0|c1=c0"
-    if music_path is not None:
-        # Speech + music peaks can coincide; keep the final mix under a
-        # gentle ceiling so the QA volume gate never trips on clipping.
-        limit_lin = round(10 ** (ALIMIT_DB / 20), 3)
-        mix_tail += f",alimiter=limit={limit_lin}:level=false"
+    # Always limit the final mix so the QA volume gate never trips on clipping,
+    # whether or not background music is present.
+    limit_lin = round(10 ** (ALIMIT_DB / 20), 3)
+    mix_tail += f",alimiter=limit={limit_lin}:level=false"
     filters.append(
         "".join(delayed)
         + "".join(music_inputs)
@@ -598,8 +593,10 @@ def main():
     else:
         output_path = OUTPUT_DIR / f"{stamp}_How_black_holes_work.mp4"
 
+    filter_graph = filter_script.read_text(encoding="utf-8")
+
     cmd += [
-        "-/filter_complex", str(filter_script),
+        "-filter_complex", filter_graph,
         "-map", "[vout]", "-map", "[aout]",
         "-t", f"{timeline:.2f}",
         "-r", str(FPS),
@@ -607,7 +604,7 @@ def main():
         "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "160k",
         "-movflags", "+faststart",
-        str(output_path),
+        str(output_path).replace("\\", "/"),
     ]
 
     print("Filter graph written to:", filter_script)

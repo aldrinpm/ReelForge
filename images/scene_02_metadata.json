@@ -1,8 +1,8 @@
 {
   "scene_number": 2,
   "duration_seconds": 8.0,
-  "narration": "The new rules require companies to test powerful AI systems for safety before release. They also mandate clear labeling for AI-generated content and protect consumer data from misuse.",
-  "on_screen_text": "WHAT THE LAW DOES",
+  "narration": "In the Philippines, impeachment is a constitutional process designed to hold certain high-ranking public officials accountable for serious misconduct. The House of Representatives has the exclusive power to initiate impeachment cases, while the Senate has the authority to conduct the trial and decide whether an official should be convicted and removed from office. Impeachment is not the same as a criminal conviction, although separate legal proceedings may also be possible. Because the process involves national leadership and constitutional institutions, it can become a major political event. The economic significance goes beyond the legal proceedings themselves. What matters is whether the political situation creates prolonged uncertainty or disrupts the government's ability to function.",
+  "on_screen_text": "UNDERSTANDING THE IMPEACHMENT",
   "prompt": "",
   "negative_prompt": "",
   "source": "user_inbox",

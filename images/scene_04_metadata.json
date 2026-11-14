@@ -1,8 +1,8 @@
 {
   "scene_number": 4,
   "duration_seconds": 8.0,
-  "narration": "Other countries are watching closely and may follow with similar legislation. This could set a new international standard for responsible AI innovation.",
-  "on_screen_text": "GLOBAL IMPACT EXPECTED",
+  "narration": "Foreign investors consider many factors before committing money to the Philippines. They look at the size of the consumer market, workforce skills, infrastructure, regulations, taxes, and the stability of government policies. Political uncertainty can become another factor in that decision. When investors cannot confidently predict the direction of policies or the stability of institutions, some may postpone expansion plans or delay major financial commitments. This does not necessarily mean they will abandon the country. A temporary delay is very different from a long-term decline in foreign investment. To determine whether an impeachment controversy is actually affecting investor confidence, analysts would need to examine investment announcements, actual capital flows, business surveys, and other economic indicators rather than relying on political headlines alone. Beyond investor decisions, political uncertainty may also affect how government officials manage the country's economic priorities.",
+  "on_screen_text": "FOREIGN INVESTOR CONFIDENCE",
   "prompt": "",
   "negative_prompt": "",
   "source": "user_inbox",

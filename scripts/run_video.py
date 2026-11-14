@@ -585,8 +585,8 @@ def qa_check(mp4_path, timeline_seconds, scene_count=None, allow_overlong=False)
 
 def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
              overlay=True, overlay_duration=3.0, overlay_position="top",
-             burn_narration=False, allow_overlong=False,
-             music=None, scenes=None):
+             burn_narration=False, allow_overlong=False, music=None,
+             scenes=None, title=None, description=None, hashtags=None):
     slug = slugify(run_name)
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -658,7 +658,7 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
         ("--no-overlay" if not overlay else "--overlay"),
         "--overlay-duration", str(overlay_duration),
         "--overlay-position", overlay_position,
-        "--overlay-fontsize", "52",
+        "--overlay-fontsize", "51",
         ("--no-burn-narration" if not burn_narration else "--burn-narration"),
     ]
     if music:
@@ -694,15 +694,38 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
         allow_overlong=allow_overlong,
     )
 
-    # Output is MP4-only (no SRT sidecar, no publishing kit). The social
-    # title/description/hashtags live in the desktop UI (copy-to-clipboard
-    # for manual upload) and are not part of the pipeline contract.
+    # Write the full storyboard text structure alongside the MP4.
+    title = title or manifest.get("title", slug)
+    description = description or ""
+    hashtags = hashtags or ""
+    lines = []
+    lines.append(f"Title: {title}")
+    if description:
+        lines.append(f"Description: {description}")
+    if hashtags:
+        lines.append(f"Hashtags: {hashtags}")
+    lines.append("")
+    for scene in manifest.get("scenes", []):
+        num = scene.get("scene_number", "")
+        lines.append(f"Scene {num}")
+        overlay = str(scene.get("on_screen_text", "")).strip()
+        if overlay:
+            lines.append(f"Overlay: {overlay}")
+        narration = str(scene.get("narration", "")).strip()
+        if narration:
+            lines.append(f"Narration: {narration}")
+        lines.append("")
+    storyboard_text = "\n".join(lines).rstrip() + "\n"
+    storyboard_path = mp4_path.with_suffix(".storyboard.txt")
+    storyboard_path.write_text(storyboard_text, encoding="utf-8")
+    log(f"storyboard: {storyboard_path.name}", indent=True)
 
     log("")
     log("=" * 60)
     log("=" * 60)
     log("READY TO UPLOAD:")
     log(f"  video:  {mp4_path.name} ({mp4_path.stat().st_size / 1_048_576:.1f} MB)")
+    log(f"  storyboard text: {storyboard_path.name}")
     log(f"  log:    {log.path}")
     log("")
 
@@ -752,6 +775,18 @@ def main():
         help="Background music track (mp3/wav/m4a/...); mixed under "
              "the narration with fades"
     )
+    parser.add_argument(
+        "--title", default=None,
+        help="Video title for the storyboard sidecar text file"
+    )
+    parser.add_argument(
+        "--description", default=None,
+        help="Social-post description for the storyboard sidecar text file"
+    )
+    parser.add_argument(
+        "--hashtags", default=None,
+        help="Hashtags for the storyboard sidecar text file"
+    )
     args = parser.parse_args()
 
     run_name = args.name or f"run_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -771,7 +806,8 @@ def main():
                         args.voice, args.tts_speed or 1.0,
                         args.overlay, args.overlay_duration,
                         args.overlay_position, args.burn_narration,
-                        args.allow_overlong, args.music, scenes)
+                        args.allow_overlong, args.music, scenes,
+                        args.title, args.description, args.hashtags)
     except PipelineError as error:
         log("PIPELINE FAILED — " + str(error))
         return 1

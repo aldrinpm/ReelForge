@@ -86,7 +86,7 @@ DYNAMIC SCENE COUNT FROM DURATION
 - Read the requested video duration from the user's prompt. Treat it as the target runtime, not a suggestion.
 - Calculate the number of scenes from the duration so that each scene carries 15–30 seconds of narration.
   - Target roughly 15–30 seconds per scene; shorter scenes (15s) for punchy, fast topics, longer scenes (30s) for explanatory or complex topics.
-  - Example calculations: 30 seconds ≈ 1–2 scenes; 60 seconds ≈ 2–4 scenes; 2 minutes ≈ 4–8 scenes; 3 minutes ≈ 6–12 scenes.
+  - Example calculations: 30 seconds ≈ 1–2 scenes; 60 seconds ≈ 2–4 scenes; 2 minutes ≈ 4–8 scenes; 3 minutes ≈ 6–12+ scenes.
 - Number scenes consecutively, starting at 1. Do not use a fixed minimum or maximum; allow additional scenes whenever the topic requires them to cover the material clearly.
 - Distribute the narration across scenes according to each scene's narrative importance. The hook and payoff may be shorter; explanatory scenes may carry more detail.
 - If the user does not specify a duration, do not invent one or force a three-minute script. Produce a concise storyboard appropriate to the scope of the topic.
@@ -524,6 +524,9 @@ class RunRequest(BaseModel):
     allow_overlong: bool = False  # permit exceeding gate.yaml duration/scene limits
     scenes: list = []   # list of {scene_number, narration_segment, on_screen_text, duration_seconds}
     music: Optional[str] = None  # background music track (absolute path)
+    title: Optional[str] = None   # video title for storyboard sidecar
+    description: Optional[str] = None  # social-post description for storyboard sidecar
+    hashtags: Optional[str] = None  # hashtags for storyboard sidecar
 
 
 def re_slug(name):
@@ -576,6 +579,12 @@ def _run_worker(job_id, req):
             cmd += ["--burn-narration"]
         if req.allow_overlong:
             cmd += ["--allow-overlong"]
+        if req.title:
+            cmd += ["--title", req.title]
+        if req.description:
+            cmd += ["--description", req.description]
+        if req.hashtags:
+            cmd += ["--hashtags", req.hashtags]
         cmd += ["--no-open"]
 
         _put({"type": "log", "line": f"Command: {' '.join(cmd)}"})
@@ -940,7 +949,7 @@ def generate_ai(req: GenerateAIRequest):
     try:
         data = _json.dumps(payload).encode("utf-8")
         req_obj = urllib.request.Request(url, data=data, headers=headers, method="POST")
-        with urllib.request.urlopen(req_obj, timeout=60) as resp:
+        with urllib.request.urlopen(req_obj, timeout=300) as resp:
             resp_data = resp.read().decode("utf-8")
             result = _json.loads(resp_data)
             # Extract message content from OpenAI-compatible response

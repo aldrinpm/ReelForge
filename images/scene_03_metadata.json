@@ -1,8 +1,8 @@
 {
   "scene_number": 3,
   "duration_seconds": 8.0,
-  "narration": "Tech giants, startups, and everyday users will all feel the impact. Developers face stricter compliance, while users gain more rights and transparency over AI interactions.",
-  "on_screen_text": "WHO IS AFFECTED",
+  "narration": "Financial markets respond not only to economic data but also to expectations about the future. When political uncertainty increases, investors may reconsider the risks of holding assets in a particular country. Some may reduce their exposure to local stocks or become more cautious about investments denominated in pesos. These decisions can contribute to movements in the Philippine peso and the stock market. But neither the currency nor stock prices move because of politics alone. Interest rates, inflation, global financial conditions, trade, and developments in major economies also influence market performance. An impeachment trial does not automatically cause the peso to weaken or stock prices to fall. What matters is whether investors perceive a meaningful and sustained increase in economic or political risk. These market reactions can also influence how foreign investors view the country, making investor confidence the next important part of the story.",
+  "on_screen_text": "THE PESO AND STOCK MARKET",
   "prompt": "",
   "negative_prompt": "",
   "source": "user_inbox",

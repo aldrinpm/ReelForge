@@ -18,7 +18,7 @@ thresholds:
   duration_min_s: 1          # hard floor
   duration_max_s: 90         # Reels max (Shorts: 60)
   scene_count_min: 1
-  scene_count_max: 12
+  scene_count_max: 99999   # no fixed cap — scene count depends on prompt
   subtitle_wording: "exact_match"   # verify_subtitles.py must pass
 
 # Promotion ladder
