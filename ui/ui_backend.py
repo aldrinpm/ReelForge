@@ -70,7 +70,6 @@ Narration: <spoken narration for scene 2>
 Continue the same structure for each scene.
 
 STORY DESIGN
-- Write between 3 and 8 scenes. Number them consecutively, starting at 1.
 - Build the entire video around ONE central idea and one clear audience promise.
 - Scene 1 MUST function as the hook. Open with the most intriguing question, surprising verified fact, striking contrast, bold but defensible claim, or unusual situation. Do not begin with greetings, introductions, channel names, or "Today we're going to talk about".
 - Make the subject and stakes understandable immediately. The viewer should quickly know why the topic is worth their attention.
@@ -83,14 +82,21 @@ STORY DESIGN
 - Use emotional contrast where appropriate: curiosity, surprise, awe, tension, humor, empathy, or inspiration. Do not force emotion when the topic does not support it.
 - Make the story understandable even if a viewer has not seen any previous ReelForge videos.
 
-DURATION AND SPOKEN-WORD TARGET
+DYNAMIC SCENE COUNT FROM DURATION
 - Read the requested video duration from the user's prompt. Treat it as the target runtime, not a suggestion.
+- Calculate the number of scenes from the duration so that each scene carries 15–30 seconds of narration.
+  - Target roughly 15–30 seconds per scene; shorter scenes (15s) for punchy, fast topics, longer scenes (30s) for explanatory or complex topics.
+  - Example calculations: 30 seconds ≈ 1–2 scenes; 60 seconds ≈ 2–4 scenes; 2 minutes ≈ 4–8 scenes; 3 minutes ≈ 6–12 scenes.
+- Number scenes consecutively, starting at 1. Do not use a fixed minimum or maximum; allow additional scenes whenever the topic requires them to cover the material clearly.
+- Distribute the narration across scenes according to each scene's narrative importance. The hook and payoff may be shorter; explanatory scenes may carry more detail.
+- If the user does not specify a duration, do not invent one or force a three-minute script. Produce a concise storyboard appropriate to the scope of the topic.
+
+DURATION AND SPOKEN-WORD TARGET
 - For narration, target approximately 115–130 spoken words per finished minute. This pace allows room for natural delivery, emphasis, and brief pauses.
 - Calculate the target narration word count from the requested duration before drafting. Examples: 30 seconds = about 58–65 words; 60 seconds = about 115–130 words; 2 minutes = about 230–260 words; 3 minutes = about 345–390 words.
 - Stay reasonably close to the calculated range. Do not produce a short script for a long requested runtime or pad the script with repetition just to reach the target.
-- Distribute the narration across the 3–8 scenes according to each scene's narrative importance. The hook and payoff may be shorter; explanatory scenes may carry more detail.
+- Distribute the narration across scenes according to each scene's narrative importance. The hook and payoff may be shorter; explanatory scenes may carry more detail.
 - Keep each scene's narration to 1–3 speakable sentences, but do not interpret "concise" as "extremely short." Use enough explanation and examples to fulfill the requested duration.
-- If the user does not specify a duration, do not invent one or force a three-minute script. Produce a concise storyboard appropriate to the scope of the topic.
 - Before responding, estimate the total narration word count and compare it with the requested-duration target. Revise if it is materially too short or too long.
 
 NARRATION QUALITY
@@ -133,11 +139,12 @@ FINAL QUALITY CHECK — DO THIS BEFORE RESPONDING
 - Does curiosity build naturally toward a clear payoff?
 - Is the narration factual, understandable, and natural when spoken aloud?
 - Does the total narration word count match the requested runtime at approximately 115–130 words per minute?
+- Is the scene count consistent with the requested duration (roughly 15–30 seconds of narration per scene)?
 - Are legal or technical stages, responsible institutions, thresholds, and consequences described precisely?
 - Are allegations, established facts, and uncertain or changing information clearly distinguished?
 - Does the ending fulfill the opening promise?
 - Are all overlays uppercase and no longer than 35 characters?
-- Are there 3–8 consecutively numbered scenes, each with exactly one Overlay and one Narration line?
+- Are scenes consecutively numbered starting at 1, each with exactly one Overlay and one Narration line?
 - Does the response match the required structure exactly?
 
 FORMATTING RULES
