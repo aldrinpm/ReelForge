@@ -123,7 +123,7 @@
     }
     .ai-dialog {
       background: #1f2937; border-radius: 0.75rem; padding: 1.5rem;
-      max-width: 720px; width: 90vw; max-height: 85vh; overflow: auto;
+      max-width: 1280px; width: 90vw; max-height: 85vh; overflow: auto;
     }
     .ai-dialog-header {
       display: flex; justify-content: space-between; align-items: center;
@@ -164,7 +164,8 @@
     .btn-attach-media.has-media { background: #059669; }
     .btn-attach-media.has-media:hover { background: #047857; }
     .ai-response-box { background: #111827; border: 1px solid #374151;
-      border-radius: 0.375rem; padding: 0.75rem; height: 12rem; overflow: auto;
+      border-radius: 0.375rem; padding: 0.75rem;
+      flex: 1; min-height: 0; height: auto; overflow: auto;
       font-family: monospace; font-size: 0.75rem; color: #86efac; white-space: pre-wrap;
       user-select: text; cursor: text; }
     .ai-response-box.expanded { height: 30rem; }
@@ -181,6 +182,9 @@
       color: #f3f4f6; font-variant-numeric: tabular-nums; }
     .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1rem; }
     .ai-grid > div { display: flex; flex-direction: column; gap: 0.25rem; }
+    .ai-dialog-body { display: flex; gap: 1rem; min-height: 34rem; }
+    .ai-dialog-left { flex: 1; min-width: 0; overflow-y: auto; }
+    .ai-dialog-right { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   </style>
 </head>
 <body>
@@ -1429,8 +1433,9 @@
         <button class="ai-dialog-close" onclick="closeAiDialog()">&times;</button>
       </div>
       <div class="ai-dialog-body">
-        <div class="ai-field-group">
-          <div class="ai-key-row">
+        <div class="ai-dialog-left">
+          <div class="ai-field-group">
+            <div class="ai-key-row">
             <label class="ai-field-label">API Key</label>
             <button class="btn-ai-save" id="ai-save-btn" onclick="saveAiSettings()">Save Settings</button>
           </div>
@@ -1510,8 +1515,10 @@
         <div class="ai-dialog-actions">
           <button class="btn-ai-send" id="ai-send-btn" onclick="toggleAiGenerate()">Send</button>
         </div>
-        <div class="ai-field-group mt-2">
-          <div class="ai-response-header">
+        </div>
+        <div class="ai-dialog-right">
+          <div class="ai-field-group mt-2">
+            <div class="ai-response-header">
             <label class="ai-field-label" style="margin:0;">Response</label>
             <button class="btn-ai-expand" id="ai-expand-btn" onclick="toggleAiExpand()">Expand</button>
           </div>
