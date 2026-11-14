@@ -1,8 +1,8 @@
 {
   "scene_number": 3,
   "duration_seconds": 8.0,
-  "narration": "As darkness approaches, your brain signals the pineal gland to release melatonin. Often called the sleep hormone, melatonin tells your body that nighttime has arrived. Artificial light, especially bright light at night, can interfere with this natural biological signal.",
-  "on_screen_text": "MELATONIN SIGNALS SLEEP",
+  "narration": "Tech giants, startups, and everyday users will all feel the impact. Developers face stricter compliance, while users gain more rights and transparency over AI interactions.",
+  "on_screen_text": "WHO IS AFFECTED",
   "prompt": "",
   "negative_prompt": "",
   "source": "user_inbox",

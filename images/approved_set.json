@@ -1,7 +1,7 @@
 {
-  "title": "Every night, you close your eyes and enter a mysterious biol",
+  "title": "In a landmark decision, Congress has passed the first major ",
   "storyboard": null,
-  "contact_sheet": "contact_sheet_run_20261114T031352.jpg",
+  "contact_sheet": "contact_sheet_run_20261114T075854.jpg",
   "approved_on": "2026-11-14",
   "mode": "user_media_auto",
   "scenes": [
@@ -11,15 +11,15 @@
       "metadata": "scene_01_metadata.json",
       "width": 512,
       "height": 768,
-      "duration_seconds": 16.0,
-      "narration": "Every night, you close your eyes and enter a mysterious biological world. But while your body appears motionless, your brain is far from inactive. It begins a complex process that keeps you alive, healthy, and mentally sharp.",
-      "on_screen_text": "WHAT HAPPENS WHEN YOU SLEEP?",
+      "duration_seconds": 13.0,
+      "narration": "In a landmark decision, Congress has passed the first major artificial intelligence regulation bill. The vote marks a turning point for how AI is developed and deployed worldwide.",
+      "on_screen_text": "HISTORIC AI VOTE PASSED",
       "prompt": "",
       "negative_prompt": "",
       "motion_direction": "",
       "source_type": "image",
       "clip_duration": 0.0,
-      "image_source": "black_placeholder"
+      "image_source": "user_inbox:1.jpg"
     },
     {
       "scene_number": 2,
@@ -27,15 +27,63 @@
       "metadata": "scene_02_metadata.json",
       "width": 512,
       "height": 768,
-      "duration_seconds": 20.0,
-      "narration": "Deep inside your brain, a tiny structure called the suprachiasmatic nucleus controls your circadian rhythm. This internal clock responds primarily to light, helping regulate when you feel awake and when you become sleepy. It influences hormones, body temperature, and your daily energy levels.",
-      "on_screen_text": "YOUR BRAIN HAS AN INTERNAL CLOCK",
+      "duration_seconds": 14.0,
+      "narration": "The new rules require companies to test powerful AI systems for safety before release. They also mandate clear labeling for AI-generated content and protect consumer data from misuse.",
+      "on_screen_text": "WHAT THE LAW DOES",
       "prompt": "",
       "negative_prompt": "",
       "motion_direction": "",
       "source_type": "image",
       "clip_duration": 0.0,
-      "image_source": "black_placeholder"
+      "image_source": "user_inbox:2.jpg"
+    },
+    {
+      "scene_number": 3,
+      "image": "scene_03.png",
+      "metadata": "scene_03_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 13.0,
+      "narration": "Tech giants, startups, and everyday users will all feel the impact. Developers face stricter compliance, while users gain more rights and transparency over AI interactions.",
+      "on_screen_text": "WHO IS AFFECTED",
+      "prompt": "",
+      "negative_prompt": "",
+      "motion_direction": "",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:3.jpg"
+    },
+    {
+      "scene_number": 4,
+      "image": "scene_04.png",
+      "metadata": "scene_04_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 11.5,
+      "narration": "Other countries are watching closely and may follow with similar legislation. This could set a new international standard for responsible AI innovation.",
+      "on_screen_text": "GLOBAL IMPACT EXPECTED",
+      "prompt": "",
+      "negative_prompt": "",
+      "motion_direction": "",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:4.jpg"
+    },
+    {
+      "scene_number": 5,
+      "image": "scene_05.png",
+      "metadata": "scene_05_metadata.json",
+      "width": 512,
+      "height": 768,
+      "duration_seconds": 9.5,
+      "narration": "The bill heads to the president for signature before taking effect. Stay tuned as we break down the timeline and what it means for you.",
+      "on_screen_text": "WHAT HAPPENS NEXT",
+      "prompt": "",
+      "negative_prompt": "",
+      "motion_direction": "",
+      "source_type": "image",
+      "clip_duration": 0.0,
+      "image_source": "user_inbox:5.png"
     }
   ]
 }

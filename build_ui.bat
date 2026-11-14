@@ -19,6 +19,7 @@ rem ---- 2.  Run PyInstaller (--clean avoids stale build cache) ----------------
   --hidden-import "ui.ui_backend" ^
   --hidden-import "config" ^
   --hidden-import "llm_client" ^
+  --hidden-import "storyboard_format" ^
   --hidden-import "engineio.async_drivers.threading" ^
   --hidden-import "fastapi" ^
   --hidden-import "uvicorn" ^

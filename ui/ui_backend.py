@@ -40,6 +40,38 @@ BASE_PY = r"E:\ai\AirLLM\py3.11.9\python.exe"
 VENV_PY = ROOT / "venv-tts" / "Scripts" / "python.exe"
 CONFIG_PATH = ROOT / "config.json"
 
+sys.path.insert(0, str(SCRIPTS))
+import storyboard_format  # noqa: E402  (needs SCRIPTS on sys.path first)
+
+# The prepared statement sent to the LLM in the AI Storyboard Generator.
+# It pins the model to the exact plain-text storyboard structure that the
+# application can parse, so the response can be validated and fed
+# straight into the New Run form.
+STORYBOARD_SYSTEM_PROMPT = """You are a video storyboard generator.
+Convert the user's prompt into a storyboard that uses EXACTLY this plain-text
+structure and nothing else:
+
+Title: <one-line video title>
+Description: <two or three sentences describing the video for a social post>
+Hashtags: <#tag1 #tag2 #tag3>
+
+Scene 1
+Overlay: <short on-screen headline, maximum 35 characters>
+Narration: <the spoken narration for scene 1>
+
+Scene 2
+Overlay: <short on-screen headline, maximum 35 characters>
+Narration: <the spoken narration for scene 2>
+
+Rules:
+- Write between 3 and 8 scenes.
+- Every scene starts with "Scene <number>" on its own line.
+- Every scene has exactly one "Overlay:" line and one "Narration:" line.
+- Overlay text is a short uppercase headline, 35 characters or fewer.
+- Narration is one to three sentences written to be spoken aloud.
+- Do not use markdown, code fences, bullet points, or any commentary.
+- Output only the storyboard text, starting with the "Title:" line."""
+
 _console_queue = queue.Queue()
 _console_history = []
 _MAX_CONSOLE_HISTORY = 1000
@@ -194,13 +226,17 @@ def config_defaults():
 
 
 @app.get("/models")
-def models():
-    """List available models from the configured LLM API."""
+def models(base_url: str = "", api_key: str = ""):
+    """List available models from the configured LLM API.
+
+    base_url and api_key may be passed as query params (from the AI dialog),
+    falling back to config.json / defaults.
+    """
     try:
         cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8")) if CONFIG_PATH.exists() else {}
         llm = cfg.get("llm", {})
-        base_url = (llm.get("base_url") or "http://127.0.0.1:1234/v1").rstrip("/")
-        api_key = llm.get("api_key", "")
+        base_url = (base_url or llm.get("base_url") or "http://127.0.0.1:1234/v1").rstrip("/")
+        api_key = api_key or llm.get("api_key", "")
         url = base_url + "/models"
         headers = {"Content-Type": "application/json"}
         if api_key:
@@ -215,12 +251,12 @@ def models():
 
 
 @app.get("/models/info")
-def models_info(model: str = ""):
+def models_info(model: str = "", base_url: str = "", api_key: str = ""):
     """Return model metadata: compatibility modes, context length, reasoning effort options."""
-    return _model_info_impl(model)
+    return _model_info_impl(model, base_url, api_key)
 
 
-def _model_info_impl(model: str = ""):
+def _model_info_impl(model: str = "", base_url: str = "", api_key: str = ""):
     if not model:
         return {"compatibility_modes": [], "context_length": None, "reasoning_effort_options": []}
 
@@ -228,8 +264,8 @@ def _model_info_impl(model: str = ""):
     try:
         cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8")) if CONFIG_PATH.exists() else {}
         llm = cfg.get("llm", {})
-        base_url = (llm.get("base_url") or "http://127.0.0.1:1234/v1").rstrip("/")
-        api_key = llm.get("api_key", "")
+        base_url = (base_url or llm.get("base_url") or "http://127.0.0.1:1234/v1").rstrip("/")
+        api_key = api_key or llm.get("api_key", "")
         url = base_url + "/models"
         headers = {"Content-Type": "application/json"}
         if api_key:
@@ -772,7 +808,13 @@ class GenerateAIRequest(BaseModel):
 
 @app.post("/ai/generate")
 def generate_ai(req: GenerateAIRequest):
-    """Generate content via an LLM API and return plain text response."""
+    """Generate a storyboard via an LLM API and return the raw text.
+
+    The request carries the prepared statement (STORYBOARD_SYSTEM_PROMPT) so
+    the model answers in the canonical storyboard structure. The response is
+    parsed and validated with the one canonical parser; the parsed storyboard
+    and any structure errors are returned alongside the raw text.
+    """
     import json as _json
 
     base_url = req.base_url.rstrip("/")
@@ -784,7 +826,7 @@ def generate_ai(req: GenerateAIRequest):
     payload = {
         "model": model,
         "messages": [
-            {"role": "system", "content": "You are a helpful assistant that creates video storyboards and video ideas. Respond in plain text without markdown code fences unless requested."},
+            {"role": "system", "content": STORYBOARD_SYSTEM_PROMPT},
             {"role": "user", "content": req.prompt}
         ],
         "temperature": 0.7,
@@ -823,9 +865,64 @@ def generate_ai(req: GenerateAIRequest):
                 content = result["choices"][0].get("message", {}).get("content", "")
             else:
                 content = str(result)
-            return {"text": content}
+            return _ai_response(content)
     except Exception as e:
-        return {"text": f"Error: {str(e)}"}
+        return {"text": f"Error: {str(e)}", "storyboard": None, "errors": [str(e)]}
+
+
+def _ai_response(content):
+    """Validate an LLM storyboard response and package the result."""
+    if not content or content.startswith("Error:"):
+        return {
+            "text": content or "",
+            "storyboard": None,
+            "errors": ["The LLM returned no usable response."],
+        }
+    parsed = storyboard_format.parse_storyboard(content)
+    errors = storyboard_format.validate_storyboard(parsed)
+    return {
+        "text": content,
+        "storyboard": parsed if not errors else None,
+        "errors": errors,
+    }
+
+
+class ParseStoryboardRequest(BaseModel):
+    text: str
+
+
+@app.post("/parse/storyboard")
+def parse_storyboard_endpoint(req: ParseStoryboardRequest):
+    """Parse + validate storyboard text (the canonical format).
+
+    Used by "Browse from text file" and by the AI Storyboard Generator, so
+    both paths share one parser and one set of error messages.
+    """
+    parsed = storyboard_format.parse_storyboard(req.text or "")
+    errors = storyboard_format.validate_storyboard(parsed)
+    return {
+        "ok": not errors,
+        "storyboard": parsed if not errors else None,
+        "errors": errors,
+    }
+
+
+class ConsoleLogRequest(BaseModel):
+    message: str
+    level: str = "INFO"
+
+
+@app.post("/log/console")
+def log_console(req: ConsoleLogRequest):
+    """Append a message to the application console log (Console tab)."""
+    message = (req.message or "").strip()
+    if not message:
+        raise HTTPException(400, "message is required")
+    level = (req.level or "INFO").upper()
+    if level not in ("INFO", "WARN", "ERROR", "DEBUG"):
+        level = "INFO"
+    console_log(message, level)
+    return {"ok": True}
 
 
 @app.get("/")

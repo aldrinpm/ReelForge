@@ -1,14 +1,14 @@
 {
   "scene_number": 2,
   "duration_seconds": 8.0,
-  "narration": "Deep inside your brain, a tiny structure called the suprachiasmatic nucleus controls your circadian rhythm. This internal clock responds primarily to light, helping regulate when you feel awake and when you become sleepy. It influences hormones, body temperature, and your daily energy levels.",
-  "on_screen_text": "YOUR BRAIN HAS AN INTERNAL CLOCK",
+  "narration": "The new rules require companies to test powerful AI systems for safety before release. They also mandate clear labeling for AI-generated content and protect consumer data from misuse.",
+  "on_screen_text": "WHAT THE LAW DOES",
   "prompt": "",
   "negative_prompt": "",
-  "source": "black_placeholder",
-  "source_file": "black_placeholder",
+  "source": "user_inbox",
+  "source_file": "2.jpg",
   "source_type": "image",
   "width": 512,
   "height": 768,
-  "normalized_filter": "color=black:size=512x768"
+  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
 }

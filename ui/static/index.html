@@ -270,6 +270,7 @@
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-burn-narration"> Burn narration</label>
           <label class="flex items-center gap-2 text-sm" title="Let the run finish even if it exceeds the gate.yaml duration / scene-count limits"><input type="checkbox" id="run-allow-overlong"> Allow overlong</label>
         </div>
+        <div id="file-list" class="text-sm text-gray-400 mb-2">No files selected.</div>
         <div>
           <label class="block text-sm text-gray-400 mb-1">Background music (optional)</label>
           <div class="flex items-center gap-2 mb-2">
@@ -439,99 +440,41 @@
           alert('Could not read file: ' + (data.error || 'unknown error'));
           return;
         }
-        parseTextFile(data.content, filePath);
+        await parseTextFile(data.content, filePath);
       } catch(e) {
         alert('Error reading file: ' + e.message);
       }
     }
 
-    function parseTextFile(content, filePath) {
-      const lines = content.split(/\r?\n/);
-      let title = '';
-      let description = '';
-      let hashtags = '';
-      const scenes = [];
-      let currentScene = null;
-      let currentField = null; // 'overlay' or 'narration'
-
-      console.log('parseTextFile: starting parse, content length:', content.length);
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed) continue;
-
-        const titleMatch = trimmed.match(/^Title:\s*(.*)$/i);
-        if (titleMatch) { title = titleMatch[1].trim(); continue; }
-
-        const descMatch = trimmed.match(/^Description:\s*(.*)$/i);
-        if (descMatch) { description = descMatch[1].trim(); continue; }
-
-        const hashMatch = trimmed.match(/^Hashtags:\s*(.*)$/i);
-        if (hashMatch) { hashtags = hashMatch[1].trim(); continue; }
-
-        // Scene header: "Scene N:" or "Scene N - ..." or just "Scene N"
-        const sceneMatch = trimmed.match(/^Scene\s+(\d+)\s*:?/i);
-        if (sceneMatch) {
-          const sceneNum = parseInt(sceneMatch[1]);
-          currentScene = { num: sceneNum, overlay: '', narration: '' };
-          currentField = null;
-          const afterColon = trimmed.substring(sceneMatch[0].length).trim();
-          if (afterColon) currentScene.overlay = afterColon;
-          scenes.push(currentScene);
-          continue;
-        }
-
-        // Overlay line: "Overlay: ..." or "Overlay N: ..."
-        const overlayMatch = trimmed.match(/^Overlay\s*(?:\d+)?:\s*(.*)$/i);
-        if (overlayMatch && currentScene) {
-          currentScene.overlay = overlayMatch[1].trim();
-          currentField = 'overlay';
-          continue;
-        }
-
-        // Narration line: "Narration: ..." or "Narration N: ..."
-        const narrMatch = trimmed.match(/^Narration\s*(?:\d+)?:\s*(.*)$/i);
-        if (narrMatch && currentScene) {
-          currentScene.narration = narrMatch[1].trim();
-          currentField = 'narration';
-          continue;
-        }
-
-        // Continuation of previous field (multi-line)
-        if (currentScene && currentField === 'overlay') {
-          currentScene.overlay += ' ' + trimmed;
-        } else if (currentScene && currentField === 'narration') {
-          currentScene.narration += ' ' + trimmed;
-        }
-      }
-
-      console.log('parseTextFile: parsed scenes:', JSON.stringify(scenes));
-
-      // Populate form header fields
-      document.getElementById('run-title').value = title;
-      document.getElementById('run-description').value = description;
-      document.getElementById('run-hashtags').value = hashtags;
-
-      // Clear existing scenes and rebuild from file
-      const scenesList = document.getElementById('scenes-list');
-      scenesList.innerHTML = '';
-
-      if (scenes.length > 0) {
-        scenes.forEach((s, i) => {
-          console.log('parseTextFile: adding scene', s.num, 'overlay:', s.overlay, 'narration:', s.narration);
-          addScene(s.num || (i + 1), s.narration, s.overlay, 8);
+    async function parseTextFile(content, filePath) {
+      // The canonical parser lives in the backend (scripts/storyboard_format.py)
+      // so this path and the AI Storyboard Generator share one implementation.
+      const fileName = filePath.split(/[\\\/]/).pop();
+      try {
+        const res = await fetch('/parse/storyboard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: content })
         });
-      } else {
-        // No scenes found; create one empty scene if media files exist
-        if (selectedFiles.length > 0) {
-          syncScenesToMedia();
-        } else {
-          addScene(1, '', '', 8);
+        const data = await res.json();
+        if (!data.ok) {
+          reportStructureErrors(data.errors, 'text file "' + fileName + '"');
+          document.getElementById('run-status').textContent =
+            'Storyboard structure check failed for ' + fileName + ' (see Console).';
+          alert('Storyboard structure check failed:\n\n' +
+                (data.errors || []).join('\n'));
+          return;
         }
+        const count = applyStoryboardToForm(data.storyboard);
+        document.getElementById('run-status').textContent =
+          'Parsed ' + count + ' scene(s) from ' + fileName;
+        logToConsole('Storyboard parsed from file "' + fileName + '": ' +
+                     count + ' scene(s).', 'INFO');
+      } catch (e) {
+        document.getElementById('run-status').textContent =
+          'Error parsing storyboard file: ' + e.message;
+        alert('Could not parse storyboard file: ' + e.message);
       }
-
-      // Show status
-      document.getElementById('run-status').textContent = 'Parsed ' + scenes.length + ' scene(s) from ' + filePath.split(/[\\\/]/).pop();
     }
     function renderFileList() {
       const el = document.getElementById('file-list');
@@ -756,6 +699,9 @@
           body: JSON.stringify({
             name, media: selectedFiles,
             scenes: scenes,
+            title: document.getElementById('run-title').value.trim() || null,
+            description: document.getElementById('run-description').value.trim() || null,
+            hashtags: document.getElementById('run-hashtags').value.trim() || null,
             voice: document.getElementById('run-voice').value || null,
             speed: parseFloat(document.getElementById('run-tts-speed').value),
             overlay: document.getElementById('run-overlay').checked,
@@ -884,15 +830,6 @@
       alert('TTS defaults saved');
     }
 
-    async function runDoctor() {
-      const el = document.getElementById('doctor-output');
-      el.classList.remove('hidden');
-      el.textContent = 'Running...';
-      const res = await fetch('/doctor', { method: 'POST' });
-      const data = await res.json();
-      el.textContent = data.output || 'No output';
-    }
-
     async function loadHistory() {
       try {
         const r = await fetch('/runs'); const d = await r.json();
@@ -906,15 +843,21 @@
       } catch(e) {}
     }
     async function rerun(slug) {
+      // The inbox-based re-run path was removed with make_video.bat.
+      // Keep the History "Re-run" button functional without crashing on
+      // missing DOM elements.
       try {
         const r = await fetch('/inbox/' + encodeURIComponent(slug));
+        if (!r.ok) throw new Error('inbox endpoint not available');
         const d = await r.json();
-        document.getElementById('run-name').value = d.name || slug;
-        document.getElementById('run-prompt').value = d.prompt || '';
         selectedFiles = d.media || [];
         renderFileList();
         showTab('newrun');
-      } catch(e) { alert('Could not load run details: ' + e.message); }
+      } catch(e) {
+        alert('Re-run from history is not available in this build.\n\n' +
+              'Open the run in New Run manually or start a fresh run.');
+        console.log('rerun skipped:', e.message);
+      }
     }
     async function viewResult(name) {
       showTab('result');
@@ -979,9 +922,68 @@
 
     // AI Dialog
     let aiAbortController = null;
+    // ---- Storyboard structure -------------------------------------------
+    // One parser serves both paths: "Browse from text file" and the AI
+    // Storyboard Generator. The backend owns it (scripts/storyboard_format.py)
+    // so the two can never drift apart.
+    let aiStoryboard = null;   // validated storyboard awaiting "Proceed"
+
+    function setProceedEnabled(enabled) {
+      const btn = document.getElementById('ai-proceed-btn');
+      if (btn) btn.disabled = !enabled;
+    }
+    function logToConsole(message, level) {
+      // The backend owns the console log (Console tab + persisted history),
+      // so messages go through it instead of being appended locally.
+      return fetch('/log/console', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message, level: level || 'INFO' })
+      }).catch(() => {});
+    }
+    function reportStructureErrors(errors, source) {
+      const list = (errors && errors.length) ? errors : ['Unknown structure error.'];
+      const msg = 'Storyboard structure check FAILED (' + source + '):\n' +
+                  list.map(e => '  - ' + e).join('\n');
+      logToConsole(msg, 'ERROR');
+      return msg;
+    }
+    function applyStoryboardToForm(storyboard) {
+      if (!storyboard) return 0;
+      document.getElementById('run-title').value = storyboard.title || '';
+      document.getElementById('run-description').value = storyboard.description || '';
+      document.getElementById('run-hashtags').value = storyboard.hashtags || '';
+
+      const list = document.getElementById('scenes-list');
+      list.innerHTML = '';
+      const scenes = storyboard.scenes || [];
+      scenes.forEach((s, i) => {
+        addScene(s.num || (i + 1), s.narration || '', s.overlay || '', 8);
+      });
+      if (!scenes.length) addScene(1, '', '', 8);
+      updateSceneNumbers();
+      return scenes.length;
+    }
+    function proceedToNewRun() {
+      if (!aiStoryboard) {
+        logToConsole('Proceed to New Run: no validated storyboard available.', 'WARN');
+        return;
+      }
+      const storyboard = aiStoryboard;
+      const count = applyStoryboardToForm(storyboard);
+      aiStoryboard = null;
+      setProceedEnabled(false);
+      closeAiDialog();
+      showTab('newrun');
+      document.getElementById('run-status').textContent =
+        'Storyboard applied from AI: ' + count + ' scene(s) - "' +
+        (storyboard.title || '') + '". Attach media, then Start Run.';
+      logToConsole('Storyboard applied to New Run: ' + count + ' scene(s).', 'INFO');
+    }
     function openAiDialog() {
       document.getElementById('ai-dialog-overlay').style.display = 'flex';
       document.getElementById('ai-response-box').textContent = '';
+      aiStoryboard = null;
+      setProceedEnabled(false);
       validateAiForm();
       loadAiSettings();
     }
@@ -1013,7 +1015,9 @@
       const output = document.getElementById('ai-response-box');
       output.textContent = 'Querying models...';
       try {
-        const r = await fetch('/models');
+        const apiKey = document.getElementById('ai-api-key').value;
+        const baseUrl = document.getElementById('ai-api-url').value;
+        const r = await fetch('/models?' + new URLSearchParams({base_url: baseUrl, api_key: apiKey}));
         const d = await r.json();
         const sel = document.getElementById('ai-model');
         sel.innerHTML = '<option value="">Select or type a model...</option>';
@@ -1327,6 +1331,8 @@
         }
 
         aiAbortController = new AbortController();
+        aiStoryboard = null;
+        setProceedEnabled(false);
         btn.textContent = 'Stop';
         btn.className = 'btn-ai-stop';
         // Verbose: display all request parameters in the response/log window
@@ -1373,15 +1379,35 @@
           });
           const result = await response.json();
           if (result.text) {
-            output.textContent = paramLog + '\n=== Response ===\n' + (result.text.startsWith('Error:') ? result.text : result.text);
+            output.textContent = paramLog + '\n=== Response ===\n' + result.text;
           } else {
             output.textContent = paramLog + '\n=== Response ===\nError: ' + (result.error || 'Unknown error');
           }
+
+          // --- structure check -------------------------------------------
+          const errors = result.errors || [];
+          if (errors.length) {
+            aiStoryboard = null;
+            setProceedEnabled(false);
+            reportStructureErrors(errors, 'AI response');
+            output.textContent += '\n\n=== Structure check FAILED ===\n' +
+              errors.map(e => '- ' + e).join('\n');
+          } else if (result.storyboard) {
+            aiStoryboard = result.storyboard;
+            setProceedEnabled(true);
+            const n = (result.storyboard.scenes || []).length;
+            output.textContent += '\n\n=== Structure check PASSED === ' + n +
+              ' scene(s) ready. Click "Proceed to New Run" to fill the New Run form.';
+            logToConsole('Storyboard structure check passed: ' + n + ' scene(s) from AI response.', 'INFO');
+          }
         } catch (e) {
+          aiStoryboard = null;
+          setProceedEnabled(false);
           if (e.name === 'AbortError') {
             output.textContent = paramLog + '\n=== Response ===\nRequest cancelled by user.';
           } else {
             output.textContent = paramLog + '\n=== Response ===\nError: ' + e.message;
+            reportStructureErrors([e.message], 'AI request');
           }
         } finally {
           resetAiSendButton();
@@ -1490,6 +1516,9 @@
             <button class="btn-ai-expand" id="ai-expand-btn" onclick="toggleAiExpand()">Expand</button>
           </div>
           <div class="ai-response-box" id="ai-response-box"></div>
+          <div class="ai-dialog-actions" style="margin-top: 0.75rem;">
+            <button class="btn-ai-save" id="ai-proceed-btn" onclick="proceedToNewRun()" disabled title="Enabled when the response matches the required storyboard structure">Proceed to New Run</button>
+          </div>
         </div>
       </div>
     </div>
