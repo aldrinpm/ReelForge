@@ -1,14 +1,14 @@
 {
   "scene_number": 2,
   "duration_seconds": 8.0,
-  "narration": "In the Philippines, impeachment is a constitutional process designed to hold certain high-ranking public officials accountable for serious misconduct. The House of Representatives has the exclusive power to initiate impeachment cases, while the Senate has the authority to conduct the trial and decide whether an official should be convicted and removed from office. Impeachment is not the same as a criminal conviction, although separate legal proceedings may also be possible. Because the process involves national leadership and constitutional institutions, it can become a major political event. The economic significance goes beyond the legal proceedings themselves. What matters is whether the political situation creates prolonged uncertainty or disrupts the government's ability to function.",
-  "on_screen_text": "UNDERSTANDING THE IMPEACHMENT",
+  "narration": "The first challenge is connectivity. The Marcos Jr. administration's Build Better More program, the successor to Duterte's Build Build Build, aims to transform the country's infrastructure through railways, expressways, airports, and flood control. The pipeline includes more than one hundred ninety flagship projects worth roughly nine trillion pesos. Major developments such as the North-South Commuter Railway, the Metro Manila Subway, and the Bataan-Cavite Interlink Bridge are designed to decongest the capital and connect previously isolated regions to economic growth corridors. This follows a strategy that helped Singapore and Malaysia strengthen their economies through integrated transportation networks. The Philippines is relying on foreign development assistance, public-private partnerships, and domestic financing to fund these projects. But ambitious plans do not automatically translate into completed infrastructure. Procurement delays, right-of-way disputes, rising construction costs, and governance concerns continue to threaten implementation. Every delayed railway or unfinished expressway means businesses face higher logistics costs and communities wait longer for economic opportunities. The real test of Build Better More is not the number of projects announced or groundbreaking ceremonies held. It is whether these projects are completed on schedule, operate efficiently, and genuinely reduce the cost of doing business. Without consistent execution, infrastructure spending risks becoming another missed opportunity rather than the foundation of industrial competitiveness.",
+  "on_screen_text": "BUILD BETTER MORE",
   "prompt": "",
   "negative_prompt": "",
-  "source": "user_inbox",
-  "source_file": "2.jpg",
+  "source": "black_placeholder",
+  "source_file": "black_placeholder",
   "source_type": "image",
   "width": 512,
   "height": 768,
-  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+  "normalized_filter": "color=black:size=512x768"
 }

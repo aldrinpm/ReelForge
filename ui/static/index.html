@@ -272,17 +272,47 @@
         </div>
         <div class="grid2">
           <div>
-            <label class="block text-sm text-gray-400 mb-1">Voice</label>
-            <select id="run-voice"><option value="af_heart">af_heart (default)</option></select>
-            <div class="flex items-center gap-2 mt-1">
-              <button class="btn-secondary btn-sm" onclick="previewRunVoice()">Preview</button>
-              <span id="run-voice-status" class="text-xs text-gray-500"></span>
-            </div>
+            <label class="block text-sm text-gray-400 mb-1">Voice source</label>
+            <select id="run-voice-mode" onchange="onVoiceModeChange()">
+              <option value="preset">Kokoro preset</option>
+              <option value="clone">Cloned voice (my WAV)</option>
+            </select>
           </div>
           <div>
-            <label class="block text-sm text-gray-400 mb-1">Speed</label>
+            <label class="block text-sm text-gray-400 mb-1">Speed <span class="text-xs text-gray-500">(preset only)</span></label>
             <input type="number" step="0.1" min="0.5" max="2.0" value="1.0" id="run-tts-speed">
           </div>
+        </div>
+        <div id="voice-preset-row">
+          <label class="block text-sm text-gray-400 mb-1">Kokoro voice</label>
+          <select id="run-voice"><option value="af_heart">af_heart (default)</option></select>
+          <div class="flex items-center gap-2 mt-1">
+            <button class="btn-secondary btn-sm" onclick="previewRunVoice()">Preview</button>
+            <span id="run-voice-status" class="text-xs text-gray-500"></span>
+          </div>
+        </div>
+        <div id="voice-clone-row" class="hidden">
+          <label class="block text-sm text-gray-400 mb-1">Reference WAV (5-20 s, one speaker)</label>
+          <div class="flex items-center gap-2">
+            <button class="btn-secondary btn-sm" onclick="pickVoiceRef()">Browse WAV</button>
+            <button class="btn-secondary btn-sm" onclick="clearVoiceRef()">Clear</button>
+            <span id="voice-ref-name" class="text-sm text-gray-300"></span>
+          </div>
+          <div class="grid2 mt-2">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Emotion</label>
+              <input type="number" step="0.05" min="0" max="1.5" value="0.5" id="run-clone-exagg">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Pace weight</label>
+              <input type="number" step="0.05" min="0" max="1" value="0.5" id="run-clone-cfg">
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mt-1">
+            <button class="btn-secondary btn-sm" onclick="previewCloneVoice()">Preview clone</button>
+            <span id="run-clone-status" class="text-xs text-gray-500"></span>
+          </div>
+          <div class="text-xs text-gray-500">Every scene is spoken in the reference voice (Chatterbox, CPU). Slower than Kokoro.</div>
         </div>
         <div class="flex items-center gap-4">
           <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="run-save-defaults"> Save as default</label>
@@ -380,27 +410,62 @@
     // Health
     function loadHealth() {
       fetch('/health').then(r=>r.json()).then(d => {
-        let html = '';
+        const panel = document.getElementById('health-panel');
+        panel.replaceChildren();
         for (const [k, v] of Object.entries(d)) {
           if (k === 'config_exists') continue;
           const status = v.status || 'unknown';
           const cls = status === 'ok' ? 'dot-ok' : (status === 'degraded' ? 'dot-degraded' : 'dot-down');
-          html += `<div class="health-row"><span class="dot ${cls}"></span><span class="font-medium">${k}</span><span class="text-gray-500 text-xs ml-2">${status}</span></div>`;
+          const row = document.createElement('div');
+          row.className = 'health-row';
+          const dot = document.createElement('span');
+          dot.className = `dot ${cls}`;
+          const name = document.createElement('span');
+          name.className = 'font-medium';
+          name.textContent = k;
+          const st = document.createElement('span');
+          st.className = 'text-gray-500 text-xs ml-2';
+          st.textContent = status;
+          row.append(dot, name, st);
+          panel.appendChild(row);
         }
-        document.getElementById('health-panel').innerHTML = html;
       }).catch(e => { document.getElementById('health-panel').textContent = 'Error: ' + e.message; });
     }
     function loadConfigPanel() {
       fetch('/config').then(r=>r.json()).then(d => {
-        document.getElementById('config-panel').innerHTML = `<div class="text-sm">Voice: ${d.tts?.voice || '?'}</div>`;
+        const panel = document.getElementById('config-panel');
+        panel.replaceChildren();
+        const div = document.createElement('div');
+        div.className = 'text-sm';
+        div.textContent = 'Voice: ';
+        const voice = document.createElement('span');
+        voice.textContent = d.tts?.voice || '?';
+        div.appendChild(voice);
+        panel.appendChild(div);
       }).catch(e => {});
     }
     function loadRuns() {
       fetch('/runs').then(r=>r.json()).then(d => {
         const el = document.getElementById('runs-panel');
+        el.replaceChildren();
         if (d.runs && d.runs.length) {
-          el.innerHTML = d.runs.slice(0,5).map(r => `<div class="flex justify-between text-sm border-b border-gray-700 py-1"><span>${r.name}</span><span class="text-gray-500">${r.size_mb} MB</span></div>`).join('');
-        } else { el.innerHTML = '<div class="text-gray-500 text-sm">No runs yet.</div>'; }
+          d.runs.slice(0, 5).forEach(r => {
+            const row = document.createElement('div');
+            row.className = 'flex justify-between text-sm border-b border-gray-700 py-1';
+            const name = document.createElement('span');
+            name.textContent = r.name;
+            const size = document.createElement('span');
+            size.className = 'text-gray-500';
+            size.textContent = r.size_mb + ' MB';
+            row.append(name, size);
+            el.appendChild(row);
+          });
+        } else {
+          const empty = document.createElement('div');
+          empty.className = 'text-gray-500 text-sm';
+          empty.textContent = 'No runs yet.';
+          el.appendChild(empty);
+        }
       }).catch(e => {});
     }
 
@@ -498,8 +563,25 @@
     }
     function renderFileList() {
       const el = document.getElementById('file-list');
-      if (selectedFiles.length === 0) { el.innerHTML = '<div class="text-gray-500 text-sm">No files selected.</div>'; return; }
-      el.innerHTML = selectedFiles.map((f, i) => `<div class="text-sm"><span class="text-gray-500">${i+1}.</span> ${f.split(/[\/]/).pop()}</div>`).join('');
+      el.replaceChildren();
+      if (selectedFiles.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'text-gray-500 text-sm';
+        empty.textContent = 'No files selected.';
+        el.appendChild(empty);
+        return;
+      }
+      selectedFiles.forEach((f, i) => {
+        const row = document.createElement('div');
+        row.className = 'text-sm';
+        const num = document.createElement('span');
+        num.className = 'text-gray-500';
+        num.textContent = i + 1 + '.';
+        const name = document.createElement('span');
+        name.textContent = f.split(/[\/]/).pop();
+        row.append(num, name);
+        el.appendChild(row);
+      });
       syncScenesToMedia();
     }
 
@@ -530,21 +612,57 @@
       }
       const row = document.createElement('div');
       row.className = 'scene-row border border-gray-700 rounded p-3 mb-2 bg-gray-800';
-      row.innerHTML = `
-        <div class="flex gap-2 items-start">
-          <span class="text-xs text-gray-500 w-10">${num}</span>
-          <input type="text" class="scene-overlay w-40 text-sm" placeholder="Overlay text" maxlength="35" onpaste="return checkOverlayPaste(this)" oninput="checkOverlayLimit(this)">
-          <span class="text-xs text-red-400 hidden overlay-warn">Max 35 chars</span>
-          <textarea class="scene-narration flex-1 h-20 text-sm" placeholder="Narration for this scene..."></textarea>
-          <button class="btn-attach-media btn-sm" onclick="attachMediaToScene(this)" title="Attach media file to this scene">Attach Media</button>
-          <input type="number" class="scene-duration text-xs text-center" value="${duration}" step="0.5" min="1" style="width: 2rem; max-width: 2rem; padding: 0 0.2rem;">
-          <button class="btn-danger btn-sm" onclick="removeScene(this)">Remove</button>
-        </div>
-      `;
+
+      const inner = document.createElement('div');
+      inner.className = 'flex gap-2 items-start';
+
+      const numSpan = document.createElement('span');
+      numSpan.className = 'text-xs text-gray-500 w-10';
+      numSpan.textContent = num;
+
+      const overlayInput = document.createElement('input');
+      overlayInput.type = 'text';
+      overlayInput.className = 'scene-overlay w-40 text-sm';
+      overlayInput.placeholder = 'Overlay text';
+      overlayInput.maxLength = 35;
+      overlayInput.addEventListener('paste', (e) => checkOverlayPaste(e, overlayInput));
+      overlayInput.addEventListener('input', () => checkOverlayLimit(overlayInput));
+
+      const warn = document.createElement('span');
+      warn.className = 'text-xs text-red-400 hidden overlay-warn';
+      warn.textContent = 'Max 35 chars';
+
+      const narrationTextarea = document.createElement('textarea');
+      narrationTextarea.className = 'scene-narration flex-1 h-20 text-sm';
+      narrationTextarea.placeholder = 'Narration for this scene...';
+
+      const attachBtn = document.createElement('button');
+      attachBtn.className = 'btn-attach-media btn-sm';
+      attachBtn.type = 'button';
+      attachBtn.title = 'Attach media file to this scene';
+      attachBtn.textContent = 'Attach Media';
+      attachBtn.addEventListener('click', () => attachMediaToScene(attachBtn));
+
+      const durationInput = document.createElement('input');
+      durationInput.type = 'number';
+      durationInput.className = 'scene-duration text-xs text-center';
+      durationInput.value = duration;
+      durationInput.step = '0.5';
+      durationInput.min = '1';
+      durationInput.style.width = '2rem';
+      durationInput.style.maxWidth = '2rem';
+      durationInput.style.padding = '0 0.2rem';
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'btn-danger btn-sm';
+      removeBtn.type = 'button';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', () => removeScene(removeBtn));
+
+      inner.append(numSpan, overlayInput, warn, narrationTextarea, attachBtn, durationInput, removeBtn);
+      row.appendChild(inner);
       list.appendChild(row);
       // Populate overlay and narration fields from provided values
-      const overlayInput = row.querySelector('.scene-overlay');
-      const narrationTextarea = row.querySelector('.scene-narration');
       if (overlayInput) {
         overlayInput.value = overlay || '';
         console.log('addScene: set overlay input value to:', overlayInput.value);
@@ -559,7 +677,7 @@
       }
     }
 
-    function checkOverlayPaste(input) {
+    function checkOverlayPaste(event, input) {
       const pastedText = (event.clipboardData || window.clipboardData).getData('text');
       const currentValue = input.value || '';
       const start = input.selectionStart || 0;
@@ -660,6 +778,69 @@
       previewVoice(document.getElementById('run-voice').value, 'run-voice-status');
     }
 
+    // Voice cloning (reference WAV -> Chatterbox)
+    let selectedVoiceRef = null;
+    function voiceRefName(p) { return p.split(/[\\\/]/).pop(); }
+    function renderVoiceRef() {
+      const el = document.getElementById('voice-ref-name');
+      el.textContent = selectedVoiceRef ? voiceRefName(selectedVoiceRef) : 'No reference selected';
+      el.className = selectedVoiceRef ? 'text-sm text-green-400' : 'text-sm text-gray-500';
+    }
+    function isCloneMode() {
+      return document.getElementById('run-voice-mode').value === 'clone';
+    }
+    function onVoiceModeChange() {
+      const clone = isCloneMode();
+      document.getElementById('voice-preset-row').classList.toggle('hidden', clone);
+      document.getElementById('voice-clone-row').classList.toggle('hidden', !clone);
+    }
+    async function pickVoiceRef() {
+      try {
+        const res = await fetch('/pick-audio', { method: 'POST' });
+        const data = await res.json();
+        if (data.file) { selectedVoiceRef = data.file; renderVoiceRef(); }
+      } catch(e) {
+        document.getElementById('run-clone-status').textContent = 'Could not open picker: ' + e.message;
+      }
+    }
+    function clearVoiceRef() {
+      selectedVoiceRef = null; renderVoiceRef();
+    }
+    async function loadTtsDefaults() {
+      try {
+        const r = await fetch('/config'); const cfg = await r.json();
+        const tts = cfg.tts || {};
+        if (tts.voice) document.getElementById('run-voice').value = tts.voice;
+        if (tts.speed) document.getElementById('run-tts-speed').value = tts.speed;
+        if (tts.clone_exaggeration !== undefined) document.getElementById('run-clone-exagg').value = tts.clone_exaggeration;
+        if (tts.clone_cfg_weight !== undefined) document.getElementById('run-clone-cfg').value = tts.clone_cfg_weight;
+        selectedVoiceRef = tts.clone_ref || null;
+        if (selectedVoiceRef) document.getElementById('run-voice-mode').value = 'clone';
+      } catch(e) {}
+      renderVoiceRef();
+      onVoiceModeChange();
+    }
+    async function previewCloneVoice() {
+      const status = document.getElementById('run-clone-status');
+      if (!selectedVoiceRef) { status.className = 'text-xs text-red-400'; status.textContent = 'Choose a reference WAV first.'; return; }
+      status.className = 'text-xs text-gray-500';
+      status.textContent = 'Cloning and generating... (CPU, may take a minute)';
+      try {
+        const r = await fetch('/clone/preview', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ voice: selectedVoiceRef })
+        });
+        const d = await r.json();
+        if (!d.ok) throw new Error(d.error || 'preview failed');
+        status.className = 'text-xs text-green-400';
+        status.textContent = 'Preview: ' + d.voice;
+        new Audio(d.url + '?t=' + Date.now()).play().catch(() => {});
+      } catch(e) {
+        status.className = 'text-xs text-red-400';
+        status.textContent = 'Preview failed: ' + e.message;
+      }
+    }
+
     // Background music selection (real path needed by the pipeline)
     let selectedMusic = null;
     function musicDisplayName(p) { return p.split(/[\\\/]/).pop(); }
@@ -711,6 +892,10 @@
       for (const s of scenes) {
         if (!s.narration_segment) { alert('Scene ' + s.scene_number + ' is missing narration.'); return; }
       }
+      if (isCloneMode() && !selectedVoiceRef) {
+        alert('Choose a reference WAV to clone, or switch the voice source back to a Kokoro preset.');
+        return;
+      }
       const btn = document.querySelector('#newrun button.btn-primary');
       btn.disabled = true; btn.textContent = 'Starting...';
       try {
@@ -722,7 +907,10 @@
             title: document.getElementById('run-title').value.trim() || null,
             description: document.getElementById('run-description').value.trim() || null,
             hashtags: document.getElementById('run-hashtags').value.trim() || null,
-            voice: document.getElementById('run-voice').value || null,
+            voice: isCloneMode() ? null : (document.getElementById('run-voice').value || null),
+            voice_ref: isCloneMode() ? selectedVoiceRef : null,
+            clone_exaggeration: parseFloat(document.getElementById('run-clone-exagg').value),
+            clone_cfg_weight: parseFloat(document.getElementById('run-clone-cfg').value),
             speed: parseFloat(document.getElementById('run-tts-speed').value),
             overlay: document.getElementById('run-overlay').checked,
             burn_narration: document.getElementById('run-burn-narration').checked,
@@ -806,15 +994,33 @@
     async function renderResult(data, jobId) {
       const el = document.getElementById('result-content');
       result = data;
+      el.replaceChildren();
       if (data.status !== 'done') { el.textContent = 'Status: ' + data.status + (data.error ? ' — ' + data.error : ''); return; }
-      let html = '';
       if (data.mp4) {
-        html += `<div class="mb-4"><h3 class="font-semibold mb-2">Video</h3>
-          <video controls class="w-full rounded" src="/files/${data.mp4}"></video>
-          <p class="text-sm text-gray-400 mt-1">${data.mp4} (${data.size_mb} MB)</p></div>`;
+        const wrap = document.createElement('div');
+        wrap.className = 'mb-4';
+        const h3 = document.createElement('h3');
+        h3.className = 'font-semibold mb-2';
+        h3.textContent = 'Video';
+        const video = document.createElement('video');
+        video.controls = true;
+        video.className = 'w-full rounded';
+        video.src = '/files/' + String(data.mp4);
+        const p = document.createElement('p');
+        p.className = 'text-sm text-gray-400 mt-1';
+        p.textContent = String(data.mp4) + ' (' + data.size_mb + ' MB)';
+        wrap.append(h3, video, p);
+        el.appendChild(wrap);
       }
-      html += `<div class="mt-3"><button class="btn-secondary btn-sm" onclick="openFolder()">Open Folder</button></div>`;
-      el.innerHTML = html;
+      const div = document.createElement('div');
+      div.className = 'mt-3';
+      const btn = document.createElement('button');
+      btn.className = 'btn-secondary btn-sm';
+      btn.type = 'button';
+      btn.textContent = 'Open Folder';
+      btn.addEventListener('click', openFolder);
+      div.appendChild(btn);
+      el.appendChild(div);
     }
     function copyText(btn, text) {
       navigator.clipboard.writeText(text).then(() => {
@@ -843,6 +1049,9 @@
         tts: {
           voice: document.getElementById('run-voice').value || 'af_heart',
           speed: parseFloat(document.getElementById('run-tts-speed').value),
+          clone_ref: isCloneMode() ? (selectedVoiceRef || '') : '',
+          clone_exaggeration: parseFloat(document.getElementById('run-clone-exagg').value),
+          clone_cfg_weight: parseFloat(document.getElementById('run-clone-cfg').value),
         }
       };
       await fetch('/config', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({config: cfg}) });
@@ -854,12 +1063,42 @@
       try {
         const r = await fetch('/runs'); const d = await r.json();
         const el = document.getElementById('history-panel');
+        el.replaceChildren();
         if (d.runs && d.runs.length) {
-          el.innerHTML = d.runs.map(r => {
+          d.runs.forEach(r => {
             const slug = r.name.replace(/^\d{8}_\d{6}_/, '');
-            return `<div class="flex justify-between items-center text-sm border-b border-gray-700 py-2"><div><div class="font-medium">${r.name}</div><div class="text-gray-500 text-xs">${r.size_mb} MB</div></div><div class="flex gap-2"><button class="btn-secondary btn-sm" onclick="rerun('${slug}')">Re-run</button><button class="btn-secondary btn-sm" onclick="viewResult('${r.name}')">View</button></div></div>`;
-          }).join('');
-        } else { el.innerHTML = '<div class="text-gray-500 text-sm">No runs yet.</div>'; }
+            const row = document.createElement('div');
+            row.className = 'flex justify-between items-center text-sm border-b border-gray-700 py-2';
+            const left = document.createElement('div');
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'font-medium';
+            nameDiv.textContent = r.name;
+            const sizeDiv = document.createElement('div');
+            sizeDiv.className = 'text-gray-500 text-xs';
+            sizeDiv.textContent = r.size_mb + ' MB';
+            left.append(nameDiv, sizeDiv);
+            const right = document.createElement('div');
+            right.className = 'flex gap-2';
+            const rerunBtn = document.createElement('button');
+            rerunBtn.className = 'btn-secondary btn-sm';
+            rerunBtn.type = 'button';
+            rerunBtn.textContent = 'Re-run';
+            rerunBtn.addEventListener('click', () => rerun(slug));
+            const viewBtn = document.createElement('button');
+            viewBtn.className = 'btn-secondary btn-sm';
+            viewBtn.type = 'button';
+            viewBtn.textContent = 'View';
+            viewBtn.addEventListener('click', () => viewResult(r.name));
+            right.append(rerunBtn, viewBtn);
+            row.append(left, right);
+            el.appendChild(row);
+          });
+        } else {
+          const empty = document.createElement('div');
+          empty.className = 'text-gray-500 text-sm';
+          empty.textContent = 'No runs yet.';
+          el.appendChild(empty);
+        }
       } catch(e) {}
     }
     async function rerun(slug) {
@@ -930,6 +1169,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       showTab('dashboard');
       loadHealth(); loadConfigPanel(); loadRuns(); loadVoices(); loadHistory();
+      loadTtsDefaults();
       // Load console history
       fetch('/console/history').then(r=>r.json()).then(d => {
         const el = document.getElementById('console-log');

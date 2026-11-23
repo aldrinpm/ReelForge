@@ -1,14 +1,14 @@
 {
   "scene_number": 1,
   "duration_seconds": 8.0,
-  "narration": "Could a political crisis involving the country's Vice President affect the money in ordinary Filipinos' pockets? At first glance, impeachment may seem like a political issue with little connection to everyday economic life. But political uncertainty can influence how investors behave, how businesses make decisions, and how governments manage their priorities. These decisions can eventually affect employment, prices, public spending, and household finances. However, economic damage is not automatic. The consequences depend on how the political situation develops, how long uncertainty continues, and whether the country's institutions remain stable and functional.",
-  "on_screen_text": "CAN IMPEACHMENT HURT THE ECONOMY?",
+  "narration": "In 1960, the Philippines, Singapore, and Malaysia had nearly identical GDP per capita — around four hundred dollars. Today, Singapore exceeds eighty-two thousand, Malaysia sits near twelve thousand, while the Philippines hovers just above three thousand six hundred. Three countries started from relatively similar economic positions, yet followed dramatically different paths. Singapore built a highly efficient bureaucracy, a world-class port, and a financial hub anchored by the rule of law. Malaysia leveraged its Look East policy in the eighties, attracting Japanese electronics manufacturing, then climbed the value chain through state-led industrialization via Khazanah and Petronas. The Philippines, by contrast, struggled with political instability, inconsistent economic policies, protectionism, elite capture, and chronic underinvestment in infrastructure. The result is a decades-long economic gap that remains difficult to close. Today, the Philippine government is pursuing an ambitious roadmap to achieve upper-middle-income status and eventually become a high-income economy by 2045. But can it deliver what previous administrations failed to sustain? The answer depends on four critical pillars: physical connectivity, investment climate reform, energy transition, and human capital. Each offers an opportunity to catch up, but each also presents obstacles that could derail the country's ambitions.",
+  "on_screen_text": "THE INCOME GAP PUZZLE",
   "prompt": "",
   "negative_prompt": "",
-  "source": "user_inbox",
-  "source_file": "1.jpg",
+  "source": "black_placeholder",
+  "source_file": "black_placeholder",
   "source_type": "image",
   "width": 512,
   "height": 768,
-  "normalized_filter": "scale=512:768:force_original_aspect_ratio=decrease,pad=512:768:(ow-iw)/2:(oh-ih)/2:black"
+  "normalized_filter": "color=black:size=512x768"
 }

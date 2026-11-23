@@ -38,6 +38,8 @@ ROOT = Path(r"E:\AI-Video-Production")
 SCRIPTS = ROOT / "scripts"
 BASE_PY = r"E:\ai\AirLLM\py3.11.9\python.exe"
 VENV_PY = ROOT / "venv-tts" / "Scripts" / "python.exe"
+# Voice cloning (Chatterbox, MIT) has its own venv; Kokoro's stays pinned.
+VENV_CLONE_PY = ROOT / "venv-clone" / "Scripts" / "python.exe"
 CONFIG_PATH = ROOT / "config.json"
 
 sys.path.insert(0, str(SCRIPTS))
@@ -217,6 +219,12 @@ def _probe_venv():
     return {"status": "ok" if VENV_PY.exists() else "down", "path": str(VENV_PY)}
 
 
+def _probe_clone_venv():
+    """Clone engine present? Reported separately so a missing optional
+    engine never blocks the Kokoro path."""
+    return {"status": "ok" if VENV_CLONE_PY.exists() else "down", "path": str(VENV_CLONE_PY)}
+
+
 @app.get("/health")
 def health():
     global _health_prev
@@ -224,6 +232,7 @@ def health():
         "ffmpeg": _probe_ffmpeg(),
         "espeak": _probe_espeak(),
         "venv_tts": _probe_venv(),
+        "venv_clone": _probe_clone_venv(),
         "config_exists": CONFIG_PATH.exists(),
     }
     for k, v in h.items():
@@ -280,7 +289,8 @@ def validate_config(body: ConfigUpdate):
     cfg = body.config
     # Check voice
     voice = cfg.get("tts", {}).get("voice", "")
-    if voice:
+    clone_ref = (cfg.get("tts", {}).get("clone_ref") or "").strip()
+    if voice and not clone_ref:
         try:
             sys.path.insert(0, str(SCRIPTS))
             import generate_narration as gn
@@ -288,6 +298,11 @@ def validate_config(body: ConfigUpdate):
                 errors.append(f"Voice '{voice}' not in known list")
         except Exception:
             pass
+    if clone_ref:
+        if not Path(clone_ref).is_file():
+            errors.append(f"Voice reference not found: {clone_ref}")
+        if not VENV_CLONE_PY.exists():
+            errors.append("Clone engine missing: venv-clone (see _config/voice.md)")
     return {"valid": len(errors) == 0, "errors": errors}
 
 
@@ -300,7 +315,8 @@ def config_defaults():
         sys.path.insert(0, str(SCRIPTS))
         import config as cfg_mod
         d = cfg_mod.DEFAULT_CONFIG
-        tts_keys = ("voice", "speed")
+        tts_keys = ("voice", "speed", "clone_ref", "clone_exaggeration",
+                    "clone_cfg_weight")
         return {"config": {
             "tts": {k: d["tts"][k] for k in tts_keys if k in d["tts"]},
         }}
@@ -462,6 +478,31 @@ def voice_preview(body: VoicePreviewRequest):
     return {"ok": True, "voice": voice, "path": rel, "url": "/files/" + rel}
 
 
+@app.post("/clone/preview")
+def clone_preview(body: VoicePreviewRequest):
+    """Generate a short preview in the cloned voice from a reference WAV."""
+    if not body.voice:
+        return {"ok": False, "error": "Choose a reference WAV to clone"}
+    reference = Path(body.voice)
+    if not reference.is_file():
+        return {"ok": False, "error": f"Reference not found: {reference}"}
+    if not VENV_CLONE_PY.exists():
+        return {"ok": False, "error": "Clone engine missing: venv-clone"}
+    cmd = [str(VENV_CLONE_PY), str(SCRIPTS / "clone_narration.py"),
+           "--reference", str(reference), "--preview"]
+    console_log(f"Cloned-voice preview: {reference.name}", "INFO")
+    r = subprocess.run(
+        cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
+        creationflags=subprocess.CREATE_NO_WINDOW, timeout=1800,
+    )
+    rel = "audio/preview_clone.wav"
+    full = ROOT / rel
+    if r.returncode != 0 or not full.exists():
+        return {"ok": False, "error": (r.stderr or r.stdout or "clone preview failed")[-1200:]}
+    return {"ok": True, "voice": f"clone:{reference.name}", "path": rel,
+            "url": "/files/" + rel}
+
+
 @app.post("/run/{job_id}/write-note")
 def write_run_note_endpoint(job_id: str):
     job = _jobs.get(job_id)
@@ -523,6 +564,9 @@ class RunRequest(BaseModel):
     burn_narration: bool = False  # burn narration captions into the video
     allow_overlong: bool = False  # permit exceeding gate.yaml duration/scene limits
     scenes: list = []   # list of {scene_number, narration_segment, on_screen_text, duration_seconds}
+    voice_ref: Optional[str] = None  # reference WAV to clone (overrides voice)
+    clone_exaggeration: Optional[float] = None  # 0.0-1.0+, default 0.5
+    clone_cfg_weight: Optional[float] = None    # 0.0-1.0, default 0.5
     music: Optional[str] = None  # background music track (absolute path)
     title: Optional[str] = None   # video title for storyboard sidecar
     description: Optional[str] = None  # social-post description for storyboard sidecar
@@ -557,9 +601,20 @@ def _run_worker(job_id, req):
             encoding="utf-8",
         )
         cmd += ["--scenes", str(scenes_path)]
-        if req.voice:
+        if req.voice_ref:
+            ref_path = Path(str(req.voice_ref).strip())
+            if not ref_path.is_file():
+                console_log(f"Voice reference NOT found: {req.voice_ref}", "WARN")
+                raise FileNotFoundError(f"Voice reference not found: {req.voice_ref}")
+            console_log(f"Cloned voice reference: {ref_path.name}", "INFO")
+            cmd += ["--voice-ref", str(ref_path)]
+            if req.clone_exaggeration is not None:
+                cmd += ["--clone-exaggeration", str(req.clone_exaggeration)]
+            if req.clone_cfg_weight is not None:
+                cmd += ["--clone-cfg-weight", str(req.clone_cfg_weight)]
+        if req.voice and not req.voice_ref:
             cmd += ["--voice", req.voice]
-        if req.speed and req.speed != 1.0:
+        if req.speed and req.speed != 1.0 and not req.voice_ref:
             cmd += ["--tts-speed", str(req.speed)]
         if req.music:
             music_path = Path(str(req.music).strip())
@@ -785,6 +840,25 @@ def pick_media_file():
         title="Select media file for scene",
         filetypes=[
             ("Media files", "*.png *.jpg *.jpeg *.webp *.mp4 *.mov *.mkv *.avi *.webm *.m4v *.mpg *.mpeg *.flv *.wmv *.gif"),
+            ("All files", "*.*"),
+        ],
+    )
+    root.destroy()
+    return {"file": str(file) if file else ""}
+
+
+@app.post("/pick-audio")
+def pick_audio():
+    """Backend single-file dialog for a voice-clone reference recording."""
+    import tkinter as tk
+    from tkinter import filedialog
+    root = tk.Tk()
+    root.withdraw()
+    root.attributes("-topmost", True)
+    file = filedialog.askopenfilename(
+        title="Select a voice reference (5-20 s of one speaker)",
+        filetypes=[
+            ("Audio files", "*.wav *.mp3 *.flac *.m4a *.ogg *.aiff *.aif"),
             ("All files", "*.*"),
         ],
     )

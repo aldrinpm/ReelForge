@@ -173,6 +173,37 @@ Test (`scripts\test_kokoro.py` does exactly this):
 # → audio\test_kokoro_af_heart.wav (~5.9 s clip, CPU, faster than real time)
 ```
 
+### 5.7 Voice-clone venv (optional, one-time)
+
+Needed only for **Cloned voice** runs (your own voice, or another speaker's
+reference WAV). Kokoro presets keep working without it.
+
+```powershell
+& 'E:\ai\AirLLM\py3.11.9\python.exe' -m venv 'E:\AI-Video-Production\venv-clone'
+& 'E:\AI-Video-Production\venv-clone\Scripts\python.exe' -m pip install --upgrade pip
+& 'E:\AI-Video-Production\venv-clone\Scripts\python.exe' -m pip install chatterbox-tts 'setuptools<81'
+```
+
+`setuptools<81` is mandatory: Chatterbox's watermarker (`resemble-perth`)
+imports `pkg_resources`, removed in later setuptools — without the pin the
+model loads but every run dies with `'NoneType' object is not callable`.
+
+Installed stack: `chatterbox-tts 0.1.7`, `torch 2.6.0` (CPU build),
+`torchaudio`, `transformers`, `librosa`, `s3tokenizer`, `conformer`,
+`resemble-perth` (watermark). `gradio` arrives as a dependency and pulls
+`Pillow` into this venv only — the pipeline's own image checks stay
+Pillow-free.
+
+First clone run downloads the `ResembleAI/chatterbox` weights into `HF_HOME`
+(section 6): ≈2 GB, on E:.
+
+Test:
+
+```powershell
+& 'E:\AI-Video-Production\venv-clone\Scripts\python.exe' 'E:\AI-Video-Production\scripts\clone_narration.py' --reference 'E:\AI-Video-Production\audio\scene_01.wav' --preview
+# → audio\preview_clone.wav
+```
+
 ---
 
 ## 6. Environment variables
@@ -405,7 +436,8 @@ Behavior worth knowing:
     `logs\<stamp>_<name>.log`. Use "Allow overlong" (or
     `--allow-overlong`) to knowingly exceed the platform-fit limits.
 -   Output is MP4-only: no publishing kit and no `.srt` sidecar.
--   Useful flags: `--voice` / `--tts-speed`, `--overlay` /
+-   Useful flags: `--voice` / `--tts-speed`, `--voice-ref <wav>` /
+    `--clone-exaggeration` / `--clone-cfg-weight`, `--overlay` /
     `--no-overlay`, `--burn-narration` / `--no-burn-narration`,
     `--music <file>`, `--allow-overlong`, `--no-open` (suppresses Explorer).
 
@@ -434,6 +466,25 @@ The LLM (storyboard) and TTS voice are now configurable via
   writes `audio/preview_bf_emma.wav`.
 - Kokoro is English-only (no Filipino). Changing voice changes durations;
   auto-fit in run_video.py handles it.
+
+### Voice (cloned voice)
+
+- Any WAV/MP3/FLAC/M4A/OGG/AIFF reference (5–20 s, one speaker) is spoken by
+  Chatterbox TTS 0.5B (MIT) on CPU in `venv-clone`; the clip is a speaker
+  prompt, not copied audio.
+- The reference is decoded with librosa to 24 kHz mono (a 16 kHz recording is
+  properly resampled, not relabelled — relabelling played the speaker 1.5x
+  fast and cloned a voice a fifth too high) and cut at a quiet gap near 20 s.
+- CLI: `--voice-ref <wav>`, `--clone-exaggeration` (emotion, default 0.5),
+  `--clone-cfg-weight` (pace, default 0.5). `--voice` / `--tts-speed` are
+  ignored in clone mode.
+- Preview: `venv-clone\Scripts\python.exe scripts\clone_narration.py
+  --reference <wav> --preview` → `audio/preview_clone.wav`; the UI has
+  "Preview clone" on the New Run panel.
+- UI: **Voice source → Cloned voice (my WAV)** → *Browse WAV*. "Save as
+  default" stores `tts.clone_ref` / `tts.clone_exaggeration` /
+  `tts.clone_cfg_weight` in `config.json`.
+- Details and consent note: `_config/voice.md`.
 
 ### Files
 - `config.json` — runtime config (gitignored; contains secrets).

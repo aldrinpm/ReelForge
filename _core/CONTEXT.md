@@ -9,7 +9,7 @@ stage you are working on. Do NOT load everything.
 |---|-------|--------|--------|---------|------------|
 | 01 | Storyboard | (desktop UI) or `--scenes` JSON | user-defined scenes | in-memory scene list | — |
 | 02 | Images | scripts/run_video.py (auto) | user media + scenes | images/scene_XX.png + metadata + approved_set.json | Contact sheet review (human) |
-| 03 | Narration | scripts/generate_narration.py | approved_set.json | audio/scene_XX.wav + metadata | Voice audition (human) |
+| 03 | Narration | scripts/generate_narration.py (Kokoro preset) or scripts/clone_narration.py (cloned voice) | approved_set.json + optional reference WAV | audio/scene_XX.wav + metadata | Voice audition (human) |
 | 04 | Subtitles | scripts/generate_subtitles.py + verify_subtitles.py | approved_set.json + audio sidecars | subtitles/<slug>.srt | Wording gate (auto) |
 | 05 | Assembly | scripts/assemble_video.py | approved_set.json + audio + srt | output/<stamp>_<slug>.mp4 | — |
 | 06 | QA | scripts/gates.py + ffprobe / volumedetect | MP4 | verdict (MP4-only output) | Final MP4 review (human) |
@@ -39,7 +39,8 @@ See SETUP.md section 10.
 ## Human checkpoints (do not skip)
 
 1. Image contact sheet (pipeline/02 or run_video staging)
-2. Narration voice audition (audio/test_kokoro_af_heart.wav)
+2. Narration voice audition (audio/test_kokoro_af_heart.wav, or the cloned-voice
+   preview audio/preview_clone.wav)
 3. Final MP4 review
 
 ## Audits (run before declaring a stage done)

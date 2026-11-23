@@ -19,9 +19,10 @@ What it does (fully automatic, no review stops):
        whole asset is visible, never stretched or cropped), builds the
        approved_set.json manifest + contact sheet. Scenes without media get
        a black placeholder and carry forward the last media image.
-    4. Narration: Kokoro af_heart via venv-tts; measured durations are
-       then auto-fitted into the manifest (scene = narration + 0.9 s,
-       rounded up to 0.5 s).
+    4. Narration: Kokoro af_heart via venv-tts, or a cloned voice via
+       Chatterbox in venv-clone when --voice-ref <wav> is given; measured
+       durations are then auto-fitted into the manifest (scene = narration
+       + 0.9 s, rounded up to 0.5 s).
     5. Subtitles: generated and hard-verified (wording gate).
     6. Assembly: crossfades + burned captions -> MP4.
     7. QA: ffprobe/volumedetect + gate.yaml thresholds. Output is the MP4
@@ -64,6 +65,8 @@ LOGS_DIR = ROOT / "logs"
 
 BASE_PY = r"E:\ai\AirLLM\py3.11.9\python.exe"
 VENV_PY = ROOT / "venv-tts" / "Scripts" / "python.exe"
+# Voice cloning lives in its own venv so Kokoro's pinned stack is untouched.
+CLONE_PY = ROOT / "venv-clone" / "Scripts" / "python.exe"
 MANIFEST = IMAGES_DIR / "approved_set.json"
 
 IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp")
@@ -428,17 +431,44 @@ def stage_images_and_manifest(scenes, sources, media_types, slug,
     log(f"Manifest written: {MANIFEST}", indent=True)
 
 
-def generate_narration_and_fit(scenes, tts_cfg=None):
-    """Kokoro narration, then auto-fit scene durations in the manifest."""
-    voice = (tts_cfg or {}).get("voice", "af_heart")
-    speed = (tts_cfg or {}).get("speed", 1.0)
-    run_step(
-        [str(VENV_PY), str(SCRIPTS / "generate_narration.py"),
-         "--voice", voice,
-         "--speed", str(speed)],
-        "narration generation",
-        cwd=ROOT, timeout=600,
-    )
+def generate_narration_and_fit(scenes, tts_cfg=None, clone_cfg=None):
+    """Narration (Kokoro preset or cloned voice), then auto-fit durations.
+
+    When clone_cfg carries a reference WAV the cloned-voice engine
+    (clone_narration.py in venv-clone) is used; otherwise the Kokoro preset
+    voice runs exactly as before.
+    """
+    clone_ref = (clone_cfg or {}).get("clone_ref", "")
+    if clone_ref:
+        reference = Path(clone_ref)
+        if not reference.is_file():
+            raise PipelineError(
+                f"Voice reference not found: {reference}\n"
+                f"    Point the clone at a WAV of the voice to speak in."
+            )
+        if not CLONE_PY.exists():
+            raise PipelineError(
+                f"Cloned voice needs its own interpreter: {CLONE_PY} is missing.\n"
+                f"    Create it and install chatterbox-tts (see _config/voice.md)."
+            )
+        run_step(
+            [str(CLONE_PY), str(SCRIPTS / "clone_narration.py"),
+             "--reference", str(reference),
+             "--exaggeration", str(clone_cfg.get("exaggeration", 0.5)),
+             "--cfg-weight", str(clone_cfg.get("cfg_weight", 0.5))],
+            "cloned narration generation",
+            cwd=ROOT, timeout=3600,
+        )
+    else:
+        voice = (tts_cfg or {}).get("voice", "af_heart")
+        speed = (tts_cfg or {}).get("speed", 1.0)
+        run_step(
+            [str(VENV_PY), str(SCRIPTS / "generate_narration.py"),
+             "--voice", voice,
+             "--speed", str(speed)],
+            "narration generation",
+            cwd=ROOT, timeout=600,
+        )
 
     changed = []
     for scene in scenes:
@@ -586,12 +616,18 @@ def qa_check(mp4_path, timeline_seconds, scene_count=None, allow_overlong=False)
 def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
              overlay=True, overlay_duration=3.0, overlay_position="top",
              burn_narration=False, allow_overlong=False, music=None,
-             scenes=None, title=None, description=None, hashtags=None):
+             scenes=None, title=None, description=None, hashtags=None,
+             voice_ref=None, clone_exaggeration=None, clone_cfg_weight=None):
     slug = slugify(run_name)
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     cfg = cfg_mod.load_config()
     tts_cfg = {"voice": voice or "af_heart", "speed": speed}
+    clone_cfg = cfg_mod.resolve_clone_config(cfg, {
+        "clone_ref": voice_ref,
+        "exaggeration": clone_exaggeration,
+        "cfg_weight": clone_cfg_weight,
+    })
     LOGS_DIR.mkdir(exist_ok=True)
     global log
     log = Log(LOGS_DIR / f"{stamp}_{slug}.log")
@@ -633,8 +669,12 @@ def pipeline(run_name, media_files, no_open, voice=None, speed=1.0,
 
 
     # 3. Narration + auto-fit
-    log("[4/6] Narration (Kokoro, CPU) + auto-fit scene durations")
-    generate_narration_and_fit(scenes, tts_cfg)
+    if clone_cfg["clone_ref"]:
+        log(f"[4/6] Narration (cloned voice from "
+            f"{Path(clone_cfg['clone_ref']).name}, CPU) + auto-fit scene durations")
+    else:
+        log("[4/6] Narration (Kokoro, CPU) + auto-fit scene durations")
+    generate_narration_and_fit(scenes, tts_cfg, clone_cfg)
 
     # 4. Subtitles + verification (temporary SRT for burned captions)
     log("[5/6] Subtitles + verification")
@@ -752,6 +792,19 @@ def main():
                         help="Do not open the output folder at the end")
     parser.add_argument("--voice", default=None, help="TTS voice (e.g. af_heart)")
     parser.add_argument("--tts-speed", type=float, default=None, dest="tts_speed")
+    parser.add_argument(
+        "--voice-ref", default=None, dest="voice_ref",
+        help="Clone this WAV's voice instead of using a Kokoro preset "
+             "(Chatterbox, CPU, venv-clone)"
+    )
+    parser.add_argument(
+        "--clone-exaggeration", type=float, default=None, dest="clone_exaggeration",
+        help="Cloned-voice emotion intensity 0.0-1.0+ (default 0.5)"
+    )
+    parser.add_argument(
+        "--clone-cfg-weight", type=float, default=None, dest="clone_cfg_weight",
+        help="Cloned-voice pace/adherence weight 0.0-1.0 (default 0.5)"
+    )
     parser.add_argument("--overlay", dest="overlay", action="store_true", default=True,
                         help="Burn on-screen headline text per scene (default on)")
     parser.add_argument("--no-overlay", dest="overlay", action="store_false",
@@ -807,7 +860,9 @@ def main():
                         args.overlay, args.overlay_duration,
                         args.overlay_position, args.burn_narration,
                         args.allow_overlong, args.music, scenes,
-                        args.title, args.description, args.hashtags)
+                        args.title, args.description, args.hashtags,
+                        args.voice_ref, args.clone_exaggeration,
+                        args.clone_cfg_weight)
     except PipelineError as error:
         log("PIPELINE FAILED — " + str(error))
         return 1

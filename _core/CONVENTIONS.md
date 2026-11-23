@@ -68,7 +68,7 @@ pipeline. Full source: https://github.com/RinDig/Interpretable-Context-Methodolo
 |---|-------|--------|--------------|
 | 01 | Storyboard | (desktop UI) or `--scenes` JSON | — |
 | 02 | Images | scripts/run_video.py (auto) | images/ |
-| 03 | Narration | scripts/generate_narration.py | audio/ |
+| 03 | Narration | scripts/generate_narration.py (Kokoro) / scripts/clone_narration.py (cloned voice) | audio/ |
 | 04 | Subtitles | scripts/generate_subtitles.py + verify_subtitles.py | subtitles/ |
 | 05 | Assembly | scripts/assemble_video.py | output/ + temp/ |
 | 06 | QA | scripts/gates.py + (ffprobe / volumedetect) | output/ + logs/ |

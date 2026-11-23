@@ -39,6 +39,9 @@ DEFAULT_CONFIG = {
         "engine": "kokoro",
         "voice": "af_heart",
         "speed": 1.0,
+        "clone_ref": "",
+        "clone_exaggeration": 0.5,
+        "clone_cfg_weight": 0.5,
     },
     "providers": DEFAULT_PROVIDERS,
 }
@@ -142,6 +145,28 @@ def resolve_tts_config(cfg, overrides=None):
     tts["voice"] = voice
     tts["speed"] = float(speed)
     return tts
+
+
+def resolve_clone_config(cfg, overrides=None):
+    """Return the voice-clone settings (reference WAV + Chatterbox knobs).
+
+    The reference is an empty string when no clone voice has been chosen;
+    callers fall back to the Kokoro preset path in that case.
+    """
+    overrides = overrides or {}
+    tts = dict(cfg.get("tts", {}))
+    reference = (overrides.get("clone_ref") or tts.get("clone_ref") or "").strip()
+    exaggeration = overrides.get("exaggeration")
+    if exaggeration is None:
+        exaggeration = tts.get("clone_exaggeration", 0.5)
+    cfg_weight = overrides.get("cfg_weight")
+    if cfg_weight is None:
+        cfg_weight = tts.get("clone_cfg_weight", 0.5)
+    return {
+        "clone_ref": reference,
+        "exaggeration": float(exaggeration),
+        "cfg_weight": float(cfg_weight),
+    }
 
 
 def redact_key(key):
